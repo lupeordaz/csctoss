@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>PsqlBackups</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Postgre Restore Procedures</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>PaperWise Notes</I></FONT><BR>&nbsp;<BR>
+
+<li>Takes current database backup on testoss01 and send to a gzip file:
+
+  LANG=C pg_dump --disable-dollar-quoting -U postgres -C -v csctoss | gzip > testoss01_csctoss_backup_`date +%Y%m%d`.dmp.gz
+  pg_dump: reading schemas
+  pg_dump: reading user-defined functions
+  pg_dump: reading user-defined types
+  pg_dump: reading procedural languages
+  .
+  .
+  .
+  pg_dump: setting owner and privileges for FK CONSTRAINT usergroup_groupname_fk
+  pg_dump: setting owner and privileges for FK CONSTRAINT usergroup_username_fk
+  pg_dump: setting owner and privileges for FK CONSTRAINT username_billing_entity_id_fk
+  [postgres@testoss01 ~]$ ll testoss01_csctoss_backup_20180511.dmp.gz 
+  -rw-rw-r--. 1 postgres postgres 2159960617 May 11 11:30 testoss01_csctoss_backup_20180511.dmp.gz
+  [postgres@testoss01 ~]$ 
+
+<li>Drop csctoss database on testoss01
+
+
+
+
+</BODY>
+</HTML>
+ 
+

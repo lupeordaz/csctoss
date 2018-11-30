@@ -1,0 +1,46 @@
+[gordaz@cctlix03 functions]$ git status
+# On branch master
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   csctoss.ops_api_assign.sql
+#	modified:   csctoss.ops_api_static_ip_assign.sql
+#	modified:   csctoss.rt_oss_rma.sql
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+[gordaz@cctlix03 functions]$ git add csctoss.ops_api_assign.sql
+[gordaz@cctlix03 functions]$ git status
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	modified:   csctoss.ops_api_assign.sql
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   csctoss.ops_api_static_ip_assign.sql
+#	modified:   csctoss.rt_oss_rma.sql
+#
+[gordaz@cctlix03 functions]$ git commit csctoss.ops_api_assign.sql
+[master 5c6b3b2] Task #8522 - Provision Tool:  add bypass signature to ops_api_assign() function.
+ 1 file changed, 119 insertions(+), 64 deletions(-)
+[gordaz@cctlix03 functions]$ git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 1 commit.
+#   (use "git push" to publish your local commits)
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   csctoss.ops_api_static_ip_assign.sql
+#	modified:   csctoss.rt_oss_rma.sql
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+[gordaz@cctlix03 functions]$ git push csctoss.ops_api_assign.sql
+fatal: You are pushing to remote 'csctoss.ops_api_assign.sql', which is not the upstream of
+your current branch 'master', without telling me what to push
+to update which remote branch.

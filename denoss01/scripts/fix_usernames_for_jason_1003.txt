@@ -1,0 +1,449 @@
+iOLD USERNAME:
+
+4047196529@vzw.net 4047196529@vzw3g.com
+4047196080@vzw.net 4047196080@vzw3g.com
+4047649998@vzw.net 4047649998@vzw3g.com
+4047649152@vzw.net 4047649152@vzw3g.com
+4047649068@vzw.net 4047649068@vzw3g.com
+4047725912@vzw.net 4047725912@vzw3g.com
+4046657027@vzw.net 4046657027@vzw3g.com
+4046233263@vzw.net 4046233263@vzw3g.com
+4046233262@vzw.net 4046233262@vzw3g.com
+4046233239@vzw.net 4046233239@vzw3g.com
+4046233221@vzw.net 4046233221@vzw3g.com
+4047836569@vzw.net 4047836569@vzw3g.com
+4047838464@vzw.net 4047838464@vzw3g.com
+4047839550@vzw.net 4047839550@vzw3g.com
+4047835496@vzw.net 4047835496@vzw3g.com
+4047835492@vzw.net 4047835492@vzw3g.com
+4048033886@vzw.net 4048033886@vzw3g.com
+4047102106@vzw.net 4047102106@vzw3g.com
+4047104234@vzw.net 4047104234@vzw3g.com
+
+NEW USERNAMES:
+
+4047196529@vzw3g.com
+4047196080@vzw3g.com 
+4047649998@vzw3g.com
+4047649152@vzw3g.com 
+4047649068@vzw3g.com 
+4047725912@vzw3g.com 
+4046657027@vzw3g.com 
+4046233263@vzw3g.com 
+4046233262@vzw3g.com 
+4046233239@vzw3g.com 
+4046233221@vzw3g.com 
+4047836569@vzw3g.com 
+4047838464@vzw3g.com 
+4047839550@vzw3g.com
+4047835496@vzw3g.com 
+4047835492@vzw3g.com 
+4048033886@vzw3g.com 
+4047102106@vzw3g.com
+4047104234@vzw3g.com
+
+
+
+
+postgres@atloss01:~/dba/scripts>./fix_username.sh
+
+-----------------------------------------------------
+Please enter the username you wish to change:
+4047196529@vzw.net
+
+You entered: 4047196529@vzw.net : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please review row counts before continuing with username modification
+
+Table:    username     radreply  radcheck  usergroup    line
+------   ----------    --------  --------  ---------    ----
+Row Cnt      1            2          1         1         1
+
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please enter the new username :
+4047196529@vzw3g.com
+
+
+You entered: 4047196529@vzw3g.com : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+
+Calling DB function to perform updates
+
+NOTICE:  Start of DB Username Update Function
+NOTICE:  change log staff id was set
+ username    table : expected (1) updated (1)- passed
+ radreply    table : expected (2) updated (2)- passed
+ radcheck    table : expected (1) updated (1)- passed
+ usergroup   table : expected (1) updated (1)- passed
+ line        table : expected (1) updated (1)- passed
+
+ End of DB Username Update Function
+
+
+The username update completed successfully
+Please review to ensure all updates are correct
+exiting script
+
+LOGFILE Location is: /home/postgres/dba/scripts/logs/fix_username_1003_205436.log
+-----------------------------------------------------------------------------------------------
+postgres@atloss01:~/dba/scripts>./fix_username.sh
+
+-----------------------------------------------------
+Please enter the username you wish to change:
+4047196080@vzw.net
+
+You entered: 4047196080@vzw.net : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please review row counts before continuing with username modification
+
+Table:    username     radreply  radcheck  usergroup    line
+------   ----------    --------  --------  ---------    ----
+Row Cnt      1            2          1         1         1
+
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please enter the new username :
+4047196080@vzw3g.com
+
+
+You entered: 4047196080@vzw3g.com : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+
+Calling DB function to perform updates
+
+NOTICE:  Start of DB Username Update Function
+NOTICE:  change log staff id was set
+ username    table : expected (1) updated (1)- passed
+ radreply    table : expected (2) updated (2)- passed
+ radcheck    table : expected (1) updated (1)- passed
+ usergroup   table : expected (1) updated (1)- passed
+ line        table : expected (1) updated (1)- passed
+
+ End of DB Username Update Function
+
+
+The username update completed successfully
+Please review to ensure all updates are correct
+exiting script
+
+LOGFILE Location is: /home/postgres/dba/scripts/logs/fix_username_1003_210101.log
+-----------------------------------------------------------------------------------------------
+postgres@atloss01:~/dba/scripts>./fix_username.sh
+
+-----------------------------------------------------
+Please enter the username you wish to change:
+4047649998@vzw.net
+
+You entered: 4047649998@vzw.net : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please review row counts before continuing with username modification
+
+Table:    username     radreply  radcheck  usergroup    line
+------   ----------    --------  --------  ---------    ----
+Row Cnt      1            2          1         1         1
+
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please enter the new username :
+4047649998@vzw3g.com
+
+
+You entered: 4047649998@vzw3g.com : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+
+Calling DB function to perform updates
+
+NOTICE:  Start of DB Username Update Function
+NOTICE:  change log staff id was set
+ username    table : expected (1) updated (1)- passed
+ radreply    table : expected (2) updated (2)- passed
+ radcheck    table : expected (1) updated (1)- passed
+ usergroup   table : expected (1) updated (1)- passed
+ line        table : expected (1) updated (1)- passed
+
+ End of DB Username Update Function
+
+
+The username update completed successfully
+Please review to ensure all updates are correct
+exiting script
+
+LOGFILE Location is: /home/postgres/dba/scripts/logs/fix_username_1003_210127.log
+-----------------------------------------------------------------------------------------------
+postgres@atloss01:~/dba/scripts>./fix_username.sh
+
+-----------------------------------------------------
+Please enter the username you wish to change:
+4047649152@vzw.net
+
+You entered: 4047649152@vzw.net : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please review row counts before continuing with username modification
+
+Table:    username     radreply  radcheck  usergroup    line
+------   ----------    --------  --------  ---------    ----
+Row Cnt      1            2          1         1         1
+
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please enter the new username :
+4047649152@vzw3g.com
+
+
+You entered: 4047649152@vzw3g.com : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+
+Calling DB function to perform updates
+
+NOTICE:  Start of DB Username Update Function
+NOTICE:  change log staff id was set
+ username    table : expected (1) updated (1)- passed
+ radreply    table : expected (2) updated (2)- passed
+ radcheck    table : expected (1) updated (1)- passed
+ usergroup   table : expected (1) updated (1)- passed
+ line        table : expected (1) updated (1)- passed
+
+ End of DB Username Update Function
+
+
+The username update completed successfully
+Please review to ensure all updates are correct
+exiting script
+
+LOGFILE Location is: /home/postgres/dba/scripts/logs/fix_username_1003_210153.log
+-----------------------------------------------------------------------------------------------
+postgres@atloss01:~/dba/scripts>./fix_username.sh
+
+-----------------------------------------------------
+Please enter the username you wish to change:
+4047649068@vzw.net
+
+You entered: 4047649068@vzw.net : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please review row counts before continuing with username modification
+
+Table:    username     radreply  radcheck  usergroup    line
+------   ----------    --------  --------  ---------    ----
+Row Cnt      1            2          1         1         1
+
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please enter the new username :
+4047649068@vzw3g.com
+
+
+You entered: 4047649068@vzw3g.com : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+
+Calling DB function to perform updates
+
+NOTICE:  Start of DB Username Update Function
+NOTICE:  change log staff id was set
+ username    table : expected (1) updated (1)- passed
+ radreply    table : expected (2) updated (2)- passed
+ radcheck    table : expected (1) updated (1)- passed
+ usergroup   table : expected (1) updated (1)- passed
+ line        table : expected (1) updated (1)- passed
+
+ End of DB Username Update Function
+
+
+The username update completed successfully
+Please review to ensure all updates are correct
+exiting script
+
+LOGFILE Location is: /home/postgres/dba/scripts/logs/fix_username_1003_210225.log
+-----------------------------------------------------------------------------------------------
+postgres@atloss01:~/dba/scripts>./fix_username.sh
+
+-----------------------------------------------------
+Please enter the username you wish to change:
+
+You entered an invalid username-  exiting
+postgres@atloss01:~/dba/scripts>
+postgres@atloss01:~/dba/scripts>
+postgres@atloss01:~/dba/scripts>./fix_username.sh
+
+-----------------------------------------------------
+Please enter the username you wish to change:
+4047725912@vzw.net
+
+You entered: 4047725912@vzw.net : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please review row counts before continuing with username modification
+
+Table:    username     radreply  radcheck  usergroup    line
+------   ----------    --------  --------  ---------    ----
+Row Cnt      1            2          1         1         1
+
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please enter the new username :
+4047725912@vzw3g.com
+
+
+You entered: 4047725912@vzw3g.com : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+
+Calling DB function to perform updates
+
+NOTICE:  Start of DB Username Update Function
+NOTICE:  change log staff id was set
+ username    table : expected (1) updated (1)- passed
+ radreply    table : expected (2) updated (2)- passed
+ radcheck    table : expected (1) updated (1)- passed
+ usergroup   table : expected (1) updated (1)- passed
+ line        table : expected (1) updated (1)- passed
+
+ End of DB Username Update Function
+
+
+The username update completed successfully
+Please review to ensure all updates are correct
+exiting script
+
+LOGFILE Location is: /home/postgres/dba/scripts/logs/fix_username_1003_210254.log
+-----------------------------------------------------------------------------------------------
+postgres@atloss01:~/dba/scripts>./fix_username.sh
+
+-----------------------------------------------------
+Please enter the username you wish to change:
+4046657027@vzw.net
+
+You entered: 4046657027@vzw.net : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please review row counts before continuing with username modification
+
+Table:    username     radreply  radcheck  usergroup    line
+------   ----------    --------  --------  ---------    ----
+Row Cnt      1            2          1         1         1
+
+
+Do you wish to continue?  [ y/n ]
+4046657027@vzw3g.com
+You entered '4046657027@vzw3g.com' -  Exiting now
+postgres@atloss01:~/dba/scripts>./fix_username.sh
+
+-----------------------------------------------------
+Please enter the username you wish to change:
+4046657027@vzw.net
+
+You entered: 4046657027@vzw.net : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please review row counts before continuing with username modification
+
+Table:    username     radreply  radcheck  usergroup    line
+------   ----------    --------  --------  ---------    ----
+Row Cnt      1            2          1         1         1
+
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+Please enter the new username :
+4046657027@vzw3g.com
+
+
+You entered: 4046657027@vzw3g.com : Please double check this username before continuing
+
+Do you wish to continue?  [ y/n ]
+y
+You entered 'y' - Continuing
+
+
+Calling DB function to perform updates
+
+NOTICE:  Start of DB Username Update Function
+NOTICE:  change log staff id was set
+ username    table : expected (1) updated (1)- passed
+ radreply    table : expected (2) updated (2)- passed
+ radcheck    table : expected (1) updated (1)- passed
+ usergroup   table : expected (1) updated (1)- passed
+ line        table : expected (1) updated (1)- passed
+
+ End of DB Username Update Function
+
+
+The username update completed successfully
+Please review to ensure all updates are correct
+exiting script
+
+LOGFILE Location is: /home/postgres/dba/scripts/logs/fix_username_1003_210413.log
+-----------------------------------------------------------------------------------------------
+

@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>LU Top 10</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+
+
+  <i>Displaying Less than (&lt) and a greater than (&gt) symbols</i>
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Linux/Unix Top 10</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<pre>
+
+<FONT COLOR="#009999"><I>Display IP Address</I></FONT>
+
+  <i><b>On Centos:</b></i>
+    <b>ip addr </b>
+    1: lo: %ltLOOPBACK,UP,LOWER_UP%gt mtu 65536 qdisc noqueue state UNKNOWN
+        link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+        inet 127.0.0.1/8 scope host lo
+        inet6 ::1/128 scope host
+           valid_lft forever preferred_lft forever
+    2: eth0: %ltBROADCAST,MULTICAST,UP,LOWER_UP%gt mtu 1500 qdisc pfifo_fast state UP qlen 1000
+        link/ether 00:0c:29:b3:50:e1 brd ff:ff:ff:ff:ff:ff
+        inet <b>10.17.72.21</b>/29 brd 10.17.72.23 scope global eth0
+        inet6 fe80::20c:29ff:feb3:50e1/64 scope link
+           valid_lft forever preferred_lft forever
+
+      <i>The bold ip address is the external ip address.</i>
+
+    <b>hostname -I</b>
+    10.17.72.21
+
+
+  <i>To get the external IP address, use the following curl command to call <b>checkip.dyndns.org</b> 
+    and display IP address from outside source:</i>
+    
+    curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'
+
+
+</BODY>
+</HTML>
+ 
+

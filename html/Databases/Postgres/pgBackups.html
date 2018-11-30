@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>PGbackups</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">PG database backups</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+<BR>
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>Take backups of testoss1</I></FONT>
+
+<li>Production backups reside in:  <b>denoss01:/pgdata/backups</b></li>
+<li>Backup file naming format is:  <b>csctoss_backup.H&lt<i>sequence</i>&gt.gz</b></li>
+<li>Transfer prodction database backup file to testoss01</li>
+<li>Log in as postgres id</li>
+<li><FONT COLOR="#FF0000"><I>(Optional)  </i></font>To take backup of current <i>testoss01</i> database, run following:  </li>
+    
+  <b>[postgres@testoss01 ~]$ LANG=C pg_dump --disable-dollar-quoting -U postgres -C -v csctoss | gzip > testoss01_csctoss_backup_`date +%Y%m%d`.dmp.gz</b>
+
+  Displays of backup progress will be generated till the task is complete.
+  
+<li>Drop csctoss database on testoss1</li>  
+
+    <FONT COLOR="#009999"><I>Someone may be connecting to the database, so we need to restart PostgreSQL process.</I></FONT>
+
+    [postgres@testoss01 ~]$ pg_ctl restart -m fast
+
+    <FONT COLOR="#009999"><I>Drop database on testoss01</I></FONT>
+
+    [postgres@testoss01 ~]$ psql -U postgres template1
+    template1=# DROP DATABASE csctoss;
+    DROP DATABASE
+
+
+
+template1=# DROP DATABASE csctoss;
+DROP DATABASE
+template1=# \i csctoss_backup.H10
+csctoss_backup.H10: No such file or directory
+template1=# \i data/csctoss_backup.H10
+You are now connected to database "template1".
+psql:data/csctoss_backup.H10:11: ERROR:  user "get_limit_reader" already exists
+psql:data/csctoss_backup.H10:12: ERROR:  user ID 108 is already assigned
+.
+.
+.
+NOTICE:  drop cascades to function _csctoss_repl.altertableforreplication(integer)
+NOTICE:  drop cascades to function _csctoss_repl.addpartiallogindices()
+NOTICE:  drop cascades to function _csctoss_repl.add_missing_table_field(text,text,text,text)
+NOTICE:  drop cascades to function _csctoss_repl.add_empty_table_to_replication(integer,integer,text,text,text,text)
+DROP SCHEMA
+csctoss=# TRUNCATE TABLE replication_failure;
+TRUNCATE TABLE
+csctoss=# VACUUM VERBOSE ANALYZE ;
+INFO:  vacuuming "information_schema.sql_languages"
+INFO:  "sql_languages": found 0 removable, 2 nonremovable row versions in 1 pages
+.
+.
+.
+CPU 0.00s/0.00u sec elapsed 0.00 sec.
+INFO:  analyzing "csctoss.replication_failure"
+INFO:  "replication_failure": scanned 0 of 0 pages, containing 0 live rows and 0 dead rows; 0 rows in sample, 0 estimated total rows
+INFO:  free space map: 245 relations, 29885 pages stored; 33280 total pages needed
+DETAIL:  Allocated FSM size: 1000 relations + 50000 pages = 399 kB shared memory.
+VACUUM
+csctoss=# 
+.
+.
+.
+csctoss=# \q
+[postgres@testoss01 ~]$ psql
+csctoss=# CREATE USER password_reset;
+ERROR:  user "password_reset" already exists
+csctoss=# CREATE USER password_reset ENCRYPTED PASSWORD 'reset';
+ERROR:  user "password_reset" already exists
+csctoss=# ALTER USER password_reset SET search_path TO csctoss;
+ALTER USER
+csctoss=# GRANT SELECT,UPDATE,DELETE ON csctoss.equipment_credential TO password_reset;
+GRANT
+csctoss=# 
+csctoss=# GRANT SELECT               ON csctoss.equipment            TO password_reset;
+GRANT
+csctoss=# 
+csctoss=# GRANT SELECT               ON csctoss.unique_identifier    TO password_reset;
+GRANT
+csctoss=# 
+csctoss=# GRANT SELECT               ON csctoss.line_equipment       TO password_reset;
+GRANT
+csctoss=# 
+csctoss=# GRANT SELECT               ON csctoss.line                 TO password_reset;
+GRANT
+csctoss=# 
+csctoss=# GRANT SELECT               ON csctoss.equipment_model      TO password_reset;
+GRANT
+csctoss=# 
+
+
+
+
+
+
+When you refresh testoss01 database, please execute the following SQLs.
+
+
+ 
+-- Create user for password reset
+CREATE USER password_reset
+CREATE USER password_reset ENCRYPTED PASSWORD 'reset';
+ALTER USER password_reset SET search_path TO csctoss;
+
+-- Grant access to password_reset user
+GRANT SELECT,UPDATE,DELETE ON csctoss.equipment_credential TO password_reset;
+GRANT SELECT               ON csctoss.equipment            TO password_reset;
+GRANT SELECT               ON csctoss.unique_identifier    TO password_reset;
+GRANT SELECT               ON csctoss.line_equipment       TO password_reset;
+GRANT SELECT               ON csctoss.line                 TO password_reset;
+GRANT SELECT               ON csctoss.equipment_model      TO password_reset;
+
+
+</pre>
+
+</BODY>
+</HTML>
+ 
+

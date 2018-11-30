@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>opentaps</TITLE>
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Opentaps Crontab</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+
+<pre>
+<FONT COLOR="#009999"><I>Crontab entries for Opentaps</I></FONT>
+
+# ############################################################# #
+# Min | HR | Day of Month | Month | Day of Week | File | Output #
+# ############################################################# #
+
+# MySQL Backup (Daily)
+00 01 * * * /home/mysql-backups/mysql-backup.sh 2>&1 > /home/mysql-backups/mysql-backup.log
+
+# OSS Active/Cancelled
+00 02 01 * * <FONT COLOR="#009999"><I><b>/opt/scripts/get_active_cancelled_lines.sh</b></I></FONT> 2>&1 | tee /opt/scripts/get_active_cancelled_lines.log | mail -s "Put OSS/JBilling active/cancelled lines into OpenTaps database." yshibuya@cctus.com tstovicek@cctus.com support@contournetworks.com
+
+
+</BODY>
+</HTML>

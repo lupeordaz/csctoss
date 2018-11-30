@@ -1,0 +1,874 @@
+ DECLARE                                                                                                       +
+                                                                                                               +
+   rec_usernames      record ;                                                                                 +
+   var_sql            text ;                                                                                   +
+   var_affected_count int ;                                                                                    +
+                                                                                                               +
+ BEGIN                                                                                                         +
+                                                                                                               +
+   PERFORM public.set_change_log_staff_id(3) ;                                                                 +
+                                                                                                               +
+   -- query master_radacct for the fourth successful login                                                     +
+   FOR rec_usernames IN                                                                                        +
+       SELECT rr.username AS username, rr.value AS class                                                       +
+       FROM public.dblink((SELECT * FROM csctoss.fetch_csctlog_conn()),                                        +
+                          'SELECT DISTINCT username                                                            +
+                           FROM csctlog.master_radacct                                                         +
+                           WHERE 1 = 1                                                                         +
+                           AND substring(username from ''@.*$'') = ''@vzw3g.com''                              +
+                           AND ((class !~* ''[0-9].*'') OR (class = ''0'') OR (class IS NULL))                 +
+                          ')                                                                                   +
+            AS mradacct (username text)                                                                        +
+       JOIN radreply rr ON (mradacct.username = rr.username)                                                   +
+       WHERE rr.attribute = 'Class'                                                                            +
+   LOOP                                                                                                        +
+                                                                                                               +
+       var_sql := 'UPDATE csctlog.master_radacct SET class = ' || quote_literal(rec_usernames.class) ||        +
+         ' WHERE username = ' || quote_literal(rec_usernames.username) ||                                      +
+         ' AND   ((class !~* ''[0-9].*'') OR (class = ''0'') OR (class IS NULL))' ;                            +
+       PERFORM dblink_exec((SELECT * FROM csctoss.fetch_csctlog_conn()), var_sql ) ;                           +
+                                                                                                               +
+       GET DIAGNOSTICS var_affected_count = ROW_COUNT ;                                                        +
+       RETURN NEXT rec_usernames.username || ',' || rec_usernames.class || ' UPDCNT=> ' || var_affected_count ;+
+                                                                                                               +
+   END LOOP ;                                                                                                  +
+                                                                                                               +
+   RETURN NEXT 'SUCCESS' ;                                                                                     +
+   RETURN ;                                                                                                    +
+                                                                                                               +
+ END ;                                                                                                         +
+ 
+(1 row)
+
+                                                                       prosrc                                                                        
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                                    +
+ DECLARE                                                                                                                                            +
+                                                                                                                                                    +
+    var_row              RECORD;                                                                                                                    +
+    var_line_id          integer :=0;                                                                                                               +
+                                                                                                                                                    +
+    var_end_date         date ;                                                                                                                     +
+    var_length_days      integer :=0;                                                                                                               +
+    var_plan_type_id     integer :=0;                                                                                                               +
+    var_timestamp        timestamp;                                                                                                                 +
+    var_notes            varchar;                                                                                                                   +
+    var_external_id      integer;                                                                                                                   +
+                                                                                                                                                    +
+ BEGIN                                                                                                                                              +
+                                                                                                                                                    +
+ --length days from product                                                                                                                         +
+ --plan_type_id - ??????                                                                                                                            +
+ --comment - SO from notes in line *                                                                                                                +
+ --create_timestamptimestamp from line *                                                                                                            +
+ --product id - external_id from jbilling                                                                                                           +
+ --3 for jalbert                                                                                                                                    +
+ --line_id                                                                                                                                          +
+ --start_date from line *                                                                                                                           +
+ --end_date from line *                                                                                                                             +
+ --accounting_start_date - timestamp from above                                                                                                     +
+                                                                                                                                                    +
+ set client_min_messages to NOTICE;                                                                                                                 +
+                                                                                                                                                    +
+ FOR var_row IN select l.line_id,l.date_created,l.notes,l.end_date                                                                                  +
+                 from line l                                                                                                                        +
+                 left outer join plan p on (l.line_id = p.line_id)                                                                                  +
+                 where 1=1                                                                                                                          +
+                 and  p.line_id is null                                                                                                             +
+                 order by l.start_date                                                                                                              +
+                 --limit 5                                                                                                                          +
+                                                                                                                                                    +
+ LOOP                                                                                                                                               +
+    var_line_id = var_row.line_id;                                                                                                                  +
+    var_timestamp = var_row.date_created;                                                                                                           +
+    var_notes = var_row.notes;                                                                                                                      +
+    var_end_date = var_row.end_date;                                                                                                                +
+                                                                                                                                                    +
+   --  RAISE INFO 'lineid=%', var_line_id;                                                                                                          +
+ --RAISE NOTICE 'lineid=%', var_line_id;                                                                                                            +
+ --RAISE WARNING 'lineid=%', var_line_id;                                                                                                           +
+                                                                                                                                                    +
+    select row.external_id into var_external_id from public.dblink('hostaddr=10.17.70.25 port=5440 dbname=jbilling user=jbilling password=wrub5N4b',+
+         'select i.external_id                                                                                                                      +
+         from prov_line pl,item i                                                                                                                   +
+         where 1=1                                                                                                                                  +
+         and pl.item_id = i.id                                                                                                                      +
+         and pl.line_id = '|| var_line_id)                                                                                                          +
+    as row (external_id integer);                                                                                                                   +
+                                                                                                                                                    +
+   -- RAISE INFO 'exId=%', var_external_id;                                                                                                         +
+ --RAISE NOTICE 'exId=%', var_external_id;                                                                                                          +
+ --RAISE WARNING 'exId=%', var_external_id;                                                                                                         +
+                                                                                                                                                    +
+   IF var_external_id IS NULL THEN                                                                                                                  +
+     RAISE NOTICE 'Null returned for external_id for line_id=%', var_line_id;                                                                       +
+                                                                                                                                                    +
+   ELSE                                                                                                                                             +
+                                                                                                                                                    +
+     SELECT                                                                                                                                         +
+       length_days,                                                                                                                                 +
+       plan_type_id                                                                                                                                 +
+     INTO                                                                                                                                           +
+       var_length_days,                                                                                                                             +
+       var_plan_type_id                                                                                                                             +
+     FROM product                                                                                                                                   +
+     WHERE product_id = var_external_id;                                                                                                            +
+                                                                                                                                                    +
+     RAISE INFO 'length_days=%', var_length_days;                                                                                                   +
+     RAISE NOTICE 'length_days=%', var_length_days;                                                                                                 +
+     RAISE WARNING 'length_days=%', var_length_days;                                                                                                +
+                                                                                                                                                    +
+                                                                                                                                                    +
+     INSERT INTO plan                                                                                                                               +
+      (length_days,plan_type_id,comment,create_timestamp,product_id,staff_id,line_id,start_date,end_date,accounting_start_date)                     +
+     VALUES                                                                                                                                         +
+      (var_length_days,var_plan_type_id,var_notes,var_timestamp,var_external_id,3,var_line_id,var_timestamp::date,var_end_date,var_timestamp::date);+
+                                                                                                                                                    +
+    END IF;                                                                                                                                         +
+                                                                                                                                                    +
+                                                                                                                                                    +
+ END LOOP;                                                                                                                                          +
+                                                                                                                                                    +
+ RETURN true;                                                                                                                                       +
+                                                                                                                                                    +
+                                                                                                                                                    +
+ END ;                                                                                                                                              +
+                                                                                                                                                    +
+ 
+(1 row)
+
+                                                                prosrc                                                                
+--------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                     +
+ DECLARE                                                                                                                             +
+ /*                                                                                                                                  +
+   par_username          TEXT:=$1 ;                                                                                                  +
+   par_staff_id          INTEGER:=$2;                                                                                                +
+   var_carrier           TEXT;                                                                                                       +
+ */                                                                                                                                  +
+                                                                                                                                     +
+   par_staff_id          INTEGER:=$1 ;                                                                                               +
+   var_row               RECORD;                                                                                                     +
+   var_username          TEXT;                                                                                                       +
+   var_equipment_id      INTEGER;                                                                                                    +
+   var_mdn               TEXT;                                                                                                       +
+   var_carrier           TEXT;                                                                                                       +
+ BEGIN                                                                                                                               +
+                                                                                                                                     +
+   SET client_min_messages TO NOTICE;                                                                                                +
+                                                                                                                                     +
+   PERFORM public.set_change_log_staff_id (par_staff_id);                                                                            +
+                                                                                                                                     +
+   FOR var_row IN select ui.equipment_id,ui.value as hex,ui2.value as mdn,u.username                                                 +
+                 from unique_identifier ui                                                                                           +
+                 left outer join unique_identifier ui2 on (ui.equipment_id = ui2.equipment_id and ui2.unique_identifier_type = 'MDN')+
+                 left outer join username u on (substr(u.username,1,10) = ui2.value)                                                 +
+                 --join line_equipment le on le.equipment_id = ui.equipment_id                                                       +
+                 where 1=1                                                                                                           +
+                 --and le.end_date is null                                                                                           +
+                 and not exists (select true from line_equipment where equipment_id = ui.equipment_id  and end_date is null)         +
+                 -- to find two active routers :                                                                                     +
+                 --and not exists (select true from line_equipment where equipment_id = ui.equipment_id  and end_date is null)       +
+                 --                                                                                                                  +
+                 and ui.value in                                                                                                     +
+                 ('A10000157E3AC2',                                                                                                  +
+                 'A10000157E5CF7',                                                                                                   +
+                 'A10000157E5D57',                                                                                                   +
+                 'A10000157ECB5B',                                                                                                   +
+                 'A10000157ECAF8',                                                                                                   +
+                 'A10000157EC97D',                                                                                                   +
+                 'A1000009429744',                                                                                                   +
+                 'A10000094222CF',                                                                                                   +
+                 'A100000941D483',                                                                                                   +
+                 'A1000009414D26',                                                                                                   +
+                 'A100000941E67F',                                                                                                   +
+                 'F616A1D3',                                                                                                         +
+                 'A100000941E4F9',                                                                                                   +
+                 'A100000941AB28',                                                                                                   +
+                 'A100000941AA89',                                                                                                   +
+                 'A10000157EBCED',                                                                                                   +
+                 'A10000157E3ABA',                                                                                                   +
+                 'A10000157E3B43',                                                                                                   +
+                 'A100000941F0C3',                                                                                                   +
+                 'A100001578C925',                                                                                                   +
+                 'A1000009426633',                                                                                                   +
+                 'A1000009408859',                                                                                                   +
+                 'A1000009422270',                                                                                                   +
+                 'A1000009465FFD',                                                                                                   +
+                 'A10000094223FA',                                                                                                   +
+                 'A10000094223CC',                                                                                                   +
+                 'A1000009465FFC',                                                                                                   +
+                 'A1000009407DDA',                                                                                                   +
+                 'F616A20E',                                                                                                         +
+                 'A100000941E44F',                                                                                                   +
+                 'A10000157E5CF3',                                                                                                   +
+                 'A100000941E610',                                                                                                   +
+                 'A100000943EA76',                                                                                                   +
+                 'A100000941E40D',                                                                                                   +
+                 'A100000941E45C',                                                                                                   +
+                 'A100000942659F',                                                                                                   +
+                 'A1000009426323',                                                                                                   +
+                 'A100000942247A',                                                                                                   +
+                 'A10000094263CC',                                                                                                   +
+                 'A1000009429A98',                                                                                                   +
+                 'A100000941A9DE',                                                                                                   +
+                 'A1000009422299',                                                                                                   +
+                 'A100000941CD9A',                                                                                                   +
+                 'A100000943EA77',                                                                                                   +
+                 'A100000941E41A',                                                                                                   +
+                 'A100000941D362',                                                                                                   +
+                 'A1000009407DE1',                                                                                                   +
+                 'A100000943C2FE',                                                                                                   +
+                 'A1000009426073',                                                                                                   +
+                 'A10000094264D5',                                                                                                   +
+                 'A10000157E356D',                                                                                                   +
+                 'A10000157ED033',                                                                                                   +
+                 'A1000015771A2A',                                                                                                   +
+                 'A10000157ED2D1',                                                                                                   +
+                 'A1000009409ED7',                                                                                                   +
+                 'A10000157E3A58',                                                                                                   +
+                 'A100000943EBE7',                                                                                                   +
+                 'A1000009426246',                                                                                                   +
+                 'A100000942DC15',                                                                                                   +
+                 'A100000941F022',                                                                                                   +
+                 'A100000941E510',                                                                                                   +
+                 'A10000157EE728',                                                                                                   +
+                 'A100000941CDCE',                                                                                                   +
+                 'A100000941E359',                                                                                                   +
+                 'A1000009408897',                                                                                                   +
+                 'A10000094226F7',                                                                                                   +
+                 'A100000941E67B',                                                                                                   +
+                 'A100000941AAF6',                                                                                                   +
+                 'A100000941D216',                                                                                                   +
+                 'A1000009420BCE',                                                                                                   +
+                 'A100000943EF72',                                                                                                   +
+                 'A10000157EBCBA',                                                                                                   +
+                 'A10000157D16BF',                                                                                                   +
+                 'A100000941E3E1',                                                                                                   +
+                 'A1000009433279',                                                                                                   +
+                 'A1000009410298',                                                                                                   +
+                 'A10000157ECBD6',                                                                                                   +
+                 'A10000157EBB9F',                                                                                                   +
+                 'A100001578C848',                                                                                                   +
+                 'A100001578C794',                                                                                                   +
+                 'A10000157ED04E',                                                                                                   +
+                 'A10000157EBB1C',                                                                                                   +
+                 'A1000015771E08',                                                                                                   +
+                 'A1000015771A38',                                                                                                   +
+                 'A10000157E3B7A',                                                                                                   +
+                 'A100001578C7CD',                                                                                                   +
+                 'A100001578C833',                                                                                                   +
+                 'A100001578C9AA',                                                                                                   +
+                 'A1000015771E40',                                                                                                   +
+                 'A100001578C80D',                                                                                                   +
+                 'A100001578C91E',                                                                                                   +
+                 'A100001578C82A',                                                                                                   +
+                 'A100001578C786'                                                                                                    +
+                 )                                                                                                                   +
+                 order by 1                                                                                                          +
+                                                                                                                                     +
+   LOOP                                                                                                                              +
+                                                                                                                                     +
+     --RAISE NOTICE '** PROCESSING e_id = %, hex = %, username = %' , var_row.equipment_id,var_row.hex,var_row.username ;            +
+                                                                                                                                     +
+   RAISE NOTICE '** PROCESSING %', var_row.username ;                                                                                +
+                                                                                                                                     +
+   --determine carrier                                                                                                               +
+   IF substr(var_row.username,11,4) in ('@tsp','@cn0') THEN                                                                          +
+     RAISE NOTICE 'SPRINT' ;                                                                                                         +
+     var_carrier = 'SPRINT' ;                                                                                                        +
+   ELSIF substr(var_row.username,11,4) = '@vzw' THEN                                                                                 +
+     RAISE NOTICE 'VERIZON' ;                                                                                                        +
+     var_carrier = 'VERIZON' ;                                                                                                       +
+   ELSE                                                                                                                              +
+     var_carrier = 'UNKNOWN' ;                                                                                                       +
+     RAISE EXCEPTION 'UNRECOGNIZED CARRIER from given username (%). Check username for errors.' , var_row.username ;                 +
+   END IF;                                                                                                                           +
+                                                                                                                                     +
+   DELETE FROM radcheck WHERE username = var_row.username ;                                                                          +
+                                                                                                                                     +
+   --insert into radcheck                                                                                                            +
+   IF var_carrier = 'SPRINT' THEN                                                                                                    +
+     DELETE FROM radcheck WHERE username = var_row.username ;                                                                        +
+                                                                                                                                     +
+     INSERT INTO radcheck                                                                                                            +
+     (username,attribute,op)                                                                                                         +
+     VALUES                                                                                                                          +
+     (var_row.username,'ClearText-Password',':=');                                                                                   +
+   END IF;                                                                                                                           +
+                                                                                                                                     +
+   IF var_carrier = 'VERIZON' THEN                                                                                                   +
+     IF var_row.username like '%@vzw.net' THEN                                                                                       +
+       INSERT INTO radcheck                                                                                                          +
+       (username,attribute,op)                                                                                                       +
+       VALUES                                                                                                                        +
+       (var_row.username,'ClearText-Password',':=') ;                                                                                +
+     ELSIF var_row.username like '%@vzw3g.com' THEN                                                                                  +
+       INSERT INTO radcheck                                                                                                          +
+       (username,attribute,op,value)                                                                                                 +
+       VALUES                                                                                                                        +
+       (var_row.username,'Auth-Type',':=','Accept') ;                                                                                +
+     ELSE                                                                                                                            +
+       RAISE EXCEPTION 'Cannot determine carrier realm from username (%)' , var_row.username ;                                       +
+     END IF;                                                                                                                         +
+   END IF;                                                                                                                           +
+                                                                                                                                     +
+                                                                                                                                     +
+   --insert into usergroup                                                                                                           +
+                                                                                                                                     +
+   DELETE FROM usergroup WHERE username = var_row.username ;                                                                         +
+                                                                                                                                     +
+   INSERT INTO usergroup                                                                                                             +
+   (username,groupname,priority)                                                                                                     +
+   VALUES                                                                                                                            +
+   (var_row.username,'SERVICE-inventory',5000) ;                                                                                     +
+                                                                                                                                     +
+                                                                                                                                     +
+   --delete from radreply                                                                                                            +
+                                                                                                                                     +
+   DELETE FROM radreply WHERE username = var_row.username ;                                                                          +
+                                                                                                                                     +
+   RAISE NOTICE '***** COMPLETED %', var_row.username ;                                                                              +
+                                                                                                                                     +
+ END LOOP;                                                                                                                           +
+                                                                                                                                     +
+ RETURN true;                                                                                                                        +
+                                                                                                                                     +
+ END ;                                                                                                                               +
+                                                                                                                                     +
+ 
+(1 row)
+
+                                                                prosrc                                                                
+--------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                     +
+ DECLARE                                                                                                                             +
+                                                                                                                                     +
+   par_staff_id          INTEGER:=$1 ;                                                                                               +
+   var_row               RECORD;                                                                                                     +
+   var_username          TEXT;                                                                                                       +
+   var_equipment_id      INTEGER;                                                                                                    +
+   var_mdn               TEXT;                                                                                                       +
+   var_carrier           TEXT;                                                                                                       +
+                                                                                                                                     +
+ BEGIN                                                                                                                               +
+                                                                                                                                     +
+   SET client_min_messages TO NOTICE;                                                                                                +
+                                                                                                                                     +
+   PERFORM public.set_change_log_staff_id (par_staff_id);                                                                            +
+                                                                                                                                     +
+   FOR var_row IN select ui.equipment_id,ui.value as hex,ui2.value as mdn,u.username                                                 +
+                 from unique_identifier ui                                                                                           +
+                 left outer join unique_identifier ui2 on (ui.equipment_id = ui2.equipment_id and ui2.unique_identifier_type = 'MIN')+
+                 left outer join username u on (substr(u.username,1,10) = ui2.value)                                                 +
+                 --join line_equipment le on le.equipment_id = ui.equipment_id                                                       +
+                 where 1=1                                                                                                           +
+                 --and le.end_date is null                                                                                           +
+                 and not exists (select true from line_equipment where equipment_id = ui.equipment_id  and end_date is null)         +
+                 -- to find two active routers :                                                                                     +
+                 --and not exists (select true from line_equipment where equipment_id = ui.equipment_id  and end_date is null)       +
+                 --                                                                                                                  +
+                 and ui.value in                                                                                                     +
+                 ('F615C285',                                                                                                        +
+ 'F615D77D',                                                                                                                         +
+ 'F616EC5B',                                                                                                                         +
+ 'F616F08E',                                                                                                                         +
+ 'F6160350',                                                                                                                         +
+ 'F6158B00',                                                                                                                         +
+ 'F616FBD5',                                                                                                                         +
+ 'F616EED2',                                                                                                                         +
+ 'F616EAAD',                                                                                                                         +
+ 'F61782B5',                                                                                                                         +
+ 'F615C892',                                                                                                                         +
+ 'F6158943',                                                                                                                         +
+ 'F615F93C',                                                                                                                         +
+ 'F615D734',                                                                                                                         +
+ 'F615C730',                                                                                                                         +
+ 'F615D88F',                                                                                                                         +
+ 'F615FD33',                                                                                                                         +
+ 'F616EB56',                                                                                                                         +
+ 'F616F8EA',                                                                                                                         +
+ 'F615C850',                                                                                                                         +
+ 'F615C704',                                                                                                                         +
+ 'F611C1DC',                                                                                                                         +
+ 'F615C84A',                                                                                                                         +
+ 'F616F8DA',                                                                                                                         +
+ 'F61588B8',                                                                                                                         +
+ 'F615F8C4',                                                                                                                         +
+ 'F616003D',                                                                                                                         +
+ 'F616EC4A',                                                                                                                         +
+ 'F615C73A',                                                                                                                         +
+ 'F616F988',                                                                                                                         +
+ 'F614C450',                                                                                                                         +
+ 'F615C6FA',                                                                                                                         +
+ 'F616EB55',                                                                                                                         +
+ 'F615CA5A',                                                                                                                         +
+ 'F615C5A8',                                                                                                                         +
+ 'F615C852',                                                                                                                         +
+ 'F616ECF6',                                                                                                                         +
+ 'F615F8A2',                                                                                                                         +
+ 'F616EA38',                                                                                                                         +
+ 'F616002B',                                                                                                                         +
+ 'F615F8A2',                                                                                                                         +
+ 'F615D629',                                                                                                                         +
+ 'F616EA26',                                                                                                                         +
+ 'F615F8A2',                                                                                                                         +
+ 'F616EDD3',                                                                                                                         +
+ 'F615D653',                                                                                                                         +
+ 'F615FC06',                                                                                                                         +
+ 'F616ED44',                                                                                                                         +
+ 'F615F8A2'                                                                                                                          +
+ )                                                                                                                                   +
+ order by 2                                                                                                                          +
+                                                                                                                                     +
+   LOOP                                                                                                                              +
+                                                                                                                                     +
+     --RAISE NOTICE '** PROCESSING e_id = %, hex = %, username = %' , var_row.equipment_id,var_row.hex,var_row.username ;            +
+                                                                                                                                     +
+   RAISE NOTICE '** PROCESSING %', var_row.username ;                                                                                +
+                                                                                                                                     +
+   --determine carrier                                                                                                               +
+   IF substr(var_row.username,11,4) in ('@tsp','@cn0') THEN                                                                          +
+     RAISE NOTICE 'SPRINT' ;                                                                                                         +
+     var_carrier = 'SPRINT' ;                                                                                                        +
+   ELSIF substr(var_row.username,11,4) = '@vzw' THEN                                                                                 +
+     RAISE NOTICE 'VERIZON' ;                                                                                                        +
+     var_carrier = 'VERIZON' ;                                                                                                       +
+   ELSIF substr(var_row.username,11,4) = '@usc' THEN                                                                                 +
+     RAISE NOTICE 'USCC' ;                                                                                                           +
+     var_carrier = 'USCC' ;                                                                                                          +
+   ELSE                                                                                                                              +
+     RAISE EXCEPTION 'UNRECOGNIZED CARRIER from given username (%). Check username for errors.' , var_row.username ;                 +
+   END IF;                                                                                                                           +
+                                                                                                                                     +
+   DELETE FROM radcheck WHERE username = var_row.username ;                                                                          +
+                                                                                                                                     +
+   --insert into radcheck                                                                                                            +
+   IF var_carrier = 'SPRINT' THEN                                                                                                    +
+     DELETE FROM radcheck WHERE username = var_row.username ;                                                                        +
+                                                                                                                                     +
+     INSERT INTO radcheck                                                                                                            +
+     (username,attribute,op)                                                                                                         +
+     VALUES                                                                                                                          +
+     (var_row.username,'ClearText-Password',':=');                                                                                   +
+   END IF;                                                                                                                           +
+                                                                                                                                     +
+   IF var_carrier = 'VERIZON' THEN                                                                                                   +
+     IF var_row.username like '%@vzw.net' THEN                                                                                       +
+       INSERT INTO radcheck                                                                                                          +
+       (username,attribute,op)                                                                                                       +
+       VALUES                                                                                                                        +
+       (var_row.username,'ClearText-Password',':=') ;                                                                                +
+     ELSIF var_row.username like '%@vzw3g.com' THEN                                                                                  +
+       INSERT INTO radcheck                                                                                                          +
+       (username,attribute,op,value)                                                                                                 +
+       VALUES                                                                                                                        +
+       (var_row.username,'Auth-Type',':=','Accept') ;                                                                                +
+     ELSE                                                                                                                            +
+       RAISE EXCEPTION 'Cannot determine carrier realm from username (%)' , var_row.username ;                                       +
+     END IF;                                                                                                                         +
+   END IF;                                                                                                                           +
+                                                                                                                                     +
+   IF var_carrier = 'USCC' THEN                                                                                                      +
+                                                                                                                                     +
+     DELETE FROM radcheck WHERE username = var_row.username ;                                                                        +
+                                                                                                                                     +
+     INSERT INTO radcheck                                                                                                            +
+     (username,attribute,op,value)                                                                                                   +
+     VALUES                                                                                                                          +
+     (var_row.username,'ClearText-Password',':=','CP@11U$ers') ;                                                                     +
+   END IF;                                                                                                                           +
+                                                                                                                                     +
+                                                                                                                                     +
+   --insert into usergroup                                                                                                           +
+                                                                                                                                     +
+   DELETE FROM usergroup WHERE username = var_row.username ;                                                                         +
+                                                                                                                                     +
+   INSERT INTO usergroup                                                                                                             +
+   (username,groupname,priority)                                                                                                     +
+   VALUES                                                                                                                            +
+   (var_row.username,'SERVICE-inventory',5000) ;                                                                                     +
+                                                                                                                                     +
+                                                                                                                                     +
+   --delete from radreply                                                                                                            +
+                                                                                                                                     +
+   DELETE FROM radreply WHERE username = var_row.username ;                                                                          +
+                                                                                                                                     +
+   RAISE NOTICE '***** COMPLETED %', var_row.username ;                                                                              +
+                                                                                                                                     +
+ END LOOP;                                                                                                                           +
+                                                                                                                                     +
+ RETURN true;                                                                                                                        +
+                                                                                                                                     +
+ END ;                                                                                                                               +
+                                                                                                                                     +
+ 
+(1 row)
+
+                                                                prosrc                                                                
+--------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                     +
+ DECLARE                                                                                                                             +
+ /*                                                                                                                                  +
+   par_username          TEXT:=$1 ;                                                                                                  +
+   par_staff_id          INTEGER:=$2;                                                                                                +
+   var_carrier           TEXT;                                                                                                       +
+ */                                                                                                                                  +
+                                                                                                                                     +
+   par_staff_id          INTEGER:=$1 ;                                                                                               +
+   var_row               RECORD;                                                                                                     +
+   var_username          TEXT;                                                                                                       +
+   var_equipment_id      INTEGER;                                                                                                    +
+   var_mdn               TEXT;                                                                                                       +
+   var_carrier           TEXT;                                                                                                       +
+ BEGIN                                                                                                                               +
+                                                                                                                                     +
+   SET client_min_messages TO NOTICE;                                                                                                +
+                                                                                                                                     +
+   PERFORM public.set_change_log_staff_id (par_staff_id);                                                                            +
+                                                                                                                                     +
+   FOR var_row IN select ui.equipment_id,ui.value as hex,ui2.value as mdn,u.username                                                 +
+                 from unique_identifier ui                                                                                           +
+                 left outer join unique_identifier ui2 on (ui.equipment_id = ui2.equipment_id and ui2.unique_identifier_type = 'MDN')+
+                 left outer join username u on (substr(u.username,1,10) = ui2.value)                                                 +
+                 --join line_equipment le on le.equipment_id = ui.equipment_id                                                       +
+                 where 1=1                                                                                                           +
+                 --and le.end_date is null                                                                                           +
+                 and not exists (select true from line_equipment where equipment_id = ui.equipment_id  and end_date is null)         +
+                 -- to find two active routers :                                                                                     +
+                 --and  exists (select true from line_equipment where equipment_id = ui.equipment_id  and end_date is null)          +
+                 --                                                                                                                  +
+                 and ui.value in                                                                                                     +
+                 ('F611C1DC',                                                                                                        +
+                         'A100001574CBBD',                                                                                           +
+                         'A1000012C25A77',                                                                                           +
+                         'A1000012C21855',                                                                                           +
+                         'A1000036983F4A',                                                                                           +
+                         'A10000369C1A7E',                                                                                           +
+                         'A1000036981F3B',                                                                                           +
+                         'A10000157EA502',                                                                                           +
+                         'A1000036981D4C',                                                                                           +
+                         'A1000012C2046E',                                                                                           +
+                         'A100001578A7BF',                                                                                           +
+                         'A1000036985382',                                                                                           +
+                         'A1000036981E50',                                                                                           +
+                         'A100001578B466',                                                                                           +
+                         'A100001578B1F2',                                                                                           +
+                         'A10000157A1900',                                                                                           +
+                         'A1000012C2293A',                                                                                           +
+                         'A1000012C24C35',                                                                                           +
+                         'A10000157F1799',                                                                                           +
+                         'A10000157F1766',                                                                                           +
+                         'A1000036981D13',                                                                                           +
+                         'A1000036983F66',                                                                                           +
+                         'A1000012C22CA9',                                                                                           +
+                         'A1000012C21FAD',                                                                                           +
+                         'A10000157E3E36',                                                                                           +
+                         'A1000012C20668',                                                                                           +
+                         'A10000157E3AC2')                                                                                           +
+                 order by 1                                                                                                          +
+                                                                                                                                     +
+   LOOP                                                                                                                              +
+                                                                                                                                     +
+     --RAISE NOTICE '** PROCESSING e_id = %, hex = %, username = %' , var_row.equipment_id,var_row.hex,var_row.username ;            +
+                                                                                                                                     +
+   RAISE NOTICE '** PROCESSING %', var_row.username ;                                                                                +
+                                                                                                                                     +
+   --determine carrier                                                                                                               +
+   IF substr(var_row.username,11,4) in ('@tsp','@cn0') THEN                                                                          +
+     RAISE NOTICE 'SPRINT' ;                                                                                                         +
+     var_carrier = 'SPRINT' ;                                                                                                        +
+   ELSIF substr(var_row.username,11,4) = '@vzw' THEN                                                                                 +
+     RAISE NOTICE 'VERIZON' ;                                                                                                        +
+     var_carrier = 'VERIZON' ;                                                                                                       +
+   ELSE                                                                                                                              +
+     var_carrier = 'UNKNOWN' ;                                                                                                       +
+     RAISE EXCEPTION 'UNRECOGNIZED CARRIER from given username (%). Check username for errors.' , var_row.username ;                 +
+   END IF;                                                                                                                           +
+                                                                                                                                     +
+                                                                                                                                     +
+                                                                                                                                     +
+   --insert into radcheck                                                                                                            +
+   IF var_carrier = 'SPRINT' THEN                                                                                                    +
+     DELETE FROM radcheck WHERE username = var_row.username ;                                                                        +
+                                                                                                                                     +
+     INSERT INTO radcheck                                                                                                            +
+     (username,attribute,op)                                                                                                         +
+     VALUES                                                                                                                          +
+     (var_row.username,'ClearText-Password',':=');                                                                                   +
+   END IF;                                                                                                                           +
+                                                                                                                                     +
+   IF var_carrier = 'VERIZON' THEN                                                                                                   +
+     IF var_row.username like '%@vzw.net' THEN                                                                                       +
+       DELETE FROM radcheck WHERE username = var_row.username ;                                                                      +
+                                                                                                                                     +
+       INSERT INTO radcheck                                                                                                          +
+       (username,attribute,op)                                                                                                       +
+       VALUES                                                                                                                        +
+       (var_row.username,'ClearText-Password',':=') ;                                                                                +
+     ELSIF var_row.username like '%@vzw3g.com' THEN                                                                                  +
+                                                                                                                                     +
+       DELETE FROM radcheck WHERE username = var_row.username ;                                                                      +
+                                                                                                                                     +
+       INSERT INTO radcheck                                                                                                          +
+       (username,attribute,op,value)                                                                                                 +
+       VALUES                                                                                                                        +
+       (var_row.username,'Auth-Type',':=','Accept') ;                                                                                +
+     ELSE                                                                                                                            +
+       RAISE EXCEPTION 'Cannot determine carrier realm from username (%)' , var_row.username ;                                       +
+     END IF;                                                                                                                         +
+   END IF;                                                                                                                           +
+                                                                                                                                     +
+                                                                                                                                     +
+   --insert into usergroup                                                                                                           +
+                                                                                                                                     +
+   DELETE FROM usergroup WHERE username = var_row.username ;                                                                         +
+                                                                                                                                     +
+   INSERT INTO usergroup                                                                                                             +
+   (username,groupname,priority)                                                                                                     +
+   VALUES                                                                                                                            +
+   (var_row.username,'SERVICE-inventory',5000) ;                                                                                     +
+                                                                                                                                     +
+                                                                                                                                     +
+   --delete from radreply                                                                                                            +
+                                                                                                                                     +
+   DELETE FROM radreply WHERE username = var_row.username ;                                                                          +
+                                                                                                                                     +
+   RAISE NOTICE '***** COMPLETED %', var_row.username ;                                                                              +
+                                                                                                                                     +
+                                                                                                                                     +
+                                                                                                                                     +
+ END LOOP;                                                                                                                           +
+                                                                                                                                     +
+ RETURN true;                                                                                                                        +
+                                                                                                                                     +
+ END ;                                                                                                                               +
+                                                                                                                                     +
+ 
+(1 row)
+
+                                                     prosrc                                                      
+-----------------------------------------------------------------------------------------------------------------
+                                                                                                                +
+ declare                                                                                                        +
+ in_old_username   text:=$1;                                                                                    +
+ in_new_username   text:=$2;                                                                                    +
+ in_staff_login    text:=$3;                                                                                    +
+ in_username_cnt   integer:=$4;                                                                                 +
+ in_radcheck_cnt   integer:=$5;                                                                                 +
+ in_radreply_cnt   integer:=$6;                                                                                 +
+ in_usergroup_cnt  integer:=$7;                                                                                 +
+ in_line_cnt       integer:=$8;                                                                                 +
+                                                                                                                +
+ v_staff_id        integer;                                                                                     +
+ v_result          integer;                                                                                     +
+ v_tab             text;                                                                                        +
+ v_fail_ind        integer;                                                                                     +
+ v_in_count        integer;                                                                                     +
+ begin                                                                                                          +
+                                                                                                                +
+     set client_min_messages=NOTICE;                                                                            +
+                                                                                                                +
+     RAISE NOTICE 'Start of DB Username Update Function';                                                       +
+                                                                                                                +
+     select * into v_staff_id from staff where staff_login_name= in_staff_login;                                +
+                                                                                                                +
+     select * into v_result from public.set_change_log_staff_id(v_staff_id);                                    +
+                                                                                                                +
+     if v_result = -1  or v_result=v_staff_id                                                                   +
+     then                                                                                                       +
+         RAISE NOTICE 'change log staff id was set';                                                            +
+     else                                                                                                       +
+         RAISE NOTICE 'change log staff id could not be set(%)',v_result;                                       +
+         RAISE exception 'change log staff id could not be set';                                                +
+     end if;                                                                                                    +
+ --   Updating username                                                                                         +
+      v_tab:='username';                                                                                        +
+      v_in_count:=in_username_cnt;                                                                              +
+      update  csctoss.username                                                                                  +
+      set username    = in_new_username                                                                         +
+      where username  = in_old_username;                                                                        +
+      GET DIAGNOSTICS v_result = ROW_COUNT;                                                                     +
+      if  v_in_count = v_result                                                                                 +
+      then                                                                                                      +
+          return next  rpad(v_tab,9)||'   table : expected ('||v_in_count||') updated ('||v_result||')- passed';+
+      else                                                                                                      +
+          raise notice 'update of % table failed : updates: expected (%) actual (%)',v_tab,v_in_count,v_result; +
+          raise exception 'Username Change was NOT successful';                                                 +
+      end if;                                                                                                   +
+ --   Updating radreply                                                                                         +
+      v_tab:='radreply';                                                                                        +
+      v_in_count:=in_radreply_cnt;                                                                              +
+      update  csctoss.radreply                                                                                  +
+      set username    = in_new_username                                                                         +
+      where username  = in_old_username;                                                                        +
+      GET DIAGNOSTICS v_result = ROW_COUNT;                                                                     +
+      if  v_in_count = v_result                                                                                 +
+      then                                                                                                      +
+          return next  rpad(v_tab,9)||'   table : expected ('||v_in_count||') updated ('||v_result||')- passed';+
+      else                                                                                                      +
+          raise notice 'update of % table failed : updates: expected (%) actual (%)',v_tab,v_in_count,v_result; +
+          raise exception 'Username Change was NOT successful';                                                 +
+      end if;                                                                                                   +
+ --   Updating radcheck                                                                                         +
+      v_tab:='radcheck';                                                                                        +
+      v_in_count:=in_radcheck_cnt;                                                                              +
+      update  csctoss.radcheck                                                                                  +
+      set username    = in_new_username                                                                         +
+      where username  = in_old_username;                                                                        +
+      GET DIAGNOSTICS v_result = ROW_COUNT;                                                                     +
+      if  v_in_count = v_result                                                                                 +
+      then                                                                                                      +
+          return next  rpad(v_tab,9)||'   table : expected ('||v_in_count||') updated ('||v_result||')- passed';+
+      else                                                                                                      +
+          raise notice 'update of % table failed : updates: expected (%) actual (%)',v_tab,v_in_count,v_result; +
+          raise exception 'Username Change was NOT successful';                                                 +
+      end if;                                                                                                   +
+ --   Updating usergroup                                                                                        +
+      v_tab:='usergroup';                                                                                       +
+      v_in_count:=in_usergroup_cnt;                                                                             +
+      update  csctoss.usergroup                                                                                 +
+      set username    = in_new_username                                                                         +
+      where username  = in_old_username;                                                                        +
+      GET DIAGNOSTICS v_result = ROW_COUNT;                                                                     +
+      if  v_in_count = v_result                                                                                 +
+      then                                                                                                      +
+          return next  v_tab||'   table : expected ('||v_in_count||') updated ('||v_result||')- passed';        +
+      else                                                                                                      +
+          raise notice 'update of % table failed : updates: expected (%) actual (%)',v_tab,v_in_count,v_result; +
+          raise exception 'Username Change was NOT successful';                                                 +
+      end if;                                                                                                   +
+ --   Updating line                                                                                             +
+      v_tab:='line';                                                                                            +
+      v_in_count:=in_line_cnt;                                                                                  +
+      update  csctoss.line                                                                                      +
+      set radius_username    = in_new_username                                                                  +
+      where radius_username  = in_old_username;                                                                 +
+      GET DIAGNOSTICS v_result = ROW_COUNT;                                                                     +
+      if  v_in_count = v_result                                                                                 +
+      then                                                                                                      +
+          return next  rpad(v_tab,9)||'   table : expected ('||v_in_count||') updated ('||v_result||')- passed';+
+      else                                                                                                      +
+          raise notice 'update of % table failed : updates: expected (%) actual (%)',v_tab,v_in_count,v_result; +
+          raise exception 'Username Change was NOT successful';                                                 +
+      end if;                                                                                                   +
+      return next '';                                                                                           +
+      return next 'End of DB Username Update Function';                                                         +
+      return;                                                                                                   +
+ END ;                                                                                                          +
+ 
+(1 row)
+
+                                                                               prosrc                                                                               
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                                                   +
+ DECLARE                                                                                                                                                           +
+    par_start_ip          text := $1 ;                                                                                                                             +
+    par_end_ip            text := $2 ;                                                                                                                             +
+                                                                                                                                                                   +
+    var_par_start_ippart_1 text;                                                                                                                                   +
+    var_par_start_ippart_2 text;                                                                                                                                   +
+    var_par_start_ippart_3 text;                                                                                                                                   +
+    var_par_start_ippart_4 text;                                                                                                                                   +
+    var_par_end_ippart_1   text;                                                                                                                                   +
+    var_par_end_ippart_2   text;                                                                                                                                   +
+    var_par_end_ippart_3   text;                                                                                                                                   +
+    var_par_end_ippart_4   text;                                                                                                                                   +
+    var_par_start_ip       inet;                                                                                                                                   +
+    var_par_end_ip         inet;                                                                                                                                   +
+    var_start_ip           integer;                                                                                                                                +
+    var_end_ip             integer;                                                                                                                                +
+    var_par_missing_ip     text;                                                                                                                                   +
+    var_count              inet;                                                                                                                                   +
+    var_i                  integer;                                                                                                                                +
+                                                                                                                                                                   +
+                                                                                                                                                                   +
+ BEGIN                                                                                                                                                             +
+    var_par_start_ippart_1  := split_part(par_start_ip,'.',1);                                                                                                     +
+    var_par_start_ippart_2  := split_part(par_start_ip,'.',2);                                                                                                     +
+    var_par_start_ippart_3  := split_part(par_start_ip,'.',3);                                                                                                     +
+    var_par_start_ippart_4  := split_part(par_start_ip,'.',4);                                                                                                     +
+                                                                                                                                                                   +
+    var_par_end_ippart_1    := split_part(par_end_ip,'.',1);                                                                                                       +
+    var_par_end_ippart_2    := split_part(par_end_ip,'.',2);                                                                                                       +
+    var_par_end_ippart_3    := split_part(par_end_ip,'.',3);                                                                                                       +
+    var_par_end_ippart_4    := split_part(par_end_ip,'.',4);                                                                                                       +
+                                                                                                                                                                   +
+   -- validate ips                                                                                                                                                 +
+   -- 1) valid ip address, cast to inet and confirm                                                                                                                +
+      BEGIN                                                                                                                                                        +
+         SELECT par_start_ip INTO var_par_start_ip;                                                                                                                +
+         RETURN  NEXT 'Staring IP: '||host(var_par_start_ip)::text;                                                                                                +
+      EXCEPTION                                                                                                                                                    +
+         WHEN OTHERS THEN                                                                                                                                          +
+         RAISE EXCEPTION 'Invalid Start IP Address';                                                                                                               +
+      END;                                                                                                                                                         +
+                                                                                                                                                                   +
+      BEGIN                                                                                                                                                        +
+         SELECT par_end_ip INTO var_par_end_ip;                                                                                                                    +
+         RETURN  NEXT 'Ending IP: '||host(var_par_end_ip)::text;                                                                                                   +
+      EXCEPTION                                                                                                                                                    +
+         WHEN OTHERS THEN                                                                                                                                          +
+         RAISE EXCEPTION 'Invalid End IP Address';                                                                                                                 +
+      END;                                                                                                                                                         +
+                                                                                                                                                                   +
+   -- 2) starting ip and ending ip not equal                                                                                                                       +
+      BEGIN                                                                                                                                                        +
+         IF var_par_start_ip = var_par_end_ip THEN                                                                                                                 +
+            RAISE EXCEPTION 'Start and End IP address can not be the same';                                                                                        +
+         END IF;                                                                                                                                                   +
+      END;                                                                                                                                                         +
+                                                                                                                                                                   +
+   -- 3) Ending ip greater than starting ip                                                                                                                        +
+      BEGIN                                                                                                                                                        +
+         IF var_par_start_ip > var_par_end_ip THEN                                                                                                                 +
+            RAISE EXCEPTION 'Start IP address can not be greater than End IP address';                                                                             +
+         END IF;                                                                                                                                                   +
+      END;                                                                                                                                                         +
+                                                                                                                                                                   +
+    -- 4) The first 3 parts of the IP of Start and End needs to be the same                                                                                        +
+      BEGIN                                                                                                                                                        +
+         IF var_par_start_ippart_1 != var_par_end_ippart_1 OR var_par_start_ippart_2 != var_par_end_ippart_2 OR var_par_start_ippart_3 != var_par_end_ippart_3 THEN+
+            RAISE EXCEPTION 'First 3 parameters of the START and END are not the Same';                                                                            +
+         END IF;                                                                                                                                                   +
+      END;                                                                                                                                                         +
+                                                                                                                                                                   +
+    --var_start_ip := var_par_start_ippart_1||var_par_start_ippart_2||var_par_start_ippart_3||var_par_start_ippart_4;                                              +
+    --var_end_ip   := var_par_end_ippart_1||var_par_end_ippart_2||var_par_end_ippart_3||var_par_end_ippart_4;                                                      +
+                                                                                                                                                                   +
+                                                                                                                                                                   +
+    var_start_ip := var_par_start_ippart_1||var_par_start_ippart_2||var_par_start_ippart_3;                                                                        +
+    var_end_ip   := var_par_end_ippart_1||var_par_end_ippart_2||var_par_end_ippart_3;                                                                              +
+                                                                                                                                                                   +
+    -- Loop through Start IP till End IP                                                                                                                           +
+    -- If record found in table, do nothing, increment the last set(4rth portion) of IP part                                                                       +
+    -- If record not found, display the IP address, increment the last set(4rth portion) of IP part                                                                +
+                                                                                                                                                                   +
+    FOR var_i IN var_par_start_ippart_4..var_par_end_ippart_4                                                                                                      +
+    LOOP                                                                                                                                                           +
+       IF var_i < 10 THEN                                                                                                                                          +
+          SELECT INTO var_count value                                                                                                                              +
+            FROM radreply                                                                                                                                          +
+           WHERE attribute = 'Framed-IP-Address'                                                                                                                   +
+             AND REPLACE(VALUE,'.','')  = var_start_ip||var_i;                                                                                                     +
+                                                                                                                                                                   +
+           IF NOT FOUND THEN                                                                                                                                       +
+              var_par_missing_ip := var_par_start_ippart_1||'.'||var_par_start_ippart_2||'.'||var_par_start_ippart_3||'.'||var_i;                                  +
+              RETURN  NEXT var_par_missing_ip;                                                                                                                     +
+           END IF;                                                                                                                                                 +
+       ELSE                                                                                                                                                        +
+          SELECT INTO var_count value                                                                                                                              +
+            FROM radreply                                                                                                                                          +
+           WHERE attribute = 'Framed-IP-Address'                                                                                                                   +
+             AND REPLACE(VALUE,'.','')  = var_start_ip||var_i;                                                                                                     +
+           IF NOT FOUND THEN                                                                                                                                       +
+              var_par_missing_ip := var_par_start_ippart_1||'.'||var_par_start_ippart_2||'.'||var_par_start_ippart_3||'.'||var_i;                                  +
+              RETURN  NEXT var_par_missing_ip;                                                                                                                     +
+           END IF;                                                                                                                                                 +
+       END IF;                                                                                                                                                     +
+                                                                                                                                                                   +
+    END LOOP;                                                                                                                                                      +
+                                                                                                                                                                   +
+   RETURN;                                                                                                                                                         +
+                                                                                                                                                                   +
+ END ;     

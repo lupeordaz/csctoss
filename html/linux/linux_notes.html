@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Linux Commands</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Linux Notes</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>LAMP configuration</I></FONT>
+  <b>Linux OS version</b>
+    cat /etc/*-release - <i>Returns the following:</i>  CentOS release 5.11 (Final)
+
+    uname -a
+      Linux water-win 2.6.18-348.3.1.el5 #1 SMP Mon Mar 11 19:39:25 EDT 2013 x86_64 x86_64 x86_64 GNU/Linux
+
+  <b>Apache version</b>
+      <i>Go to the directory <b>/var/vhost/home/vhost/water.trustamerica.com/var/www</b> and enter following:</i>
+      httpd -V | grep version - <i>Displays: </i>The Apache version is 2.2.3
+
+  <b>MySql version</b>
+      mysql -u username -p
+
+  <b>PHP version</b>
+      php -v 
+
+      <i>Displays:</i>
+        PHP 5.3.3 (cli) (built: Jun 27 2012 12:25:48)
+        Copyright (c) 1997-2010 The PHP Group
+        Zend Engine v2.3.0, Copyright (c) 1998-2010 Zend Technologies
+
+<FONT COLOR="#009999"><I>Display OS type (Red Hat, Centos, Debian, etc.)</I></FONT>
+
+    cat /etc/issue.net
+
+    Result:   CentOS release 6.5 (Final)
+              Kernel \r on an \m
+
+<FONT COLOR="#009999"><I>Kill a user session</I></FONT>  
+
+  Must be su to execute this command.
+
+  pkill -o -u <b><i>&ltuser name&gt</i></b> sshd
+
+  To kill the session of user lperrete, enter the following:
+  
+  pkill -o -u lperrete sshd
+
+<FONT COLOR="#009999"><I>List all the listening ports</I></FONT>
+
+    netstat -a | grep LIST
+
+    For apache listeners:
+
+    netstat -A inet -lnp
+
+<FONT COLOR="#009999"><I>Display exernal IP address</I></FONT>
+    
+    <i>Use the following curl command to call <b>checkip.dyndns.org</b> and display IP address:</i>
+    
+    curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'
+
+<FONT COLOR="#009999"><I>Mount a drive</I></FONT>
+
+    mount -t cifs -o username=gordaz //cctnas02/public/linelog_201808 /mnt/
+
+    -- Unmount original since it includes all the directories under mnt/public/
+
+    sudo  umount mnt/public/
+    [sudo] password for gordaz: 
+
+
+</BODY>
+</HTML>
+ 
+

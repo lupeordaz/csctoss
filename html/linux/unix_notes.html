@@ -1,0 +1,328 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Unix Notes</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="DB2 Notes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN>
+<BR>
+<FONT COLOR="#E69900">"Unix Notes & FAQ's"</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN>
+<BR>
+</H1>
+</TD>
+</TR>
+</TABLE>
+</CENTER>
+ 
+<pre>
+
+<FONT COLOR="#009999"><I>Find Command</I></FONT>    
+    <i>Determine host name</i>
+      uname -n
+      
+    <i>Determine unix/linux version & name</i>
+      uname -a
+    
+    <i>Determine what shell you are running:</i>
+      echo $0
+
+    <i>Print the 895th line of a large file</i>
+      sed -n '895p' &lt<i>filename</i>&gt
+
+    <i>Print a range of lines inside a large file</i>
+      set -n 215595,215894p db2diag.log > /home/db2inst1/tmp/restore_error.log
+      
+    <i>Remove blank lines from a file</i>
+      sed -i '/^$/d' foo
+
+<FONT COLOR="#009999"><I>Find Command</I></FONT>
+      Find a file:
+        <i>find . -name &lt<i>filename</i>&gt -print
+
+      Find a directory:
+        <i>find / -type d -name 'includes'</i>
+
+      Find a file and ignore the "Permission denied" messages:
+        <b>find . -name postgresql.conf 2>&1 | grep -v "Permission denied"</b>
+
+    <i>Find and replace all occurrences of a string using vi</i>
+      :%s/FindMe/ReplaceME/g
+    
+    <i>rm -rf &lt<i>filename</i>&gt</i>  Remove directories and everything in them including subdirectories.
+
+    <i>rm -r **/.svn</i>	to remove .svn tags in a svn trunk you have checked out
+
+    <i>Removing all files that are older than 90 days in current directory:</i>
+
+    	find . -type f -mtime +30 -exec rm -f {} \;
+	
+       Remember to go to the directory where you want to remove the files.
+       This will remove the files from your current directory and all 
+       sub directories.
+
+         find . -type f -mtime +30 | grep -v ".sh" |grep -v ".pl" -exec rm -f {} \; 
+
+    <i>Removing duplicate records from a file:</i>
+    	sort <<i>filename</i>> | uniq
+	
+      the following removes duplicates and writes to another file:
+    	sort <<i>filename_1</i>> | uniq > <<i>filename_2</i>>
+
+    <i>Location of logfile for Crontab</i>
+      /var/adm/cron/log
+      
+    <i>Change a users password as root</i>
+    
+      root[dbpoc_rev:/root]# passwd dbadmin
+      Changing password for "dbadmin"
+      dbadmin's New password:
+      Re-enter dbadmin's new password:
+
+    <i>To remove the 'Change Password' prompt</i>
+      pwdadm -c dbadmin 
+
+    <i>Reset and Unlock User due to Failed Login in AIX</i>
+      1. Logon to system as root and run the following command to reset the unsuccessful login count to 0
+
+        chsec -f /etc/security/lastlog -a "unsuccessful_login_count=0" -s db2inst1
+
+    <i> 2. Unlock the user as well.</i>
+
+        chuser "account_locked=false" db2inst1
+
+    <i>3. Force user to change password on first login</i>
+        chage -d 0 &lt<i>user-name</i>&gt  ie.:
+
+        chage -d 0 dcarpent
+
+    <i>Disk Usage commands</i>
+      
+      du
+
+      du -g
+
+    <FONT COLOR="#009999"><I>Secure Copy</I></FONT><BR>&nbsp;<BR>
+    <i>Copy from remote to local:</i>
+
+      scp lordaz@radium1_win.trustamerica.com:/home/lordaz/tmp/groovy-2.3.6.tgz .
+
+    <i>Copy to remote from local:</i>
+
+      scp /home/lordaz/src/db2cleanup db2inst1@dbpoc_rev.trustamerica.com:/home/db2inst1/tools/weekly
+
+    <i>One line sftp copy:</i>
+
+      sftp lordaz@db2dev-rev:bin/license.sql license.sql
+
+ <i>AIX execution order at login</i>
+    <table border="border" width = 800>
+    <tr align="Left">
+      <th width="30%">Sequence</th>
+      <th width="70%">Description</th>
+    </tr>
+    <tr align="Left">
+      <td>/etc/environment file</td>
+      <td>contains variables specifying the basic environment for all processes.</td>
+    </tr>
+    <tr align="Left">
+      <td>/etc/profile file</td> 
+      <td>controls profile variables for all users on a system</td>
+    </tr>
+    <tr align="Left">
+      <td>$HOME/&lt<i>user</i>&gt/.profile file</td> 
+      <td>Lets you customize your individual working environment; overrides previous settings.</td>
+    </tr>
+    <tr align="Left">
+      <td>$HOME/&lt<i>user</i>&gt/.env file</td>
+      <td>Can be .env or .kshrc; file referred to in the statement ENV=$HOME/.env.  This file lets you further define the environment</td>
+    </tr>
+ </table>
+
+ <i>Table 1. Regular expression sequences</i>
+    <table border="border" width = 800>
+    <tr align="Left">
+      <th width="30%">Sequence</th>
+      <th width="70%">Description</th>
+    </tr>
+    <tr align="Left">
+      <td>Caret (^)</td>
+      <td>Matches the expression at the start of a line, as in ^A</td>
+    </tr>
+    <tr align="Left">
+      <td>Question mark (?)	
+      <td>Matches the expression at the end of a line, as in A?</td>
+    </tr>
+    <tr align="Left">
+      <td>Backslash (\)	
+      <td>Turns off the special meaning of the next character, as in \^</td>
+    </tr>
+    <tr align="Left">
+      <td>Brackets ([])	</td>
+      <td>Matches any one of the enclosed characters, as in [aeiou] (Use a hyphen [-] for a range, as in [0-9].)</td>
+    </tr>
+    <tr align="Left">
+      <td>[^ ]	</td>
+      <td>Matches any one character except those enclosed in brackets, as in [^0-9]</td>
+    </tr>
+    <tr align="Left">
+      <td>Period (.)	</td>
+      <td>Matches a single character of any value except end of line</td>
+    </tr>
+    <tr align="Left">
+      <td>Asterisk (*)	</td>
+      <td>Matches zero or more of the preceding characters or expressions</td>
+    </tr>
+    <tr align="Left">
+      <td>\{x,y\}	</td>
+      <td>Matches x to y occurrences of the preceding</td>
+    </tr>
+    <tr align="Left">
+      <td>\{x\}	</td>
+      <td>Matches exactly x occurrences of the preceding</td>
+    </tr>
+    <tr align="Left">
+      <td>\{x,\}	</td>
+      <td>Matches x or more occurrences of the preceding</td>
+    </tr>
+</table>
+
+<i>NetCat (nc)</i>
+  <i>Receiver (sam_rev)</i>
+$ nc -lp 50892  
+
+<i>Caller (dbpoc_rev)</i>
+$ nc -v sam_rev 50892
+DNS fwd/rev mismatch: sam_rev.trustamerica.com != sam.gemisys.com
+sam_rev.trustamerica.com [10.50.10.5] 50892 (?) open
+&lt<i>Type input data here</i>&gt
+Whassappp!
+Dog
+
+Receiver
+&lt<i>This is what whas typed in at the source</i>&gt
+Whassappp!
+Dog
+(ctl-C) punt!    &lt<i>ctl-C to stop; pgm prints punt!</i>&gt
+
+
+Listener
+nc -lp 1567 > tmp/file.txt
+
+Sender
+lordaz@sam_rev lordaz $  cat tmp/file.txt | nc dbpoc_rev 1567
+
+Ctl-C to quit nc
+
+On Listener's side
+
+lordaz@dbpoc_rev lordaz $ cat tmp/file.txt
+Hello Sam_rev!
+Tang shenul sarang he!
+
+
+Send tar file:
+
+tar -cvf - GCI | nc sam_win 1567 
+
+
+Receive the tar file and extract
+nc -lp 1567 | tar xvf -
+
+
+
+dbadmin $ cat sqlerr3.log | cut -d' ' -f11 | sort > sqlerr4.log
+dbadmin $ vi sqlerr4.log
+dbadmin $ wc -l sqlerr4.log
+    4613 sqlerr4.log
+dbadmin $ sed '/^$/d' sqlerr4.log > sqlerr5.log
+dbadmin $ vi sqlerr5.log
+dbadmin $ cat sqlerr5.log | uniq > sqlerr6.log
+dbadmin $ head sqlerr6.log
+
+
+Order of login shell execution:
+  
+    bash: .bash_profile, .bash_login, .profile (for backwards compabitibility)
+    sh: .profile
+    tcsh and csh: .login
+    zsh: .zshrc
+
+    <b>Change owner recursively using find and chown</b>
+      find . -exec chown cst:cst {} \;
+
+      or 
+
+      find CST -exec chown cst:cst {} \;
+
+<b>How To Check CPU Usage On AIX Systems</b>
+
+  Steps:
+
+  1. Running Processes:
+
+  Check what all application related processes are running and which all are utilizing more CPU by running the TOPAS command.
+
+      $ topas
+
+    Topas command will give you the CPU usage for each process.
+
+    There are different topas commands to check CPU usage.
+
+      $ topas –P
+
+  2. Memory Usage:
+
+  Check memory usage for each process utilizing high CPU by running the following command:
+
+    # svmon –p
+
+  This will show memory usage for each command.
+
+  3. Kill Processes not Required:
+
+  Kill the processes not in use by the application team in production environment in order to reduce the CPU usage. Be very careful 
+  while killing a process, be 100% sure that the process is not being used by any team member in live environment.
+
+  Applications become slow when the disk is more than 80% busy. Same thing can be checked using the following commands:
+
+  $ filemon
+
+  $ nmon
+
+  $ iostat
+
+Performance tuning parameters can be used for tuning LV’s, PV’s.
+
+Remember: AIX does not support FAT file system.
+
+</pre>
+ 
+<HR>
+</BODY>
+</HTML>

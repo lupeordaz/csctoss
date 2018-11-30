@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Assignments</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">My CCT Tasks</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<pre>
+
+<FONT COLOR="#0000FF" size=6><b><I>Database</I></b></FONT></SPAN>
+
+  Write a sample <i><b>plsh</b></i> function for testing on DENOSS06 (slave server
+  with Postgres v 8.2).
+
+<FONT COLOR="#0000FF" size=6><b><I>Reports</I></b></FONT></SPAN>
+
+  Need a report to display OSS line and JBilling prov_line discrepancies 
+  (OSS active/JBill cancelled and vice/versa)
+
+  Need shell script incorporating query on data discrepancies between static_ip_pool
+  and radreply tables (both directions)
+
+<FONT COLOR="#0000FF" size=6><b><I>Tasks</I></b></FONT></SPAN>
+
+  <b>5632:  Implement better error message in ops_api_assign() DB function</b>
+
+    Functions:  <b><i>ops_api_assign</i></b> is the calling program and <b><i>ops_api_static_ip_assign</i></b>
+        is the function that must process the error messages.
+
+    Parameters for <b>ops_api_assign</b>:
+      par_esn_hex
+      par_sales_order
+      par_billing_entity_id
+      par_groupname
+      par_static_ip_boolean
+
+    Proper testing requires:
+
+      1.  Valid unique_identifier value with the type of 'ESN HEX'.
+      2.  Valid username
+      3.  Valid equipment_id
+
+    Test parameters for ops_api_assign_lo():
+
+      par_esn_hex               00A1000051C1F330
+      par_sales_order           null
+      par_billing_entity_id     425
+      par_groupname             SERVICE-vzwretail_cnione
+      par_static_ip_boolean     TRUE
+
+        var_equipment_id        43136
+        var_carrier             VZW
+        var_mdn_min             4704461449
+        var_username            4704461449@vzw3g.com
+        var_serial_number       S05598
+        var_billing_entity_address_id
+                                472
+
+
+</BODY>
+</HTML>
+ 
+

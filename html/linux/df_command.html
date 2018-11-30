@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Unix Disk Usage</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Unix Analyze Disk Usage</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<HR>
+ 
+<A NAME="disk free & disk uusage commands"></A>
+<FONT COLOR="#009999"><I>UNIX Commands:</I></FONT><BR>&nbsp;<BR>
+<pre>
+
+</b>df - disk free</b>
+
+Filesystem    512-blocks      Free %Used    Iused %Iused Mounted on
+/dev/hd4         2097152   1457152   31%    12066     7% /
+/dev/hd2        12582912   6727632   47%    48224     6% /usr
+/dev/hd9var     12582912   7618344   40%    10735     2% /var
+/dev/hd3         8388608   4331408   49%      159     1% /tmp
+/dev/hd1        14680064   2474640   84%     3827     2% /home
+/dev/hd11admin     262144    261384    1%        7     1% /admin
+/proc                  -         -    -         -     -  /proc
+/dev/hd10opt    16777216  11561488   32%    14370     2% /opt
+/dev/livedump     524288    523552    1%        4     1% /var/adm/ras/livedump
+/dev/fslv00       917504    219008   77%       10     1% /audit
+/dev/lv_optibm   11534336   2368032   80%    10524     4% /opt/IBM/db2
+/dev/lv_db2prod  201326592  43377816   79%      710     1% /DB2/prod
+/dev/lv_db2logs  104857600  86969912   18%      231     1% /DB2/db2logs
+/dev/lv_db2bkups   31457280  31221600    1%        9     1% /DB2/db2backups
+sam_rev:/uvdata01/sam13/TCA.PERF/PERF_EXPORTS  358612992  82472976   78%   709829     7% /DB2/exports
+
+</b>du - disk usage</b>
+
+du 
+
+</pre>
+ 
+<HR>
+</BODY>
+</HTML>

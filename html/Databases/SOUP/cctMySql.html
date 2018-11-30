@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>cctMySql</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">CCT MySql Notes</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+<FONT COLOR="#009999"><I>Login to Soup</I></FONT>
+  <ol type="1">
+    <li>Log in to densoup01 as gordaz</i></li>
+    <li>At command line enter:  <i>[gordaz@densoup01 ~]$ <b>mysql -u root sdm</b></i></li>
+    <li>You will be logged in as root; be aware. </li>
+  </ol>
+  Should return a "Complete!" message.
+
+
+  mysql> show databases;
+  mysql> show tables;
+
+<FONT COLOR="#009999"><I>Use a database</I></FONT>
+  use &lt<i>database name</i>&gt;
+
+  use riaconnection;
+
+<FONT COLOR="#009999"><I>Show Command</I></FONT>
+
+    mysql> show databases;
+    +--------------------+
+    | Database           |
+    +--------------------+
+    | information_schema |
+    | mysql              |
+    | sdm                |
+    | test               |
+    +--------------------+
+    4 rows in set (0.00 sec)
+
+    mysql> show tables;
+    +---------------+
+    | Tables_in_sdm |
+    +---------------+
+    | alerts        |
+    | cellinfo      |
+    | cellsignal    |
+    | device        |
+    | device_stats  |
+    | group_device  |
+    | group_info    |
+    | group_user    |
+    | port_stats    |
+    | user          |
+    +---------------+
+    10 rows in set (0.00 sec)
+
+    mysql> show columns in device; <i>-- can also use "describe wp_posts;"
+
+    +---------------+------------------+------+-----+---------+----------------+
+    | Field         | Type             | Null | Key | Default | Extra          |
+    +---------------+------------------+------+-----+---------+----------------+
+    | did           | int(11)          | NO   | PRI | NULL    | auto_increment |
+    | create_date   | int(10) unsigned | NO   |     | NULL    |                |
+    | timestamp     | int(10) unsigned | NO   |     | NULL    |                |
+    | eui           | char(12)         | NO   | UNI | NULL    |                |
+    | model         | varchar(16)      | YES  |     | NULL    |                |
+    | serial_number | varchar(64)      | YES  |     | NULL    |                |
+    | part_number   | varchar(64)      | YES  |     | NULL    |                |
+    | description   | varchar(255)     | YES  |     | NULL    |                |
+    | location      | varchar(255)     | YES  |     | NULL    |                |
+    | lastip        | varchar(32)      | YES  |     | NULL    |                |
+    +---------------+------------------+------+-----+---------+----------------+
+    10 rows in set (0.00 sec)
+
+mysql> 
+
+
+</BODY>
+</HTML>
+ 
+

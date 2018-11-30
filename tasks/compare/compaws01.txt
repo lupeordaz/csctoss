@@ -1,0 +1,847 @@
+--------------------------------------------------------------------------------
+                                                                               +
+ DECLARE                                                                       +
+                                                                               +
+   par_equipment_id              int  := $1 ;                                  +
+   par_unique_identifier_type    text := $2 ;                                  +
+   par_old_value                 text := $3 ;                                  +
+   par_new_value                 text := $4 ;                                  +
+   var_return_row                update_unique_identifier_value_retval%ROWTYPE;+
+                                                                               +
+ BEGIN                                                                         +
+                                                                               +
+   PERFORM public.set_change_log_staff_id(3) ;                                 +
+                                                                               +
+   -- Validate parameters.                                                     +
+   PERFORM true                                                                +
+     FROM unique_identifier                                                    +
+    WHERE equipment_id = par_equipment_id                                      +
+      AND unique_identifier_type = par_unique_identifier_type                  +
+      AND value = par_old_value ;                                              +
+                                                                               +
+   IF NOT FOUND THEN                                                           +
+     var_return_row.result_code := false ;                                     +
+     var_return_row.error_message := 'Old value does not exist.' ;             +
+     RETURN NEXT var_return_row ;                                              +
+     RETURN ;                                                                  +
+   END IF ;                                                                    +
+                                                                               +
+   -- Just update unique identifier value from old to new.                     +
+   UPDATE csctoss.unique_identifier                                            +
+      SET value = par_new_value                                                +
+    WHERE equipment_id = par_equipment_id                                      +
+      AND unique_identifier_type = par_unique_identifier_type                  +
+      AND value = par_old_value ;                                              +
+                                                                               +
+   IF NOT FOUND THEN                                                           +
+     var_return_row.result_code := false ;                                     +
+     var_return_row.error_message := 'Update failed.' ;                        +
+     RETURN NEXT var_return_row ;                                              +
+     RETURN ;                                                                  +
+   END IF ;                                                                    +
+                                                                               +
+   var_return_row.result_code := true ;                                        +
+   var_return_row.error_message := '' ;                                        +
+   RETURN NEXT var_return_row ;                                                +
+   RETURN ;                                                                    +
+                                                                               +
+ END ;                                                                         +
+ 
+(1 row)
+
+                                                              prosrc                                                               
+-----------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                  +
+ DECLARE                                                                                                                          +
+ usage_rec                    record;                                                                                             +
+ v_pool_count                 numeric;                                                                                            +
+ v_base_mb                    numeric;                                                                                            +
+ v_pooled                     boolean;                                                                                            +
+ v_tot_threshold              numeric;                                                                                            +
+ v_overage                    numeric(9,2);                                                                                       +
+ v_tot_usage                  numeric(9,2);                                                                                       +
+ v_prev_product_code          text:='initialize';                                                                                 +
+ v_prev_billing_entity_id     integer:=999999999;                                                                                 +
+ v_first_time                 boolean:=true;                                                                                      +
+ v_row_count                  integer:=0;                                                                                         +
+ v_row_tot_count              integer:=0;                                                                                         +
+ v_count                      integer;                                                                                            +
+ v_count_1                    integer;                                                                                            +
+ v_count_2                    integer;                                                                                            +
+ v_count_3                    integer;                                                                                            +
+ v_count_4                    integer;                                                                                            +
+ v_jbill_id                   integer;                                                                                            +
+ v_usage_fee_text             text;                                                                                               +
+                                                                                                                                  +
+ var_sql  text:='SELECT                                                                                                           +
+        be.billing_entity_id                                                                                                      +
+      , be.name                                                                                                                   +
+      , case                                                                                                                      +
+             when pooled then null                                                                                                +
+             else l.line_id                                                                                                       +
+           end                                                                                                                    +
+      ,prd.product_code                                                                                                           +
+      ,to_char(lud.usage_date,''yyyy-mm'') as usage_month                                                                         +
+      ,sum(lud.acctinputoctets_utc) as input_octets                                                                               +
+      ,sum(lud.acctoutputoctets_utc) as output_octets                                                                             +
+   FROM                                                                                                                           +
+        line l,                                                                                                                   +
+        product_overage_threshold pot,                                                                                            +
+        line_usage_day lud,                                                                                                       +
+        plan_type pt,                                                                                                             +
+        plan pln ,                                                                                                                +
+        product prd,                                                                                                              +
+        billing_entity be                                                                                                         +
+        where 1=1                                                                                                                 +
+          and pln.product_id=pot.product_id                                                                                       +
+          and pln.plan_type_id=pt.plan_type_id                                                                                    +
+          and pln.product_id=prd.product_id                                                                                       +
+          and l.line_id=pln.line_id                                                                                               +
+          and l.line_id=lud.line_id                                                                                               +
+          and l.billing_entity_id=be.billing_entity_id                                                                            +
+          and to_char(usage_date,''yyyy-mm'')  = '||quote_literal(in_date)||                                                      +
+          ' group by                                                                                                              +
+                   be.billing_entity_id,                                                                                          +
+                   be.name,                                                                                                       +
+                   case                                                                                                           +
+                       when pooled then null                                                                                      +
+                       else l.line_id                                                                                             +
+                   end                                                                                                            +
+                   ,to_char(lud.usage_date,''yyyy-mm'')                                                                           +
+                   ,product_code                                                                                                  +
+           order by                                                                                                               +
+                   be.billing_entity_id                                                                                           +
+                   ,product_code                                                                                                  +
+                   ,case                                                                                                          +
+                        when pooled then null                                                                                     +
+                        else l.line_id                                                                                            +
+                    end'                                                                                                          +
+                   ;                                                                                                              +
+ begin                                                                                                                            +
+ --   archive  all rows that contain the year/mo  passed to the function                                                          +
+      select count(*) into v_count_1 from csctoss.usage_monthly_summary                                                           +
+      where  usage_date  = in_date                                                                                                +
+        and  not archived;                                                                                                        +
+      if v_count_1 > 0 then                                                                                                       +
+          raise notice 'Usage rows with % usage date already exist- these rows will be archived prior to summary process',in_date;+
+          select count(*) into v_count_2 from csctoss.usage_monthly_summary                                                       +
+          where  archived ;                                                                                                       +
+          update csctoss.usage_monthly_summary set archived = true                                                                +
+          where  usage_date  = in_date;                                                                                           +
+          select count(*) into v_count_3 from csctoss.usage_monthly_summary                                                       +
+          where  archived;                                                                                                        +
+          v_count_4:=v_count_3 - v_count_2;                                                                                       +
+          if  v_count_4 = v_count_1 then                                                                                          +
+              raise notice 'Archiving of % rows completed sucessfully',v_count_4;                                                 +
+              raise notice 'Summary process beginning';                                                                           +
+          else                                                                                                                    +
+              raise notice 'Archiving of rows with % usage date was not sucessful- exiting function', in_date;                    +
+              return false;                                                                                                       +
+          end if;                                                                                                                 +
+      else                                                                                                                        +
+         raise notice 'Summary process beginning';                                                                                +
+      end if;                                                                                                                     +
+                                                                                                                                  +
+    for usage_rec in execute var_sql                                                                                              +
+                                                                                                                                  +
+     loop                                                                                                                         +
+         v_usage_fee_text:=null;                                                                                                  +
+         select base_mb, pooled into v_base_mb, v_pooled                                                                          +
+            from product prd,                                                                                                     +
+            product_overage_threshold pot                                                                                         +
+            where 1=1                                                                                                             +
+              and product_code =usage_rec.product_code                                                                            +
+              and prd.product_id = pot.product_id;                                                                                +
+         if v_pooled then                                                                                                         +
+             select count(*) into v_pool_count                                                                                    +
+             from plan pln,                                                                                                       +
+                  product prd,                                                                                                    +
+                  line l,                                                                                                         +
+                  line_equipment le                                                                                               +
+             where 1=1                                                                                                            +
+              and l.billing_entity_id=usage_rec.billing_entity_id                                                                 +
+              and l.line_id = le.line_id                                                                                          +
+              and prd.product_code=usage_rec.product_code                                                                         +
+              and prd.product_id = pln.product_id                                                                                 +
+              and l.line_id =  pln.line_id                                                                                        +
+ --             and pln.end_date is null ;                                                                                        +
+                and le.end_date is null;                                                                                          +
+             else                                                                                                                 +
+                v_pool_count:=1;                                                                                                  +
+            end if;                                                                                                               +
+         v_tot_threshold:=v_pool_count * v_base_mb ;                                                                              +
+         v_tot_usage:=((usage_rec.input_octets + usage_rec.output_octets) / 1048576);                                             +
+         if v_tot_usage > v_tot_threshold then                                                                                    +
+              v_overage:=v_tot_usage - v_tot_threshold;                                                                           +
+              if v_pooled  then                                                                                                   +
+                 v_usage_fee_text:='Data Overage Fee for Pooled Lines';                                                           +
+              else                                                                                                                +
+                 v_usage_fee_text:='Data Overage Fee for Line '||usage_rec.line_id;                                               +
+              end if;                                                                                                             +
+         else                                                                                                                     +
+              v_overage:=0;                                                                                                       +
+         end if;                                                                                                                  +
+         select count(*) into v_count                                                                                             +
+         from csctoss.rating_engine_beid_trans rebt                                                                               +
+         where 1=1                                                                                                                +
+           and usage_rec.billing_entity_id = rebt.oss_beid ;                                                                      +
+         if v_count > 0 then                                                                                                      +
+             select jbill_id into v_jbill_id                                                                                      +
+             from csctoss.rating_engine_beid_trans rebt                                                                           +
+             where 1=1                                                                                                            +
+               and usage_rec.billing_entity_id = rebt.oss_beid ;                                                                  +
+         else                                                                                                                     +
+              v_jbill_id:=null;                                                                                                   +
+         end if;                                                                                                                  +
+                                                                                                                                  +
+        insert into csctoss.usage_monthly_summary                                                                                 +
+                (create_timestamp,                                                                                                +
+                 archived ,                                                                                                       +
+                 billing_entity_id ,                                                                                              +
+                 billing_entity_name,                                                                                             +
+                 jbilling_id,                                                                                                     +
+                 product_code,                                                                                                    +
+                 line_id ,                                                                                                        +
+                 usage_date ,                                                                                                     +
+                 base_mb,                                                                                                         +
+                 num_of_lines_in_pool,                                                                                            +
+                 total_threshold,                                                                                                 +
+                 acctinputoctets,                                                                                                 +
+                 acctoutputoctets,                                                                                                +
+                 total_usage,                                                                                                     +
+                 usage_overage,                                                                                                   +
+                 usage_fee_text,                                                                                                  +
+                 usage_source                                                                                                     +
+               )                                                                                                                  +
+        values (                                                                                                                  +
+                 current_timestamp,                                                                                               +
+                 false,                                                                                                           +
+                 usage_rec.billing_entity_id,                                                                                     +
+                 usage_rec.name,                                                                                                  +
+                 v_jbill_id,                                                                                                      +
+                 usage_rec.product_code,                                                                                          +
+                 usage_rec.line_id,                                                                                               +
+                 usage_rec.usage_month,                                                                                           +
+                 v_base_mb,                                                                                                       +
+                 v_pool_count,                                                                                                    +
+                 v_tot_threshold ,                                                                                                +
+                 usage_rec.input_octets,                                                                                          +
+                 usage_rec.output_octets,                                                                                         +
+                 (usage_rec.input_octets + usage_rec.output_octets) / 1048576,                                                    +
+                 v_overage,                                                                                                       +
+                 v_usage_fee_text,                                                                                                +
+                 'oss line_usage_day table'                                                                                       +
+                );                                                                                                                +
+           v_row_count:=v_row_count+1;                                                                                            +
+                                                                                                                                  +
+           if v_row_count=500 then                                                                                                +
+               v_row_tot_count:=v_row_tot_count + v_row_count;                                                                    +
+               raise notice 'rows inserted: %' ,v_row_tot_count;                                                                  +
+               v_row_count:=0;                                                                                                    +
+           end if;                                                                                                                +
+                                                                                                                                  +
+     end loop;                                                                                                                    +
+          v_row_tot_count:=v_row_tot_count + v_row_count;                                                                         +
+          raise notice 'total rows inserted: %' ,v_row_tot_count;                                                                 +
+ return true;                                                                                                                     +
+ exception                                                                                                                        +
+       when others then                                                                                                           +
+       return false;                                                                                                              +
+ END;                                                                                                                             +
+   
+(1 row)
+
+                                                                       prosrc                                                                       
+----------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                                   +
+ DECLARE                                                                                                                                           +
+                                                                                                                                                   +
+   par_threshold_hours     integer := $1 ;                                                                                                         +
+   par_line_id             integer := $2 ;                                                                                                         +
+                                                                                                                                                   +
+   var_interval            interval;                                                                                                               +
+   var_start_timestamp     timestamp ;                                                                                                             +
+   var_end_timestamp       timestamp ;                                                                                                             +
+   var_sql                 text ;                                                                                                                  +
+                                                                                                                                                   +
+   var_line_rec            record ;                                                                                                                +
+   var_overage_records     record ;                                                                                                                +
+                                                                                                                                                   +
+ BEGIN                                                                                                                                             +
+                                                                                                                                                   +
+   -- Check parameters                                                                                                                             +
+   IF par_threshold_hours IS NULL THEN                                                                                                             +
+     RETURN NEXT 'ERROR: Threshold hours required.' ;                                                                                              +
+     RETURN ;                                                                                                                                      +
+   ELSE                                                                                                                                            +
+     var_interval := par_threshold_hours || ' hours' ;                                                                                             +
+     var_start_timestamp := current_timestamp::timestamp(0) - var_interval ;                                                                       +
+     var_end_timestamp := current_timestamp::timestamp(0) ;                                                                                        +
+   END IF ;                                                                                                                                        +
+                                                                                                                                                   +
+   IF par_line_id IS NOT NULL THEN                                                                                                                 +
+     PERFORM * FROM csctoss.line WHERE line_id = par_line_id ;                                                                                     +
+     IF NOT FOUND THEN                                                                                                                             +
+       RETURN NEXT 'ERROR: Line ID '||par_line_id::text||' does not exist.' ;                                                                      +
+       RETURN ;                                                                                                                                    +
+     END IF ;                                                                                                                                      +
+   END IF ;                                                                                                                                        +
+                                                                                                                                                   +
+   PERFORM public.set_change_log_staff_id(9) ; -- Billing Engine user                                                                              +
+   RETURN NEXT '[From=' || var_start_timestamp || ' To=' || var_end_timestamp || ']';                                                              +
+   RAISE NOTICE 'Calculation Term [% - %]', var_start_timestamp, var_end_timestamp ;                                                               +
+                                                                                                                                                   +
+                                                                                                                                                   +
+   -- Delete past 30 days rows                                                                                                                     +
+   DELETE FROM csctoss.line_usage_overage_calc                                                                                                     +
+         WHERE usage_calc_end_timestamp < (current_timestamp - '30 days'::interval) ;                                                              +
+                                                                                                                                                   +
+                                                                                                                                                   +
+   -- Truncate and populate usage_overage_calc table with data based on given hours to capture all possible usage.                                 +
+   EXECUTE 'TRUNCATE TABLE csctoss.usage_overage_calc' ;                                                                                           +
+   var_sql := 'INSERT INTO csctoss.usage_overage_calc                                                                                              +
+                    SELECT *                                                                                                                       +
+                      FROM public.dblink((SELECT * FROM csctoss.fetch_csctlog_conn())                                                              +
+                       ,''SELECT class                                                                                                             +
+                                ,acctstarttime                                                                                                     +
+                                ,acctstoptime                                                                                                      +
+                                ,acctsessiontime                                                                                                   +
+                                ,acctinputoctets                                                                                                   +
+                                ,acctoutputoctets                                                                                                  +
+                            FROM csctlog.master_radacct                                                                                            +
+                           WHERE class > \'\'0\'\'                                                                                                 +
+                             AND acctstoptime >= \''||quote_literal(var_start_timestamp)||'\'                                                      +
+                             AND acctstoptime <  \''||quote_literal(var_end_timestamp)||'\'                                                        +
+                             AND acctstoptime IS NOT NULL'')                                                                                       +
+                        AS       rec_type(class            text                                                                                    +
+                                         ,acctstarttime    timestamptz                                                                             +
+                                         ,acctstoptime     timestamptz                                                                             +
+                                         ,acctsessiontime  bigint                                                                                  +
+                                         ,acctinputoctets  bigint                                                                                  +
+                                         ,acctoutputoctets bigint)' ;                                                                              +
+                                                                                                                                                   +
+   EXECUTE var_sql ;                                                                                                                               +
+                                                                                                                                                   +
+   -- Do all calculations and work from the temp table                                                                                             +
+   FOR var_line_rec IN                                                                                                                             +
+           SELECT line.line_id,                                                                                                                    +
+                  'AAA' AS preferred_timezone,                                                                                                     +
+                  SUM(COALESCE(EXTRACT(EPOCH FROM uclc.acctstoptime),0)) -                                                                         +
+                  SUM(COALESCE(EXTRACT(EPOCH FROM uclc.acctstarttime),0)) AS time_connected,                                                       +
+                  SUM(COALESCE(uclc.acctsessiontime,0)) AS acctsessiontime,                                                                        +
+                  SUM(COALESCE(uclc.acctinputoctets,0)) AS acctinputoctets,                                                                        +
+                  SUM(COALESCE(uclc.acctoutputoctets,0)) AS acctoutputoctets,                                                                      +
+                  SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0)) AS accttotaloctets,                                    +
+                  SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0)) / 1024 / 1024 AS accttotaloctets_mb,                   +
+                  MAX(bent.name) AS billing_entity_name,                                                                                           +
+                  MAX(line.radius_username) AS username,                                                                                           +
+                  MAX(prd.product_code) AS product_code,                                                                                           +
+                  MAX(prd.base_mb) AS base_mb,                                                                                                     +
+                  MAX(prd.alert_threshold_mb) AS alert_threshold_mb,                                                                               +
+                  bool_or(prd.pooled) AS pooled_product,                                                                                           +
+                  COUNT(*) AS rowcount                                                                                                             +
+             FROM csctoss.line                                                                                                                     +
+             JOIN csctoss.billing_entity bent USING (billing_entity_id)                                                                            +
+             JOIN csctoss.plan USING (line_id)                                                                                                     +
+             JOIN csctoss.product_overage_threshold_vw prd USING (product_id)                                                                      +
+             JOIN csctoss.usage_overage_calc uclc ON (line.line_id::varchar = uclc.class)                                                          +
+            WHERE 1=1                                                                                                                              +
+              AND uclc.acctstoptime at time zone 'UTC' >= var_start_timestamp                                                                      +
+              AND uclc.acctstoptime at time zone 'UTC' <  var_end_timestamp                                                                        +
+         GROUP BY line.line_id,                                                                                                                    +
+                  bent.preferred_timezone                                                                                                          +
+           HAVING TRUNC(((SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0))) / 1024 / 1024)) >= MAX(prd.alert_threshold_mb)+
+                                                                                                                                                   +
+            UNION                                                                                                                                  +
+                                                                                                                                                   +
+           SELECT line.line_id,                                                                                                                    +
+                  bent.preferred_timezone,                                                                                                         +
+                  SUM(COALESCE(EXTRACT(EPOCH FROM uclc.acctstoptime),0)) -                                                                         +
+                  SUM(COALESCE(EXTRACT(EPOCH FROM uclc.acctstarttime),0)) AS time_connected,                                                       +
+                  SUM(COALESCE(uclc.acctsessiontime,0)) AS acctsessiontime,                                                                        +
+                  SUM(COALESCE(uclc.acctinputoctets,0)) AS acctinputoctets,                                                                        +
+                  SUM(COALESCE(uclc.acctoutputoctets,0)) AS acctoutputoctets,                                                                      +
+                  SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0)) AS accttotaloctets,                                    +
+                  SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0)) / 1024 / 1024 AS accttotaloctets_mb,                   +
+                  MAX(bent.name) AS billing_entity_name,                                                                                           +
+                  MAX(line.radius_username) AS username,                                                                                           +
+                  MAX(prd.product_code) AS product_code,                                                                                           +
+                  MAX(prd.base_mb) AS base_mb,                                                                                                     +
+                  MAX(prd.alert_threshold_mb) AS alert_threshold_mb,                                                                               +
+                  bool_or(prd.pooled) AS pooled_product,                                                                                           +
+                  COUNT(*) AS rowcount                                                                                                             +
+             FROM csctoss.line                                                                                                                     +
+             JOIN csctoss.billing_entity bent USING (billing_entity_id)                                                                            +
+             JOIN csctoss.plan USING (line_id)                                                                                                     +
+             JOIN csctoss.product_overage_threshold_vw prd USING (product_id)                                                                      +
+             JOIN csctoss.usage_overage_calc uclc ON (line.line_id::varchar = uclc.class)                                                          +
+            WHERE 1=1                                                                                                                              +
+              AND uclc.acctstoptime at time zone bent.preferred_timezone >= var_start_timestamp                                                    +
+              AND uclc.acctstoptime at time zone bent.preferred_timezone <  var_end_timestamp                                                      +
+         GROUP BY line.line_id,                                                                                                                    +
+                  bent.preferred_timezone                                                                                                          +
+           HAVING TRUNC(((SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0))) / 1024 / 1024)) >= MAX(prd.alert_threshold_mb)+
+                                                                                                                                                   +
+         ORDER BY line_id,                                                                                                                         +
+                  preferred_timezone                                                                                                               +
+                                                                                                                                                   +
+   LOOP                                                                                                                                            +
+                                                                                                                                                   +
+     -- Make sure this is a valid line id                                                                                                          +
+     PERFORM TRUE FROM csctoss.line WHERE line_id::varchar = var_line_rec.line_id ;                                                                +
+                                                                                                                                                   +
+     IF NOT FOUND THEN                                                                                                                             +
+       RETURN NEXT 'ERROR: No corresponding Line Id found for MRAD Class '||var_line_rec.line_id||'.' ;                                            +
+     ELSE                                                                                                                                          +
+                                                                                                                                                   +
+       -- This is a UTC record                                                                                                                     +
+       IF var_line_rec.preferred_timezone = 'AAA' THEN                                                                                             +
+                                                                                                                                                   +
+         -- Populate the line record for given usage date for UTC values                                                                           +
+         INSERT INTO csctoss.line_usage_overage_calc                                                                                               +
+                    (line_id                                                                                                                       +
+                    ,timezone                                                                                                                      +
+                    ,usage_calc_start_timestamp                                                                                                    +
+                    ,usage_calc_end_timestamp                                                                                                      +
+                    ,billing_entity_name                                                                                                           +
+                    ,username                                                                                                                      +
+                    ,product_code                                                                                                                  +
+                    ,pooled_product                                                                                                                +
+                    ,alert_threshold_mb                                                                                                            +
+                    ,time_connected_utc                                                                                                            +
+                    ,acctsessiontime_utc                                                                                                           +
+                    ,acctinputoctets_utc                                                                                                           +
+                    ,acctoutputoctets_utc                                                                                                          +
+                    ,rowcount_utc)                                                                                                                 +
+             VALUES (var_line_rec.line_id                                                                                                          +
+                    ,'UTC'                                                                                                                         +
+                    ,var_start_timestamp                                                                                                           +
+                    ,var_end_timestamp                                                                                                             +
+                    ,var_line_rec.billing_entity_name                                                                                              +
+                    ,var_line_rec.username                                                                                                         +
+                    ,var_line_rec.product_code                                                                                                     +
+                    ,var_line_rec.pooled_product                                                                                                   +
+                    ,var_line_rec.alert_threshold_mb                                                                                               +
+                    ,var_line_rec.time_connected                                                                                                   +
+                    ,var_line_rec.acctsessiontime                                                                                                  +
+                    ,var_line_rec.acctinputoctets                                                                                                  +
+                    ,var_line_rec.acctoutputoctets                                                                                                 +
+                    ,var_line_rec.rowcount) ;                                                                                                      +
+       ELSE                                                                                                                                        +
+                                                                                                                                                   +
+         -- This is a tz record, do an update and trap failure, then transform into an insert                                                      +
+         UPDATE csctoss.line_usage_overage_calc                                                                                                    +
+            SET timezone             = var_line_rec.preferred_timezone                                                                             +
+               ,time_connected_tz    = var_line_rec.time_connected                                                                                 +
+               ,acctsessiontime_tz   = var_line_rec.acctsessiontime                                                                                +
+               ,acctinputoctets_tz   = var_line_rec.acctinputoctets                                                                                +
+               ,acctoutputoctets_tz  = var_line_rec.acctoutputoctets                                                                               +
+               ,rowcount_tz          = var_line_rec.rowcount                                                                                       +
+          WHERE line_id              = var_line_rec.line_id                                                                                        +
+            AND usage_calc_start_timestamp::timestamp(0) = var_start_timestamp::timestamp(0)                                                       +
+            AND usage_calc_end_timestamp::timestamp(0) = var_end_timestamp::timestamp(0) ;                                                         +
+                                                                                                                                                   +
+         IF NOT FOUND THEN                                                                                                                         +
+           -- Perform and insert for the entire record based on tz values                                                                          +
+           INSERT INTO csctoss.line_usage_overage_calc                                                                                             +
+                      (line_id                                                                                                                     +
+                      ,timezone                                                                                                                    +
+                      ,usage_calc_start_timestamp                                                                                                  +
+                      ,usage_calc_end_timestamp                                                                                                    +
+                      ,billing_entity_name                                                                                                         +
+                      ,username                                                                                                                    +
+                      ,product_code                                                                                                                +
+                      ,pooled_product                                                                                                              +
+                      ,alert_threshold_mb                                                                                                          +
+                      ,time_connected_utc                                                                                                          +
+                      ,acctsessiontime_utc                                                                                                         +
+                      ,acctinputoctets_utc                                                                                                         +
+                      ,acctoutputoctets_utc                                                                                                        +
+                      ,rowcount_utc                                                                                                                +
+                      ,time_connected_tz                                                                                                           +
+                      ,acctsessiontime_tz                                                                                                          +
+                      ,acctinputoctets_tz                                                                                                          +
+                      ,acctoutputoctets_tz                                                                                                         +
+                      ,rowcount_tz)                                                                                                                +
+               VALUES (var_line_rec.line_id                                                                                                        +
+                      ,var_line_rec.preferred_timezone                                                                                             +
+                      ,var_start_timestamp                                                                                                         +
+                      ,var_end_timestamp                                                                                                           +
+                      ,var_line_rec.billing_entity_name                                                                                            +
+                      ,var_line_rec.username                                                                                                       +
+                      ,var_line_rec.product_code                                                                                                   +
+                      ,var_line_rec.pooled_product                                                                                                 +
+                      ,var_line_rec.alert_threshold_mb                                                                                             +
+                      ,0                                                                                                                           +
+                      ,0                                                                                                                           +
+                      ,0                                                                                                                           +
+                      ,0                                                                                                                           +
+                      ,0                                                                                                                           +
+                      ,var_line_rec.time_connected                                                                                                 +
+                      ,var_line_rec.acctsessiontime                                                                                                +
+                      ,var_line_rec.acctinputoctets                                                                                                +
+                      ,var_line_rec.acctoutputoctets                                                                                               +
+                      ,var_line_rec.rowcount) ;                                                                                                    +
+         END IF ;                                                                                                                                  +
+       END IF ;                                                                                                                                    +
+     END IF ;                                                                                                                                      +
+   END LOOP ;                                                                                                                                      +
+                                                                                                                                                   +
+                                                                                                                                                   +
+   --                                                                                                                                              +
+   -- Returns all usage overage records.                                                                                                           +
+   --                                                                                                                                              +
+   RETURN NEXT 'line_id' ||                                                                                                                        +
+              ',billing_entity_name' ||                                                                                                            +
+              ',username' ||                                                                                                                       +
+              ',product_code' ||                                                                                                                   +
+              ',pooled_product' ||                                                                                                                 +
+              ',alert_threshold_mb' ||                                                                                                             +
+              ',acct_total_volume_mb' ||                                                                                                           +
+              ',time_connected_utc' ||                                                                                                             +
+              ',acctsessiontime_utc' ||                                                                                                            +
+              ',acctinputoctets_utc' ||                                                                                                            +
+              ',acctoutputoctets_utc' ||                                                                                                           +
+              ',rowcount_utc' ;                                                                                                                    +
+                                                                                                                                                   +
+   FOR var_overage_records IN                                                                                                                      +
+     SELECT line_id,                                                                                                                               +
+            billing_entity_name,                                                                                                                   +
+            username,                                                                                                                              +
+            product_code,                                                                                                                          +
+            CASE WHEN pooled_product = true THEN 'Pooled'::text ELSE 'NotPooled'::text END AS pooled_product,                                      +
+            alert_threshold_mb,                                                                                                                    +
+            TRUNC(((COALESCE(acctinputoctets_utc,0) + COALESCE(acctoutputoctets_utc,0)) / 1024 / 1024)) AS acct_total_volume_mb,                   +
+            time_connected_utc,                                                                                                                    +
+            acctsessiontime_utc,                                                                                                                   +
+            acctinputoctets_utc,                                                                                                                   +
+            acctoutputoctets_utc,                                                                                                                  +
+            rowcount_utc                                                                                                                           +
+       FROM csctoss.line_usage_overage_calc                                                                                                        +
+      WHERE TRUNC(((COALESCE(acctinputoctets_utc,0) + COALESCE(acctoutputoctets_utc,0)) / 1024 / 1024)) >= alert_threshold_mb                      +
+        AND usage_calc_end_timestamp::timestamp(0) = var_end_timestamp::timestamp(0)                                                               +
+   LOOP                                                                                                                                            +
+                                                                                                                                                   +
+     RETURN NEXT var_overage_records ;                                                                                                             +
+   END LOOP ;                                                                                                                                      +
+                                                                                                                                                   +
+   RETURN NEXT 'SUCCESS' ;                                                                                                                         +
+   RETURN ;                                                                                                                                        +
+                                                                                                                                                   +
+ END;                                                                                                                                              +
+ 
+(1 row)
+
+                                                                        prosrc                                                                        
+------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                                     +
+ DECLARE                                                                                                                                             +
+                                                                                                                                                     +
+   par_threshold_hours     integer := $1 ;                                                                                                           +
+   par_line_id             integer := $2 ;                                                                                                           +
+                                                                                                                                                     +
+   var_interval            interval;                                                                                                                 +
+   var_start_timestamp     timestamp ;                                                                                                               +
+   var_end_timestamp       timestamp ;                                                                                                               +
+   var_sql                 text ;                                                                                                                    +
+                                                                                                                                                     +
+   var_line_rec            record ;                                                                                                                  +
+   var_overage_records     record ;                                                                                                                  +
+                                                                                                                                                     +
+ BEGIN                                                                                                                                               +
+                                                                                                                                                     +
+   -- Check parameters                                                                                                                               +
+   IF par_threshold_hours IS NULL THEN                                                                                                               +
+     RETURN NEXT 'ERROR: Threshold hours required.' ;                                                                                                +
+     RETURN ;                                                                                                                                        +
+   ELSE                                                                                                                                              +
+     var_interval := par_threshold_hours || ' hours' ;                                                                                               +
+     var_start_timestamp := current_timestamp::timestamp(0) - var_interval ;                                                                         +
+     var_end_timestamp := current_timestamp::timestamp(0) ;                                                                                          +
+   END IF ;                                                                                                                                          +
+                                                                                                                                                     +
+   IF par_line_id IS NOT NULL THEN                                                                                                                   +
+     PERFORM * FROM csctoss.line WHERE line_id = par_line_id ;                                                                                       +
+     IF NOT FOUND THEN                                                                                                                               +
+       RETURN NEXT 'ERROR: Line ID '||par_line_id::text||' does not exist.' ;                                                                        +
+       RETURN ;                                                                                                                                      +
+     END IF ;                                                                                                                                        +
+   END IF ;                                                                                                                                          +
+                                                                                                                                                     +
+   PERFORM public.set_change_log_staff_id(9) ; -- Billing Engine user                                                                                +
+   RETURN NEXT '[From=' || var_start_timestamp || ' To=' || var_end_timestamp || ']';                                                                +
+   RAISE NOTICE 'Calculation Term [% - %]', var_start_timestamp, var_end_timestamp ;                                                                 +
+                                                                                                                                                     +
+                                                                                                                                                     +
+   -- Delete past 30 days rows                                                                                                                       +
+   DELETE FROM csctoss.line_usage_overage_calc                                                                                                       +
+         WHERE usage_calc_end_timestamp < (current_timestamp - '30 days'::interval) ;                                                                +
+                                                                                                                                                     +
+                                                                                                                                                     +
+   -- Truncate and populate usage_overage_calc table with data based on given hours to capture all possible usage.                                   +
+   EXECUTE 'TRUNCATE TABLE csctoss.usage_overage_calc' ;                                                                                             +
+   var_sql := 'INSERT INTO csctoss.usage_overage_calc                                                                                                +
+                    SELECT *                                                                                                                         +
+                      FROM public.dblink((SELECT * FROM csctoss.fetch_csctlog_conn())                                                                +
+                       ,''SELECT class                                                                                                               +
+                                ,acctstarttime                                                                                                       +
+                                ,acctstoptime                                                                                                        +
+                                ,acctsessiontime                                                                                                     +
+                                ,acctinputoctets                                                                                                     +
+                                ,acctoutputoctets                                                                                                    +
+                            FROM csctlog.master_radacct                                                                                              +
+                           WHERE class > \'\'0\'\'                                                                                                   +
+                             AND acctstoptime >= \''||quote_literal(var_start_timestamp)||'\'                                                        +
+                             AND acctstoptime <  \''||quote_literal(var_end_timestamp)||'\'                                                          +
+                             AND acctstoptime IS NOT NULL'')                                                                                         +
+                        AS       rec_type(class            text                                                                                      +
+                                         ,acctstarttime    timestamptz                                                                               +
+                                         ,acctstoptime     timestamptz                                                                               +
+                                         ,acctsessiontime  bigint                                                                                    +
+                                         ,acctinputoctets  bigint                                                                                    +
+                                         ,acctoutputoctets bigint)' ;                                                                                +
+                                                                                                                                                     +
+   EXECUTE var_sql ;                                                                                                                                 +
+                                                                                                                                                     +
+   -- Do all calculations and work from the temp table                                                                                               +
+   FOR var_line_rec IN                                                                                                                               +
+           SELECT line.line_id,                                                                                                                      +
+                  'AAA' AS preferred_timezone,                                                                                                       +
+                  SUM(COALESCE(EXTRACT(EPOCH FROM uclc.acctstoptime),0)) -                                                                           +
+                  SUM(COALESCE(EXTRACT(EPOCH FROM uclc.acctstarttime),0)) AS time_connected,                                                         +
+                  SUM(COALESCE(uclc.acctsessiontime,0)) AS acctsessiontime,                                                                          +
+                  SUM(COALESCE(uclc.acctinputoctets,0)) AS acctinputoctets,                                                                          +
+                  SUM(COALESCE(uclc.acctoutputoctets,0)) AS acctoutputoctets,                                                                        +
+                  SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0)) AS accttotaloctets,                                      +
+                  SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0)) / 1024 / 1024 AS accttotaloctets_mb,                     +
+                  MAX(bent.name) AS billing_entity_name,                                                                                             +
+                  MAX(line.radius_username) AS username,                                                                                             +
+                  MAX(prd.product_code) AS product_code,                                                                                             +
+                  MAX(prd.base_mb) AS base_mb,                                                                                                       +
+                  MAX(prd.alert_threshold_mb) AS alert_threshold_mb,                                                                                 +
+                  bool_or(prd.pooled) AS pooled_product,                                                                                             +
+                  COUNT(*) AS rowcount                                                                                                               +
+             FROM csctoss.line                                                                                                                       +
+             JOIN csctoss.billing_entity bent USING (billing_entity_id)                                                                              +
+             JOIN csctoss.plan USING (line_id)                                                                                                       +
+             JOIN csctoss.product_overage_threshold_vw prd USING (product_id)                                                                        +
+             JOIN csctoss.usage_overage_calc uclc ON (line.line_id::varchar = uclc.class)                                                            +
+            WHERE 1=1                                                                                                                                +
+              AND uclc.acctstoptime AT TIME ZONE 'UTC' >= var_start_timestamp                                                                        +
+              AND uclc.acctstoptime AT TIME ZONE 'UTC' <  var_end_timestamp                                                                          +
+              AND prd.pooled = FALSE                                                                                                                 +
+         GROUP BY line.line_id,                                                                                                                      +
+                  bent.preferred_timezone                                                                                                            +
+           HAVING TRUNC(((SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0))) / 1024 / 1024)) > 0                             +
+           --HAVING TRUNC(((SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0))) / 1024 / 1024)) >= MAX(prd.alert_threshold_mb)+
+                                                                                                                                                     +
+            UNION                                                                                                                                    +
+                                                                                                                                                     +
+           SELECT line.line_id,                                                                                                                      +
+                  bent.preferred_timezone,                                                                                                           +
+                  SUM(COALESCE(EXTRACT(EPOCH FROM uclc.acctstoptime),0)) -                                                                           +
+                  SUM(COALESCE(EXTRACT(EPOCH FROM uclc.acctstarttime),0)) AS time_connected,                                                         +
+                  SUM(COALESCE(uclc.acctsessiontime,0)) AS acctsessiontime,                                                                          +
+                  SUM(COALESCE(uclc.acctinputoctets,0)) AS acctinputoctets,                                                                          +
+                  SUM(COALESCE(uclc.acctoutputoctets,0)) AS acctoutputoctets,                                                                        +
+                  SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0)) AS accttotaloctets,                                      +
+                  SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0)) / 1024 / 1024 AS accttotaloctets_mb,                     +
+                  MAX(bent.name) AS billing_entity_name,                                                                                             +
+                  MAX(line.radius_username) AS username,                                                                                             +
+                  MAX(prd.product_code) AS product_code,                                                                                             +
+                  MAX(prd.base_mb) AS base_mb,                                                                                                       +
+                  MAX(prd.alert_threshold_mb) AS alert_threshold_mb,                                                                                 +
+                  bool_or(prd.pooled) AS pooled_product,                                                                                             +
+                  COUNT(*) AS rowcount                                                                                                               +
+             FROM csctoss.line                                                                                                                       +
+             JOIN csctoss.billing_entity bent USING (billing_entity_id)                                                                              +
+             JOIN csctoss.plan USING (line_id)                                                                                                       +
+             JOIN csctoss.product_overage_threshold_vw prd USING (product_id)                                                                        +
+             JOIN csctoss.usage_overage_calc uclc ON (line.line_id::varchar = uclc.class)                                                            +
+            WHERE 1=1                                                                                                                                +
+              AND uclc.acctstoptime AT TIME ZONE bent.preferred_timezone >= var_start_timestamp                                                      +
+              AND uclc.acctstoptime AT TIME ZONE bent.preferred_timezone <  var_end_timestamp                                                        +
+              AND prd.pooled = FALSE                                                                                                                 +
+         GROUP BY line.line_id,                                                                                                                      +
+                  bent.preferred_timezone                                                                                                            +
+           HAVING TRUNC(((SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0))) / 1024 / 1024)) > 0                             +
+           --HAVING TRUNC(((SUM(COALESCE(uclc.acctinputoctets,0) + COALESCE(uclc.acctoutputoctets,0))) / 1024 / 1024)) >= MAX(prd.alert_threshold_mb)+
+                                                                                                                                                     +
+         ORDER BY line_id,                                                                                                                           +
+                  preferred_timezone                                                                                                                 +
+                                                                                                                                                     +
+   LOOP                                                                                                                                              +
+                                                                                                                                                     +
+     -- Make sure this is a valid line id                                                                                                            +
+     PERFORM TRUE FROM csctoss.line WHERE line_id::varchar = var_line_rec.line_id ;                                                                  +
+                                                                                                                                                     +
+     IF NOT FOUND THEN                                                                                                                               +
+       RETURN NEXT 'ERROR: No corresponding Line Id found for MRAD Class '||var_line_rec.line_id||'.' ;                                              +
+     ELSE                                                                                                                                            +
+                                                                                                                                                     +
+       -- This is a UTC record                                                                                                                       +
+       IF var_line_rec.preferred_timezone = 'AAA' THEN                                                                                               +
+                                                                                                                                                     +
+         -- Populate the line record for given usage date for UTC values                                                                             +
+         INSERT INTO csctoss.line_usage_overage_calc                                                                                                 +
+                    (line_id                                                                                                                         +
+                    ,timezone                                                                                                                        +
+                    ,usage_calc_start_timestamp                                                                                                      +
+                    ,usage_calc_end_timestamp                                                                                                        +
+                    ,billing_entity_name                                                                                                             +
+                    ,username                                                                                                                        +
+                    ,product_code                                                                                                                    +
+                    ,pooled_product                                                                                                                  +
+                    ,alert_threshold_mb                                                                                                              +
+                    ,time_connected_utc                                                                                                              +
+                    ,acctsessiontime_utc                                                                                                             +
+                    ,acctinputoctets_utc                                                                                                             +
+                    ,acctoutputoctets_utc                                                                                                            +
+                    ,rowcount_utc)                                                                                                                   +
+             VALUES (var_line_rec.line_id                                                                                                            +
+                    ,'UTC'                                                                                                                           +
+                    ,var_start_timestamp                                                                                                             +
+                    ,var_end_timestamp                                                                                                               +
+                    ,var_line_rec.billing_entity_name                                                                                                +
+                    ,var_line_rec.username                                                                                                           +
+                    ,var_line_rec.product_code                                                                                                       +
+                    ,var_line_rec.pooled_product                                                                                                     +
+                    ,var_line_rec.alert_threshold_mb                                                                                                 +
+                    ,var_line_rec.time_connected                                                                                                     +
+                    ,var_line_rec.acctsessiontime                                                                                                    +
+                    ,var_line_rec.acctinputoctets                                                                                                    +
+                    ,var_line_rec.acctoutputoctets                                                                                                   +
+                    ,var_line_rec.rowcount) ;                                                                                                        +
+       ELSE                                                                                                                                          +
+                                                                                                                                                     +
+         -- This is a tz record, do an update and trap failure, then transform into an insert                                                        +
+         UPDATE csctoss.line_usage_overage_calc                                                                                                      +
+            SET timezone             = var_line_rec.preferred_timezone,                                                                              +
+                time_connected_tz    = var_line_rec.time_connected,                                                                                  +
+                acctsessiontime_tz   = var_line_rec.acctsessiontime,                                                                                 +
+                acctinputoctets_tz   = var_line_rec.acctinputoctets,                                                                                 +
+                acctoutputoctets_tz  = var_line_rec.acctoutputoctets,                                                                                +
+                rowcount_tz          = var_line_rec.rowcount                                                                                         +
+          WHERE line_id              = var_line_rec.line_id                                                                                          +
+            AND usage_calc_start_timestamp::timestamp(0) = var_start_timestamp::timestamp(0)                                                         +
+            AND usage_calc_end_timestamp::timestamp(0) = var_end_timestamp::timestamp(0) ;                                                           +
+                                                                                                                                                     +
+         IF NOT FOUND THEN                                                                                                                           +
+           -- Perform and insert for the entire record based on tz values                                                                            +
+           INSERT INTO csctoss.line_usage_overage_calc                                                                                               +
+                      (line_id,                                                                                                                      +
+                       timezone,                                                                                                                     +
+                       usage_calc_start_timestamp,                                                                                                   +
+                       usage_calc_end_timestamp,                                                                                                     +
+                       billing_entity_name,                                                                                                          +
+                       username,                                                                                                                     +
+                       product_code,                                                                                                                 +
+                       pooled_product,                                                                                                               +
+                       alert_threshold_mb,                                                                                                           +
+                       time_connected_utc,                                                                                                           +
+                       acctsessiontime_utc,                                                                                                          +
+                       acctinputoctets_utc,                                                                                                          +
+                       acctoutputoctets_utc,                                                                                                         +
+                       rowcount_utc,                                                                                                                 +
+                       time_connected_tz,                                                                                                            +
+                       acctsessiontime_tz,                                                                                                           +
+                       acctinputoctets_tz,                                                                                                           +
+                       acctoutputoctets_tz,                                                                                                          +
+                       rowcount_tz)                                                                                                                  +
+               VALUES (var_line_rec.line_id,                                                                                                         +
+                       var_line_rec.preferred_timezone,                                                                                              +
+                       var_start_timestamp,                                                                                                          +
+                       var_end_timestamp,                                                                                                            +
+                       var_line_rec.billing_entity_name,                                                                                             +
+                       var_line_rec.username,                                                                                                        +
+                       var_line_rec.product_code,                                                                                                    +
+                       var_line_rec.pooled_product,                                                                                                  +
+                       var_line_rec.alert_threshold_mb,                                                                                              +
+                       0,                                                                                                                            +
+                       0,                                                                                                                            +
+                       0,                                                                                                                            +
+                       0,                                                                                                                            +
+                       0,                                                                                                                            +
+                       var_line_rec.time_connected,                                                                                                  +
+                       var_line_rec.acctsessiontime,                                                                                                 +
+                       var_line_rec.acctinputoctets,                                                                                                 +
+                       var_line_rec.acctoutputoctets,                                                                                                +
+                       var_line_rec.rowcount) ;                                                                                                      +
+         END IF ;                                                                                                                                    +
+       END IF ;                                                                                                                                      +
+     END IF ;                                                                                                                                        +
+   END LOOP ;                                                                                                                                        +
+                                                                                                                                                     +
+                                                                                                                                                     +
+   --                                                                                                                                                +
+   -- Returns all usage overage records.                                                                                                             +
+   --                                                                                                                                                +
+   RETURN NEXT 'line_id' ||                                                                                                                          +
+              ',billing_entity_name' ||                                                                                                              +
+              ',username' ||                                                                                                                         +
+              ',product_code' ||                                                                                                                     +
+              ',pooled_product' ||                                                                                                                   +
+              ',alert_threshold_mb' ||                                                                                                               +
+              ',acct_total_volume_mb' ||                                                                                                             +
+              ',time_connected_utc' ||                                                                                                               +
+              ',acctsessiontime_utc' ||                                                                                                              +
+              ',acctinputoctets_utc' ||                                                                                                              +
+              ',acctoutputoctets_utc' ||                                                                                                             +
+              ',rowcount_utc' ;                                                                                                                      +
+                                                                                                                                                     +
+   -- Individual lines.                                                                                                                              +
+   FOR var_overage_records IN                                                                                                                        +
+     SELECT line_id,                                                                                                                                 +
+            billing_entity_name,                                                                                                                     +
+            username,                                                                                                                                +
+            product_code,                                                                                                                            +
+            CASE WHEN pooled_product = true THEN 'Pooled'::text ELSE 'NotPooled'::text END AS pooled_product,                                        +
+            alert_threshold_mb,                                                                                                                      +
+            TRUNC(((COALESCE(acctinputoctets_utc,0) + COALESCE(acctoutputoctets_utc,0)) / 1024 / 1024)) AS acct_total_volume_mb,                     +
+            time_connected_utc,                                                                                                                      +
+            acctsessiontime_utc,                                                                                                                     +
+            acctinputoctets_utc,                                                                                                                     +
+            acctoutputoctets_utc,                                                                                                                    +
+            rowcount_utc                                                                                                                             +
+       FROM csctoss.line_usage_overage_calc                                                                                                          +
+      WHERE TRUNC(((COALESCE(acctinputoctets_utc,0) + COALESCE(acctoutputoctets_utc,0)) / 1024 / 1024)) >= alert_threshold_mb                        +
+        AND usage_calc_end_timestamp::timestamp(0) = var_end_timestamp::timestamp(0)                                                                 +
+        AND pooled_product = false                                                                                                                   +
+   LOOP                                                                                                                                              +
+                                                                                                                                                     +
+     RETURN NEXT var_overage_records ;                                                                                                               +
+   END LOOP ;                                                                                                                                        +
+                                                                                                                                                     +
+                                                                                                                                                     +
+   -- Pooled lines.                                                                                                                                  +
+   FOR var_overage_records IN                                                                                                                        +
+     SELECT MIN(line_id) AS line_id,                                                                                                                 +
+            billing_entity_name,                                                                                                                     +
+            NULL AS username,                                                                                                                        +
+            product_code,                                                                                                                            +
+            'Pooled'::text AS pooled_product,                                                                                                        +
+            SUM(alert_threshold_mb) AS alert_threshold_mb,                                                                                           +
+            SUM(TRUNC(((COALESCE(acctinputoctets_utc,0) + COALESCE(acctoutputoctets_utc,0)) / 1024 / 1024))) AS acct_total_volume_mb,                +
+            SUM(time_connected_utc) AS time_connected_utc,                                                                                           +
+            SUM(acctsessiontime_utc) AS acctsessiontime_utc,                                                                                         +
+            SUM(acctinputoctets_utc) AS acctinputoctets_utc,                                                                                         +
+            SUM(acctoutputoctets_utc) AS acctoutputoctets_utc,                                                                                       +
+            SUM(rowcount_utc) AS rowcount_utc                                                                                                        +
+       FROM csctoss.line_usage_overage_calc                                                                                                          +
+      WHERE TRUNC(((COALESCE(acctinputoctets_utc,0) + COALESCE(acctoutputoctets_utc,0)) / 1024 / 1024)) >= alert_threshold_mb                        +
+        AND usage_calc_end_timestamp::timestamp(0) = var_end_timestamp::timestamp(0)                                                                 +
+        AND pooled_product = true                                                                                                                    +
+   GROUP BY billing_entity_name,                                                                                                                     +
+            product_code                                                                                                                             +
+     HAVING SUM(TRUNC(((COALESCE(acctinputoctets_utc,0) + COALESCE(acctoutputoctets_utc,0)) / 1024 / 1024))) >= SUM(alert_threshold_mb)              +
+                                                                                                                                                     +
+   LOOP                                                                                                                                              +
+                                                                                                                                                     +
+     RETURN NEXT var_overage_records ;                                                                                                               +
+   END LOOP ;                                                                                                                                        +
+                                                                                                                                                     +
+                                                                                                                                                     +
+   RETURN NEXT 'SUCCESS' ;                                                                                                                           +
+   RETURN ;                                                                                                                                          +
+                                                                                                                                                     +
+ END; 

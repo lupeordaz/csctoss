@@ -1,0 +1,688 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>CCT Postgres</TITLE>
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+<A NAME="FormTop"></A>
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">CSCT PostgreSql</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+
+
+<HR>
+<LI><A HREF="#psqlnotes">PSQL Notes</A>
+
+<LI><A HREF="#version">Display Version</A>
+
+<LI><A HREF="#setupPgadmin">Setup PgAdmin</A>
+
+<LI><A HREF="#loginRemote">Log in to a remote Postgres database</A>
+
+<LI><A HREF="#dbpermission">User maintenance/permissions</A>
+
+<LI><A HREF="#displaySchemas">Display All Schemas</A>
+
+<LI><A HREF="#displayTable">Display table structure</A>
+
+<LI><A HREF="#displayStoredProcs">Display Functions/Stored Procedures</A>
+
+<LI><A HREF="#displayFunctionSoure">Display Function Source</A>
+
+<LI><A HREF="#logupdates">SET Log trigger</A>
+
+<LI><A HREF="#psqlCopy">Backup/Restore a table with COPY</A>
+
+<LI><A HREF="#logFileLoc">Show Postgresql log file location</A>
+
+<LI><A HREF="#displayView">Display View details</A>
+
+<pre>
+
+
+<A NAME="psqlnotes"></A>
+<FONT COLOR="#0000FF"><b><I>PSQL Notes</I></b></FONT>
+Welcome to psql 8.0.14, the PostgreSQL interactive terminal.
+
+Type:  \copyright for distribution terms
+       \h for help with SQL commands
+       \? for help with psql commands
+       \g or terminate with semicolon to execute query
+       \q to quit
+
+<HR>
+<A NAME="version"></A>
+<FONT COLOR="#0000FF"><b><I>Display Postgres version</I></b></FONT>
+    
+    -bash-4.2$ <b><i>postgres -V</i></b>
+    postgres (PostgreSQL) 9.2.23
+    -bash-4.2$
+
+<HR>
+<A NAME="Display hostname and internet port"></A>
+<FONT COLOR="#0000FF"><b><I>Display hostname and internet port</I></b></FONT>
+    
+    csctoss=# SELECT CURRENT_USER, :'HOST', inet_server_port();
+     current_user  |           ?column?           | inet_server_port 
+    ---------------+------------------------------+------------------
+     csctoss_owner | <FONT COLOR="#009999"><b>denoss06.contournetworks.net</b></FONT> |             5450
+    (1 row)
+
+<HR>
+<A NAME="setupPgadmin"></A>
+<FONT COLOR="#0000FF"><b><I>Setup pgAdmin</I></b></FONT>
+
+<table border="border" width = 600>
+  <tr align="Left">
+    <th width="34%">Database</th>
+    <th width="33%">User Name</th>
+    <th width="33%">Pwd</th>
+  </tr>
+  <tr align="Left">
+    <td><b>csctoss</b></td>
+    <td>csctoss_owner</td>
+    <td>owner</td>
+  </tr>
+  <tr align="Left">
+    <td><b>csctlog</b></td>
+    <td>csctlog_owner</td>
+    <td>owner</td>
+  </tr>
+</table>
+
+<HR>
+<A NAME="loginRemote"></A>
+<FONT COLOR="#0000FF"><b><I>Log in to remote Postgres database (i.e., <b>atlrad33</b>).</I></b></FONT>
+
+    <b>psql -h atlrad33 -p 5450 -U slony -d radiusdb</b>
+
+  This command will log in to host "<b>atlrad33.contournetworks.net</b>" using port <b>5450</b>.  
+  The database is <b>radiusdb</b> and the user is <b>slony</b>.
+
+    <b>PGPASSWORD=owner psql -h denoss01.contournetworks.net -p 5450 -d csctoss -U csctoss_owner</b>
+
+<A NAME="displaySchemas"></A>
+<HR>
+<A HREF="#FormTop">Top of Form</A> 
+<FONT COLOR="#0000FF"><b><I>Display list of all schemas in database</I></b></FONT>
+
+    select schema_name
+    from information_schema.schemata
+
+<FONT COLOR="#0000FF"><b><I>Display all Databases</I></b></FONT>
+
+    <b>\l</b>
+
+  crewfs=# \l
+                                            List of databases
+           Name         |     Owner      | Encoding |   Collate   |    Ctype    |   Access privileges   
+  ----------------------+----------------+----------+-------------+-------------+-----------------------
+   android              | portal_owner   | UTF8     | C           | C           | 
+   ccare                | ccare_owner    | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+   ccare2               | ccare2_owner   | UTF8     | C           | C           | 
+   cnos2                | cnos_owner     | UTF8     | C           | C           | 
+   cnoslocaldb          | postgres       | UTF8     | C           | C           | 
+   contourportal        | contour_owner  | UTF8     | C           | C           | 
+   contourportalstaging | contour_owner  | UTF8     | C           | C           | 
+   corydb               | cory_owner     | UTF8     | C           | C           | 
+   crewfs               | crewfs_owner   | UTF8     | C           | C           | 
+   crewfs_20151130      | crewfs_owner   | UTF8     | C           | C           | 
+   crewfs_conn          | crewfs_owner   | UTF8     | C           | C           | 
+   crewfs_refresh       | postgres       | UTF8     | C           | C           | 
+   crewfs_script        | crewfs_owner   | UTF8     | C           | C           | 
+   crewfs_symfony       | contour_owner  | UTF8     | C           | C           | 
+   csctoss              | postgres       | UTF8     | C           | C           | 
+   custdb               | custdb_owner   | UTF8     | C           | C           | 
+   disportal            | dis_owner      | UTF8     | C           | C           | 
+   dvdrental            | crewfs_owner   | UTF8     | C           | C           | 
+   easo                 | easo           | UTF8     | C           | C           | 
+   gcdrtest             | crewfs_owner   | UTF8     | C           | C           | 
+   gokaido_copy         | ccare2_owner   | UTF8     | C           | C           | 
+   invoice              | invoice_owner  | UTF8     | C           | C           | 
+   kiwamoto             | kiwamoto       | UTF8     | C           | C           | 
+   opentaps             | opentaps       | UTF8     | C           | C           | 
+   portal               | portal_owner   | UTF8     | C           | C           | 
+   postgres             | postgres       | UTF8     | C           | C           | 
+   radiusdb             | radiusdb_owner | UTF8     | C           | C           | 
+   secured              | secured_owner  | UTF8     | C           | C           | 
+   shakespeare          | crewfs_owner   | UTF8     | C           | C           | 
+   template0            | postgres       | UTF8     | C           | C           | =c/postgres          +
+                        |                |          |             |             | postgres=CTc/postgres
+   template1            | postgres       | UTF8     | C           | C           | postgres=CTc/postgres+
+                        |                |          |             |             | =c/postgres
+   test                 | contour_owner  | UTF8     | C           | C           | 
+   yshibuya             | yshibuya       | UTF8     | C           | C           | 
+  (33 rows)
+
+<FONT COLOR="#0000FF"><b><I>Display all Users/Roles</I></b></FONT>
+
+crewfs=# \du
+                                List of roles
+    Role name    |                   Attributes                   | Member of 
+-----------------+------------------------------------------------+-----------
+ appconfig_owner | Create DB                                      | {}
+ ccare2_owner    | Create DB                                      | {}
+ ccare2_reader   |                                                | {}
+ ccare_owner     | Create DB                                      | {}
+ ccare_reader    |                                                | {}
+ cnos_owner      |                                                | {}
+ contour_owner   | Superuser, Create role, Create DB             +| {}
+                 | Password valid until infinity                  | 
+ cory_owner      | Create role, Create DB, Replication           +| {}
+                 | Password valid until infinity                  | 
+ crewfs_owner    | Create DB                                      | {}
+ crewfs_reader   |                                                | {}
+ custdb_owner    | Create DB                                     +| {}
+                 | Password valid until infinity                  | 
+ dis_owner       | Superuser, Create role, Create DB, Replication+| {}
+                 | Password valid until infinity                  | 
+ easo            |                                                | {}
+ invoice_owner   |                                                | {}
+ kiwamoto        |                                                | {}
+ opentaps        |                                                | {}
+ portal_owner    | Superuser, Create DB                          +| {}
+                 | Password valid until infinity                  | 
+ portal_reader   |                                                | {}
+ portal_web      |                                                | {}
+ postgres        | Superuser, Create role, Create DB, Replication | {}
+ radiusdb_owner  | Create DB                                      | {}
+ radiusdb_reader |                                                | {}
+ radiusdb_repl   | Superuser                                      | {}
+ radiusdb_test   |                                                | {}
+ schdchk_reader  |                                                | {}
+ secured_owner   |                                                | {}
+ slony           | Superuser                                      | {}
+ yshibuya        |                                                | {}
+
+<FONT COLOR="#0000FF"><b><I>Can also use the following query</I></b></FONT>
+
+csctoss=#
+SELECT u.usename AS "User name"
+      ,u.usesysid AS "User ID"
+      ,CASE WHEN u.usesuper AND u.usecreatedb 
+                THEN CAST('superuser, create database' AS pg_catalog.text)
+            WHEN u.usesuper THEN CAST('superuser' AS pg_catalog.text)
+            WHEN u.usecreatedb THEN CAST('create database' AS pg_catalog.text)
+            ELSE CAST('' AS pg_catalog.text)
+       END AS "Attributes"
+FROM pg_catalog.pg_user u
+ORDER BY 1;
+
+    User name     | User ID |         Attributes         
+------------------+---------+----------------------------
+ alert_writer     |     104 | 
+ carrier_owner    |     108 | 
+ csctoss_owner    |     100 | superuser, create database
+ csctoss_reader   |     102 | 
+ csctoss_test     |     101 | 
+ csctoss_writer   |     110 | 
+ get_limit_reader |     106 | 
+ invoice_owner    |     109 | 
+ password_reset   |     111 | 
+ postgres         |       1 | superuser, create database
+ radius_writer    |     103 | 
+ rt_user          |     107 | 
+ slony            |     105 | superuser
+(13 rows)
+
+
+<HR>
+<A NAME="dbpermission"></A>
+<A HREF="#FormTop">Top of Form</A> 
+
+<FONT COLOR="#0000FF"><b><I>CREATE USER -- define a new database role</I></b></FONT>
+  
+  Synopsis
+
+  CREATE USER name [ [ WITH ] option [ ... ] ]
+
+  where option can be:
+      
+        SUPERUSER | NOSUPERUSER
+      | CREATEDB | NOCREATEDB
+      | CREATEROLE | NOCREATEROLE
+      | CREATEUSER | NOCREATEUSER
+      | INHERIT | NOINHERIT
+      | LOGIN | NOLOGIN
+      | CONNECTION LIMIT connlimit
+      | [ ENCRYPTED | UNENCRYPTED ] PASSWORD 'password'
+      | VALID UNTIL 'timestamp' 
+      | IN ROLE rolename [, ...]
+      | IN GROUP rolename [, ...]
+      | ROLE rolename [, ...]
+      | ADMIN rolename [, ...]
+      | USER rolename [, ...]
+      | SYSID uid 
+
+  Description
+
+  CREATE USER is now an alias for CREATE ROLE, which see for more information. The only 
+  difference is that when the command is spelled CREATE USER, LOGIN is assumed by default, 
+  whereas NOLOGIN is assumed when the command is spelled CREATE ROLE.
+
+  Compatibility
+
+  The CREATE USER statement is a PostgreSQL extension. The SQL standard leaves the definition of users to the implementation.
+
+<FONT COLOR="#0000FF"><b><I>Grant table permissions</I></b></FONT>
+
+  -- Grant access to password_reset user
+  GRANT SELECT,UPDATE,DELETE ON csctoss.equipment_credential TO password_reset;
+  GRANT SELECT               ON csctoss.equipment            TO password_reset;
+  GRANT SELECT               ON csctoss.unique_identifier    TO password_reset;
+  GRANT SELECT               ON csctoss.line_equipment       TO password_reset;
+  GRANT SELECT               ON csctoss.line                 TO password_reset;
+  GRANT SELECT               ON csctoss.equipment_model      TO password_reset;
+  GRANT SELECT               ON csctoss.radreply             TO password_reset;
+
+  -- Grant access to the sequence used in the equipment_model
+  GRANT SELECT, UPDATE       ON 
+
+
+  Display access privileges for a specific user:
+
+  <b>  SELECT table_catalog, table_schema, table_name, privilege_type
+    FROM   information_schema.table_privileges 
+    WHERE  grantee = '&lt<i>user_logon</i>&gt'
+  </b>
+  To grant simple access to a table, enter the following:
+
+    <b>grant select on radreply to &lt<i>user_logon</i>&gt;</b>
+
+  To grant read/write:
+
+<A NAME="psqlCopy"></A>
+<HR>
+<A HREF="#FormTop">Top of Form</A> 
+<FONT COLOR="#0000FF"><b><I>Backup/Restore a table with COPY</I></b></FONT>
+
+crewfs=> \c cnos2
+You are now connected to database "cnos2" as user "crewfs_owner".
+
+\c contourportal
+set search_path to public;
+SET
+cnos2=> \d
+                List of relations
+ Schema |      Name       |   Type   |   Owner    
+--------+-----------------+----------+------------
+ public | apps            | table    | cnos_owner
+ public | roles           | table    | cnos_owner
+ public | roles_apps      | table    | cnos_owner
+ public | roles_id_seq    | sequence | cnos_owner
+ public | sec_apps        | table    | cnos_owner
+ public | sec_logged      | table    | cnos_owner
+ public | soc_list        | table    | cnos_owner
+ public | soc_list_id_seq | sequence | cnos_owner
+(8 rows)
+
+\copy roles_apps to 'roles_apps.csv' csv HEADER;
+
+\c contourportal
+set search_path to public;
+\copy sec_apps to 'sec_apps.csv' csv HEADER;
+
+--
+
+cnos2=# truncate table roles_apps;
+TRUNCATE TABLE
+cnos2=# truncate table sec_apps;
+TRUNCATE TABLE
+cnos2=# copy sec_apps from '/var/lib/pgsql/backups/sec_apps.csv' CSV HEADER;
+COPY 56
+cnos2=# copy roles_apps from '/var/lib/pgsql/backups/roles_apps.csv' CSV HEADER;
+COPY 165
+
+<HR>
+<A NAME="displayTable"></A>
+<A HREF="#FormTop">Top of Form</A> 
+
+<FONT COLOR="#0000FF"><b><I>Display table structure</I></b></FONT>
+Best display is to do the following:  <b>\d &lttable name&gt</b>
+
+# \d+ unique_identifier
+                      Table "csctoss.unique_identifier"
+         Column         |  Type   |              Modifiers
+------------------------+---------+--------------------------------------
+ equipment_id           | integer | not null
+ unique_identifier_type | text    | not null
+ value                  | text    | not null
+ notes                  | text    |
+ date_created           | date    | not null default ('now'::text)::date
+ date_modified          | date    |
+Indexes:
+    "unique_identifier_pkey" PRIMARY KEY, btree (equipment_id, unique_identifier_type)
+    "unique_identifier_type_value_uk" UNIQUE, btree (unique_identifier_type, value)
+    "unique_identifier_value_idx" btree (value)
+Foreign-key constraints:
+    "unique_identifier_unique_identifier_type_fk" FOREIGN KEY (unique_identifier_type) REFERENCES unique_identifier_type(unique_identifier_type)
+    "unique_identifier_equipment_id_fk" FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)
+Triggers:
+    unique_identifier_changelog BEFORE INSERT OR DELETE OR UPDATE ON unique_identifier FOR EACH ROW EXECUTE PROCEDURE public.change_log('change_log', ',')
+
+#
+
+<A NAME="displayStoredProcs"></A>
+<HR>
+<A HREF="#FormTop">Top of Form</A> 
+<FONT COLOR="#0000FF"><b><I>Display list of all stored procedures</I></b></FONT>
+  SELECT  p.proname
+  FROM    pg_catalog.pg_namespace n
+  JOIN    pg_catalog.pg_proc p
+  ON      p.pronamespace = n.oid
+  WHERE   n.nspname = 'public';
+
+<A NAME="logFileLoc"></A>
+<HR>
+<A HREF="#FormTop">Top of Form</A> 
+<FONT COLOR="#0000FF"><b><I>Show Postgresql log file location</I></b></FONT>
+
+  Inside <b><i>psql</i></b>, enter the following command:
+  <FONT COLOR="#0000FF"><i>
+  jbilling=# show log_directory;
+             log_directory           
+  -----------------------------------
+   /opt/postgresql-8.4.5/data/pg_log
+  (1 row)
+  </i></FONT>
+  For the main databases, the locations are as follows:
+
+  <table border="border" width = 800>
+    <tr align="Left">
+      <th width="25%">Host Server</th>
+      <th width="75%">Log file location</th>
+    </tr>
+    <tr align="Left">
+      <td>testoss01</td>
+      <td>/home/postgres/csctoss_logs</td>
+    </tr>
+    <tr align="Left">
+      <td>denoss01</td>
+      <td>/pgdata/pg_8014/csctoss_logs</td>
+    </tr>
+    <tr align="Left">
+      <td>denjbi02</td>
+      <td>/opt/postgresql-8.4.5/data/pg_log</td>
+    </tr>
+  </table>
+  Location is also defined in the <b>postgresql.conf</b> file.
+
+<HR>
+
+<A HREF="#FormTop">Top of Form</A> 
+<A NAME="displayView"></A>
+<FONT COLOR="#0000FF"><b><I>Display source for a view</I></b></FONT>
+
+    <b>\d+ &lt<i>view name</i>&gt</b>
+
+<HR>
+
+<A HREF="#FormTop">Top of Form</A> 
+<FONT COLOR="#0000FF"><b><I>Set timezone to MST</I></b></FONT>
+Timezone default is 'UTC'.  To change to Mountain Standard Time:
+
+  <b># SET TimeZone TO 'MST7MDT';
+  SET
+  # SELECT CURRENT_TIMESTAMP;
+            timestamptz
+  -------------------------------
+   2017-10-26 14:37:26.779569-06
+  (1 row)
+
+  csctoss=# </b>
+
+
+<A HREF="#FormTop">Top of Form</A> 
+<FONT COLOR="#0000FF"><b><I>Function for dblink</I></b></FONT>
+
+Use the following function when linking to remote databases
+
+  <b># select * from fetch_csctlog_conn();
+  -[ RECORD 1 ]------+---------------------------------------------------------------------------------
+  fetch_csctlog_conn | hostaddr=192.168.144.57 port=5450 dbname=csctlog ser=csctlog_repl password=NULL
+  #</b>
+
+This function is in the '<b>Public</b>' library.  Make sure it is in your search path ('SHOW search_path;')
+
+  <b># SET search_path TO csctoss,public;</b>
+  SET
+  # SHOW search_path;
+     search_path
+  -----------------
+  csctoss, public
+  (1 row)
+
+<FONT COLOR="#0000FF"><b><I>Copy commands for Postgresql V3.0</I></b></FONT>
+
+  <FONT COLOR="#009999"><b><I>Copy from a text file to a table</I></b></FONT>
+
+    psql -c "\copy temp_static_ip_addr from 'data/static_ip_data.txt'"
+
+  <b>OR (from inside psql)</b>
+
+    COPY temp_mac_addr_correct(equip_id,serial_no,mac_addr) FROM '/home/postgres/sql/macOfSOUP.csv' CSV;
+
+  <FONT COLOR="#009999"><b><I>Write to a CSV output file from a database table with a query</I></b></FONT>
+
+    psql -P format=unaligned -P tuples_only -P fieldsep=\, -c "SELECT * FROM static_ip_report()" > /tmp/ATMWORLD_static_ip_rpt.csv
+
+  <FONT COLOR="#009999"><b><I>Write to a CSV output file from a database table with an sql file</I></b></FONT>
+
+    psql -P format=unaligned -P tuples_only -P fieldsep=\, -f tmp/username_mismatch.sql > tmp/radius_username_mismatch.csv
+
+<A NAME="logupdates"></A>
+<HR>
+<A HREF="#FormTop">Top of Form</A> 
+
+<FONT COLOR="#0000FF"><b><I>Set the UPDATE logging triggder</I></b></FONT>
+<i>There is a trigger that prevents add, change, or delete of data; all updates must be 
+logged to determine which user made the update.  Only those in the staff table can update.  
+When updating, perform the following steps:
+</i>
+
+  <b>csctoss=> select public.set_change_log_staff_id(3);</b>
+     set_change_log_staff_id
+  -------------------------
+                        -1
+  (1 row)
+
+The <i><b>user id</b></i> can be set to 'postgres' or can be an integer like '3'.
+
+<A HREF="#FormTop">Top of Form</A> 
+
+<FONT COLOR="#0000FF"><b><I>Get the execution time of a Postgres query</I></b></FONT>
+
+  The function <b>\timing</b> toggles off/on the timing function.  When it is on, each
+  time a query is executed, the time (in milliseconds) is displayed.
+    <i>
+    csctoss=# <b>\timing</b>
+    Timing is on.
+    csctlog=> select acctsessionid
+          ,framedipaddress
+          ,acctstarttime
+          ,class
+          ,count(*) 
+      from master_radacct_201802
+     where date(acctstarttime) = '2018-02-03'
+     group by acctsessionid, framedipaddress, acctstarttime, class
+    having count(*) > 1 
+     order by acctsessionid;
+      acctsessionid   | framedipaddress |     acctstarttime      | class | count 
+    ------------------+-----------------+------------------------+-------+-------
+     0DFC6B39         | 10.81.0.228     | 2018-02-03 00:05:07+00 | 38732 |     2
+     2B6F8474         | 10.81.0.228     | 2018-02-03 17:04:06+00 | 38732 |     2
+     3E8C8013100431DE | 10.68.2.16      | 2018-02-03 21:14:45+00 | 45388 |     2
+     3E8C8013429F61AE | 10.68.2.7       | 2018-02-03 05:42:15+00 | 45402 |     2
+     62FBEC14         | 10.81.0.228     | 2018-02-03 23:05:20+00 | 38732 |     2
+     68199934         | 10.81.0.228     | 2018-02-03 21:42:34+00 | 38732 |     2
+    (6 rows)
+
+    <b>Time: 231.235 ms</b>
+    csctlog=>
+  </i>
+<FONT COLOR="#0000FF"><b><I>Create the function test_function()</I></b></FONT>
+
+    -- Function: test_function()
+
+    -- DROP FUNCTION test_function();
+
+    CREATE OR REPLACE FUNCTION test_function()
+      RETURNS text AS
+    $BODY$
+    DECLARE
+      var_conn_string    text ;
+    BEGIN
+      SELECT d.name INTO var_conn_string
+        FROM line_equipment a,
+             unique_identifier b,
+             line c,
+             billing_entity d
+       WHERE b.value = '7AIAAC008440'
+         AND b.equipment_id = a.equipment_id
+         AND c.line_id = a.line_id
+         AND d.billing_entity_id = c.billing_entity_id;
+      RETURN COALESCE(var_conn_string,'ERROR retrieving connection information for CSCTOSS.') ;
+    END ;
+    $BODY$
+      LANGUAGE plpgsql STABLE SECURITY DEFINER;
+    ALTER FUNCTION test_function()
+      OWNER TO postgres;
+    GRANT EXECUTE ON FUNCTION test_function() TO public;
+    GRANT EXECUTE ON FUNCTION test_function() TO postgres;
+    COMMENT ON FUNCTION test_function() IS 'Returns a string of connection information for the csctoss database based on entry in system_parameter table.';
+
+
+<FONT COLOR="#0000FF"><b><I>Call function test_function() and display the result.</I></b></FONT>
+
+<I><B>csctoss=#</B></I> SELECT * from test_function('7AIAAC008440');
+
+     name     | order_id | line_id | equipment_id
+--------------+----------+---------+--------------
+ CSCT Atlanta |          |       3 |          521
+(1 row)
+
+
+
+<FONT COLOR="#0000FF"><b><I>Carrier Id's</I></b></FONT>
+
+     <b>carrier_def_id | carrier    </b>
+    ----------------+---------------
+                  1 | USCC
+                  2 | SPRINT
+                  3 | VZW
+                  4 | USCC_SPRINT
+                  5 | VZW_WHOLESALE
+                  6 | MULTIPLE
+                  7 | ROGERS
+                  8 | VODAFONE
+
+<HR>
+<A NAME="displayFunctionSoure"></A>
+<A HREF="#FormTop">Top of Form</A> 
+
+<FONT COLOR="#0000FF"><b><I>Display a function</I></b></FONT>
+
+  csctmon=> select prosrc from pg_proc where proname='plsh_pod';
+                                            prosrc                                          
+  ------------------------------------------------------------------------------------------
+                                                                                           +
+   #!/bin/bash                                                                             +
+                                                                                           +
+   source /home/postgres/.bash_profile                                                     +
+                                                                                           +
+   BASEDIR=/home/postgres/dba/logs                                                         +
+   LOGFILE=$BASEDIR/pod.`date +%Y%m%d`                                                     +
+   ERRFILE=$BASEDIR/pod.err.`date +%Y%m%d`                                                 +
+   INPFILE=$BASEDIR/pod.tmp                                                                +
+   PODFILE=$BASEDIR/pod.dat                                                                +
+                                                                                           +
+   # make sure parameter passed                                                            +
+   if [ $# != 1 ]; then                                                                    +
+     echo "POD string and connection parameters required. Halting execution." >> $ERRFILE  +
+     exit 1                                                                                +
+   fi                                                                                      +
+   echo $1 > $INPFILE                                                                      +
+                                                                                           +
+   # build the output file                                                                 +
+   echo "Acct-Session-Id=`cut -d ',' -f 1 $INPFILE`"           > $PODFILE                  +
+   echo "User-Name=`cut -d ',' -f 2 $INPFILE`"                >> $PODFILE                  +
+   echo "Framed-IP-Address=`cut -d ',' -f 3 $INPFILE`"        >> $PODFILE                  +
+                                                                                           +
+   # get the connection information                                                        +
+   LNS=`cut -d ',' -f 4 $INPFILE`                                                          +
+   PORT=`cut -d ',' -f 5 $INPFILE`                                                         +
+   PSWD=`cut -d ',' -f 6 $INPFILE`                                                         +
+                                                                                           +
+   # send the packet of disconnect                                                         +
+   echo "START  : `date +%Y%m%d%H%M%S`"                                         >> $LOGFILE+
+   echo "COMMAND: radclient -x -c 1 $LNS:$PORT -f $PODFILE disconnect $PSWD"    >> $LOGFILE+
+   cat $PODFILE                                                                 >> $LOGFILE+
+   radclient -x -c 1 $LNS:$PORT -f $PODFILE disconnect $PSWD                    >> $LOGFILE+
+   echo "--------------------end of pod report--------------------"             >> $LOGFILE+
+                                                                                           +
+   
+                                                                                           +
+   #!/bin/bash                                                                             +
+                                                                                           +
+   BASEDIR=/home/postgres/dba/logs                                                         +
+   LOGFILE=$BASEDIR/pod.`date +%Y%m%d`                                                     +
+   ERRFILE=$BASEDIR/pod.err.`date +%Y%m%d`                                                 +
+   TMPFILE=$BASEDIR/pod.tmp                                                                +
+   CONFILE=$BASEDIR/pod.con                                                                +
+   PODFILE=$BASEDIR/pod.dat                                                                +
+                                                                                           +
+   # make sure parameter passed                                                            +
+   if [ $# != 2 ]; then                                                                    +
+     echo "POD string and connection parameters required. Halting execution." >> $ERRFILE  +
+     exit 1                                                                                +
+   fi                                                                                      +
+   echo $1 > $TMPFILE                                                                      +
+   echo $2 > $CONFILE                                                                      +
+                                                                                           +
+   # build the output file                                                                 +
+   echo "Acct-Session-Id=`cut -d ',' -f 2 $TMPFILE`"           > $PODFILE                  +
+   echo "User-Name=`cut -d ',' -f 1 $TMPFILE`"                >> $PODFILE                  +
+   echo "Framed-IP-Address=`cut -d ',' -f 3 $TMPFILE`"        >> $PODFILE                  +
+                                                                                           +
+   # get the connection information                                                        +
+   LNS=`cut -d ',' -f 2 $CONFILE`                                                          +
+   PORT=`cut -d ',' -f 3 $CONFILE`                                                         +
+   PSWD=`cut -d ',' -f 4 $CONFILE`                                                         +
+                                                                                           +
+   # send the packet of disconnect                                                         +
+   echo "START  : `date +%Y%m%d%H%M%S`"                                         >> $LOGFILE+
+   echo "STRING : $1"                                                           >> $LOGFILE+
+   echo "COMMAND: radclient -x -c 1 $LNS:$PORT -f $PODFILE disconnect $PSWD"    >> $LOGFILE+
+   cat $PODFILE                                                                 >> $LOGFILE+
+   radclient -x -c 1 $LNS:$PORT -f $PODFILE disconnect $PSWD                               +
+   echo "--------------------end of pod report--------------------"             >> $LOGFILE+
+                                                                                           +
+   
+  (2 rows)
+
+</pre>
+</BODY>
+</HTML>
+ 
+

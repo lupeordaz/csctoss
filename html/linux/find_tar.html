@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>find cmd</TITLE>
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+ 
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Unix/Linux Find Utility</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+
+<FONT COLOR="#009999"><I>find Commands:</I></FONT>
+<pre>
+
+<table border="border" width = 1200>
+  <tr align="Left">
+    <th width="45%">Purpose</th>
+    <th width="55%">Command</th>
+  </tr>
+  <tr align="Left">
+    <td><FONT COLOR="#0000FF"><i>Search file by name</i></FONT></td>
+    <td>find . -name filename.txt</td>
+  </tr>
+  <tr align="Left">
+    <td><FONT COLOR="#0000FF"><i>Search file by type/extension</i></FONT></td>
+    <td>find . -name "*.txt"</td>
+  </tr>
+  <tr align="Left">
+    <td><FONT COLOR="#0000FF"><i>Search case insensitive</i></FONT></td>
+    <td>find -iname testfile1.txt</td>
+  </tr>
+  <tr align="Left">
+    <td><FONT COLOR="#0000FF"><i>Search files that don't match search pattern</i></FONT></td>
+    <td>find . -not -name "*.txt"</td>
+  </tr>
+  <tr align="Left">
+    <td><FONT COLOR="#0000FF"><i>Search for file but ignore "Permission denied" message</i></FONT></td>
+    <td>find . -name art  2>&1 | grep -v "Permission denied"</td>
+  </tr>
+  <tr align="Left">
+    <td><FONT COLOR="#0000FF"><i>Recursively look for files with a specific extension</i></FONT></td>
+    <td>find &lt<i>$directory</i>&gt -type f -name "*.in"</td>
+  </tr>
+</table>
+
+
+
+
+</BODY>
+</HTML>

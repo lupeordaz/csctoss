@@ -1,0 +1,30 @@
+packet_opf_disconnect log
+---
+
+BEG: 20180306223402
+ SUCCESS
+ SUCCESS
+ POD STRING: 0672AE1F,3124371403@cn01.sprintpcs.com,10.56.53.203,10.17.4.6,1739,CSCT80pod
+ POD STRING: 0672FB4F,3124373890@cn01.sprintpcs.com,10.56.81.154,10.17.4.6,1739,CSCT80pod
+ POD STRING: 02AA122D,3124377483@cn01.sprintpcs.com,10.48.202.44,10.16.4.6,1739,CSCT80pod
+ POD STRING: 0672C82B,3126711543@cn01.sprintpcs.com,10.56.82.3,10.17.4.6,1739,CSCT80pod
+ POD STRING: 02AA1270,3126711582@cn01.sprintpcs.com,10.56.58.161,10.16.4.6,1739,CSCT80pod
+ POD STRING: 02AA1275,3128546436@cn01.sprintpcs.com,10.56.4.217,10.16.4.6,1739,CSCT80pod
+ POD STRING: 00A108C4,6465448730@tsp17.sprintpcs.com,10.47.216.104,10.17.4.7,1739,CSCT80pod
+ SUCCESS
+END: 20180306223407
+
+plsh_pod log
+---
+
+START  : 20180306223407
+COMMAND: radclient -x -c 1 10.17.4.7:1739 -f /home/postgres/dba/logs/pod.dat disconnect CSCT80pod
+Acct-Session-Id=00A108C4
+User-Name=6465448730@tsp17.sprintpcs.com
+Framed-IP-Address=10.47.216.104
+Sending Disconnect-Request of id 252 to 10.17.4.7 port 1739
+	Acct-Session-Id = "00A108C4"
+	User-Name = "6465448730@tsp17.sprintpcs.com"
+	Framed-IP-Address = 10.47.216.104
+rad_recv: Disconnect-ACK packet from host 10.17.4.7 port 1739, id=252, length=20
+--------------------end of pod report--------------------

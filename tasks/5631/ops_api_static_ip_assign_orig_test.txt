@@ -1,0 +1,132 @@
+Testing original function to compare results with.
+
+Test 1:  - valid ip address is returned.
+
+Carrier:           USCC
+Groupname:         SERVICE-premier_atm_sea
+username:          4046158488@vzw3g.com
+line id:           45921
+billing entity id: 148
+
+Calling string:  select * from ops_api_static_ip_assign('USCC','SERVICE-premier_atm_sea','4046158488@vzw3g.com',45921,148);
+
+csctoss=# begin;
+BEGIN
+csctoss=# select * from ops_api_static_ip_assign('USCC','SERVICE-premier_atm_sea','4046158488@vzw3g.com',45921,148);
+NOTICE:  ops_api_static_ip_assign is called: parameters => [carrier=USCC][vrf=SERVICE-premier_atm_sea][username=4046158488@vzw3g.com][line_id=45921][billing_entity_id=148]
+NOTICE:  We found IP pool.
+NOTICE:  We found an available IP address in the IP pool. [IP=10.56.160.12]
+NOTICE:  Inserting Class attribute value into radreply table. [line_id=45921]
+NOTICE:  Inserted Class attribute value into radreply table. [line_id=45921]
+NOTICE:  Inserting Framed-IP-Address attribute value into radreply table. [IP=10.56.160.12]
+NOTICE:  Inserted Framed-IP-Address attribute value into radreply table. [IP=10.56.160.12]
+NOTICE:  Updating static_ip_pool table for [IP=10.56.160.12 / VRF=SERVICE-premier_atm_sea]
+ ops_api_static_ip_assign 
+--------------------------
+ 10.56.160.12
+(1 row)
+
+csctoss=# rollback;
+ROLLBACK
+
+RESULT:  var_static_ip returned containing valid static IP address:  10.56.160.12.  
+
+=====
+
+Test 2:  - Test error condition 'No avalible static IPs for ip block'.  This 
+           requires setting all the "is_assigned" flags to true for the groupname in
+           this test.
+
+Carrier:           USCC
+Groupname:         SERVICE-premier_atm_sea
+username:          4046158488@vzw3g.com
+line id:           45918
+billing entity id: 148
+
+Calling string:  select * from ops_api_static_ip_assign('USCC','SERVICE-premier_atm_sea','4046158488@vzw3g.com',45918,148);
+
+
+csctoss=# begin;
+BEGIN
+csctoss=# select public.set_change_log_staff_id(3);
+ set_change_log_staff_id 
+-------------------------
+                       3
+(1 row)
+
+csctoss=# UPDATE static_ip_pool set is_assigned = TRUE where groupname = 'SERVICE-premier_atm_sea';
+UPDATE 779
+csctoss=# select * from ops_api_static_ip_assign('USCC','SERVICE-premier_atm_sea','4046158488@vzw3g.com',45918,148);
+NOTICE:  ops_api_static_ip_assign is called: parameters => [carrier=USCC][vrf=SERVICE-premier_atm_sea][username=4046158488@vzw3g.com][line_id=45918][billing_entity_id=148]
+NOTICE:  We found IP pool.
+ERROR:  OSS: No avalible staic IPs for ip block selected
+csctoss=# rollback;
+ROLLBACK
+csctoss=# 
+
+
+RESULT:  var_static_ip returned containing correct error message.
+
+====
+
+Test 3:  test condition takes path where billing_entity_id is null
+
+Carrier:           USCC
+Groupname:         SERVICE-private_atm
+username:          3123883702@uscc.net
+line id:           45921
+billing entity id: 112
+
+Calling string:  select * from ops_api_static_ip_assign('USCC','SERVICE-private_atm','3123883702@uscc.net',45921,112);
+
+csctoss=# begin;
+BEGIN
+csctoss=# select public.set_change_log_staff_id(3);
+ set_change_log_staff_id 
+-------------------------
+                       3
+(1 row)
+
+csctoss=# select * from ops_api_static_ip_assign('USCC','SERVICE-private_atm','3123883702@uscc.net',45921,112);
+NOTICE:  ops_api_static_ip_assign is called: parameters => [carrier=USCC][vrf=SERVICE-private_atm][username=3123883702@uscc.net][line_id=45921][billing_entity_id=112]
+ ops_api_static_ip_assign 
+--------------------------
+ 10.49.0.20
+(1 row)
+
+csctoss=# rollback;
+ROLLBACK
+
+RESULT:  var_static_ip returned containing valid static IP address:  10.49.0.20
+
+====
+
+Test 4:  test condition takes path where billing_entity_id is null; error message is returned in var_static_ip.
+
+Carrier:           USCC
+Groupname:         SERVICE-private_atm
+username:          3123883702@uscc.net
+line id:           45921
+billing entity id: 112
+
+Calling string:  select * from ops_api_static_ip_assign('USCC','SERVICE-private_atm','3123883702@uscc.net',45921,112);
+
+ccsctoss=# begin;
+BEGIN
+csctoss=# select public.set_change_log_staff_id(3);
+ set_change_log_staff_id 
+-------------------------
+                       3
+(1 row)
+
+csctoss=# update static_ip_pool set is_assigned = true where static_ip = '10.49.0.20';
+UPDATE 1
+csctoss=# select * from ops_api_static_ip_assign('USCC','SERVICE-private_atm','3123883702@uscc.net',45921,112);
+NOTICE:  ops_api_static_ip_assign is called: parameters => [carrier=USCC][vrf=SERVICE-private_atm][username=3123883702@uscc.net][line_id=45921][billing_entity_id=112]
+ERROR:  OSS: No avalible staic ips for ip block selected
+csctoss=# rollback;
+ROLLBACK
+csctoss=# 
+
+RESULT:  var_static_ip returned containing correct error message.  The error messages are the same for 
+         both paths in the function.  

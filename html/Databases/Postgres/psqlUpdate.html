@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 //EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+<head>
+
+<title>PsqlUpdate</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="../../css/basic.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<div id="navigation">
+ 
+<h2>UPDATE using another table with <b>dblink</b></h2>
+ 
+<ul>
+	<li><a href="cssTutorialPage1.htm">Page One</a></li>
+ 
+ 
+ 
+	<li><a href="cssTutorialPage2.htm">Page Two</a></li>
+ 
+ 
+</ul>
+ 	
+</div>
+ 
+ 
+<div id="centerDoc">
+ 
+<h1>Psql Update function</h1>
+
+<pre>
+	csctoss=# BEGIN;
+	<b>BEGIN</b>
+	csctoss=# select public.set_change_log_staff_id(3);
+	 set_change_log_staff_id 
+	-------------------------
+	                       3
+	(1 row)
+	
+	csctoss=# UPDATE line
+	csctoss-#    SET notes = jbill.public_number
+	csctoss-#   FROM public.dblink((SELECT * FROM fetch_jbilling_conn()),
+	csctoss(#                                'SELECT pl.line_id AS line_id
+	csctoss'#                                       ,po.public_number AS so_number
+	csctoss'#                                   FROM prov_line pl
+	csctoss'#                                   JOIN purchase_order po ON (po.id = pl.order_id)
+	csctoss'#                                  WHERE 1 = 1
+	csctoss'#                                    AND pl.archived IS NULL')
+	csctoss-#                                 jbill (line_id int, public_number text)
+	csctoss-#  WHERE 1 = 1
+	csctoss-#    and line.line_id = jbill.line_id
+	csctoss-#    and line.notes &lt&gt jbill.public_number
+	csctoss-#    AND line.end_date is null;
+	<b>UPDATE 4040</b>
+	csctoss=# COMMIT;
+	<b>COMMIT</b>
+</pre>
+
+<p>Follow the instructions there and create your basic HTML page
+   ... and do it now!</p></div>
+        
+</body>
+
+</html>

@@ -1,0 +1,989 @@
+\l
+\dt
+\q
+\l
+who;
+drop database dvdrental;
+\q
+\l
+create database dvdrental;
+\q
+\l
+\c dvdrental
+\dt
+\q
+select * from pg_roles;
+k\x
+select * from pg_roles;
+select * from pg_roles;
+cls
+;
+\d+ pg_roles
+\l
+\x
+cls
+;
+\l
+drop database dvdrental;
+\q
+create database dvdrental;
+\l
+\q
+\q
+\c dvdrental
+\dt
+select * from actor;
+\q
+psql
+;
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id,
+    email_address,
+    default_role,
+    current_status,
+    company_name,
+    start_date,
+FROM
+    crewfs.crew;
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id,
+    email_address,
+    default_role,
+    current_status,
+    company_name,
+    start_date
+FROM
+    crewfs.crew;
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id,
+    email_address,
+    default_role,
+    company_name,
+    start_date
+FROM
+    crewfs.crew;
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id as area_id,
+    email_address,
+    default_role,
+    company_name,
+    start_date
+FROM
+    crewfs.crew;
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id as area_id,
+    email_address as Email,
+    default_role as Role,
+    company_name as Company,
+    start_date
+FROM
+    crewfs.crew;
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id as area_id,
+    email_address as Email,
+    default_role as Role,
+    company_name as Company,
+    start_date as Date
+FROM
+    crewfs.crew;
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id as area_id,
+    email_address as Email,
+    default_role as Role,
+    company_name as Company,
+    start_date as Date
+FROM
+    crewfs.crew;
+\e
+SELECT
+    crew_id as Id, 
+    username as User,
+    given_name as Name,
+    family_name as Family,
+    functional_area_id as area_id,
+    email_address as Email,
+    default_role as Role,
+    company_name as Company,
+    start_date as Date
+FROM
+    crewfs.crew;
+\e
+SELECT
+    crew_id as Id, 
+    username as User,
+    given_name as Name,
+    family_name as Family,
+    functional_area_id as area_id,
+    email_address as Email,
+    default_role as Role,
+    company_name as Company,
+    start_date as Date
+FROM
+    crewfs.crew;
+\d+ crew
+\l
+\q
+\l
+\dt
+\q
+\dt
+\?
+\q
+SELECT pg_reload_conf();
+\q
+\du
+\q
+\dt
+\q
+\q
+\dt
+\dn+
+\d
+\q
+\dt
+drop database dvdrental;
+\q
+\c dvdrental
+\dt
+\q
+\d
+drop database dvdrental;
+\l
+\q
+create database dvdrental;
+\dt
+\l
+\q
+\q
+\dt
+\l
+\q
+\dt
+select count(*) from actor;
+\du+
+\l
+\dt
+\q
+select * from dvdrental.actor;
+\d dvdrental
+\l
+select * from public.dvdrental.actor;
+select * from dvdrental.actor;
+\d dvdrental
+\q
+select * from actor;
+\q
+\l
+\du
+SHOW search_path;
+\q
+SHOW search_path;
+SET search_path to myschema,public;
+SHOW search_path;
+SET search_path to crewfs,public;
+SHOW search_path;
+select * from dvdrental.actor;
+select * from actor;
+\dt
+  \l
+\q
+SHOW search_path;
+\q
+\l
+\du
+\dt
+\c dvdrental
+\dt
+who
+;
+\q
+\c dvdrental
+\dt
+\du
+\dt
+\q
+select * from pg_stat_activity where current_query not like '<%';
+select * from pg_user;
+select useconfig from pg_user;
+select useconfig from pg_user where username = 'crewfs_owner';
+select useconfig from pg_user where usename = 'crewfs_owner';
+show search_path;
+set search_path = '$user', 'public';
+show search_path;
+select * from dvdrental.actor;
+\l
+\c dvdrental
+\dt
+\q
+\c dvdrental
+\dt
+\du
+show search_path;
+\q
+show search_path;
+\c dvdrental
+select * from actor;
+\dt
+\q
+\dt
+select * from rental;
+select * from actor;
+select * from dvdrental.actor;
+\q
+select * from actor;
+\dt
+select * from fil;
+select * from film;
+select film_id, titl from film;
+select film_id, title from film;
+\dt
+selet film_category;
+select * from film_category;
+cls
+;
+\dt
+\d film
+\e
+select fi.title
+      ,fi.release_year
+  from film_id fi;
+\e
+select fi.title
+      ,fi.release_year
+  from film fi;
+\e
+select fi.title
+      ,fi.release_year
+  from film
+  join film_actor fa on fi.film_id = fa.film_id
+  join actory a on a.actor_id = fa.actor_id;
+\e
+select fi.title
+      ,fi.release_year
+  from film fi
+  join film_actor fa on fi.film_id = fa.film_id
+  join actory a on a.actor_id = fa.actor_id;
+\e
+select fi.title
+      ,fi.release_year
+  from film fi
+  join film_actor fa on fi.film_id = fa.film_id
+  join actor a on a.actor_id = fa.actor_id;
+\e
+select fi.title
+      ,fi.release_year
+      ,a.last_name
+      ,a.first_name
+  from film fi
+  join film_actor fa on fi.film_id = fa.film_id
+  join actor a on a.actor_id = fa.actor_id;
+\q
+select fi.title
+      ,fi.release_year
+      ,a.last_name
+      ,a.first_name
+  from film fi
+  join film_actor fa on fi.film_id = fa.film_id
+  join actor a on a.actor_id = fa.actor_id;
+\e
+select fi.title
+      ,fi.release_year
+      ,fi.film_id
+      ,a.last_name
+      ,a.first_name
+  from film fi
+  join film_actor fa on fi.film_id = fa.film_id
+  join actor a on a.actor_id = fa.actor_id;
+\e
+select fi.title
+      ,fi.release_year
+      ,fi.film_id
+      ,a.last_name
+      ,a.first_name
+  from film fi
+  join film_actor fa on fi.film_id = fa.film_id
+  join actor a on a.actor_id = fa.actor_id
+ where fi.film_id = 23;
+\e
+select fi.title
+      ,fi.release_year
+      ,fi.film_id
+      ,a.last_name
+      ,a.first_name
+  from film fi
+  join film_actor fa on fi.film_id = fa.film_id
+  join actor a on a.actor_id = fa.actor_id
+ where fi.film_id = 31;
+\e
+select fi.title
+      ,fi.release_year
+      ,fi.film_id
+      ,a.last_name
+      ,a.first_name
+  from film fi
+  join film_actor fa on fi.film_id = fa.film_id
+  join actor a on a.actor_id = fa.actor_id
+ where fi.film_id = 485;
+\e
+select fi.title
+      ,fi.release_year
+      ,fi.film_id
+      ,a.last_name
+      ,a.first_name
+  from film fi
+  join film_actor fa on fi.film_id = fa.film_id
+  join actor a on a.actor_id = fa.actor_id
+ where fi.film_id = 485;
+select * from film_category;
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = cat.film_id
+  join category cat on fc.category_id = cat.category_id
+  join actor a on a.film_id = fi.film_id
+ where a.id = 485;
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = cat.film_id
+  join category cat on fc.category_id = cat.category_id
+  join actor a on a.film_id = fi.film_id
+ where a.id = 485;
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join actor a on a.film_id = fi.film_id
+ where a.id = 485;
+\q
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join actor a on a.film_id = fi.film_id
+ where a.id = 485;
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.id = 485;
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 485;
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 485;
+select id, first_name, last_name from actor order by id;
+select actor_id, first_name, last_name from actor order by actor_id;
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 485;
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 39;
+\q
+\c dvdrental
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 485;
+\l
+\dt
+\q
+\c dvdrental
+\dt
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from public.film fi
+  join public.film_category fc on fi.film_id = fc.film_id
+  join public.category cat on fc.category_id = cat.category_id
+  join public.film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 485;
+\l
+\q
+\dt
+\q
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 485;
+\dt
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 485;
+select * from film_actor;
+select * from actor;
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 485;select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+select * from actor;
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 485;
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 195;
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 195;
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 195;
+\q
+\dt
+select * from crew_activity;
+q
+\dt
+select * from ad_group;
+;
+\e
+
+select * from ad_group;
+\dt
+\d
+\c dvdrental
+\dt
+\c crewfs
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id,
+    email_address,
+    default_role,
+    current_status,
+    company_name,
+    start_date
+FROM
+    crewfs.crew;
+\dt
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id,
+    email_address,
+    default_role,
+    current_status,
+    company_name,
+    start_date
+FROM
+    crewfs.crew;
+\q
+\l
+\q
+\dt
+\d+ function_group
+\d+ project
+select * from project;
+\d+ project
+select project_id, project_name, project_status, capitalizable_flag, business_function_id, start_date, completion_date
+  from project;
+select count(*) from project;
+select project_id, project_name, project_status, capitalizable_flag, business_function_id, start_date, completion_date
+  from project;
+\c conn_postgres
+\l
+\dt
+select * from crew_assignable_matrix;
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id,
+    email_address,
+    default_role,
+    current_status,
+    company_name,
+    start_date
+FROM
+    crewfs.crew;
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id,
+    email_address,
+    company_name,
+    start_date
+FROM
+    crewfs.crew
+WHERE current_status = 'ACTIVE';
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id,
+    email_address,
+    company_name,
+    start_date
+FROM
+    crewfs.crew
+WHERE current_status = 'ACTIVE';
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id,
+    email_address,
+    company_name,
+    start_date
+FROM
+    crewfs.crew
+WHERE current_status = 'ACTIVE'
+  and company_name = 'CCT';
+\e
+SELECT
+    crew_id,
+    username,
+    given_name,
+    family_name,
+    functional_area_id,
+    email_address,
+    company_name,
+    start_date
+FROM
+    crewfs.crew
+WHERE current_status = 'ACTIVE'
+  and company_name = 'CCT';
+\q
+\l
+\dt
+\x
+select * from crew
+;
+select crew_id, username, given_name, family_name, email_address, default_role, current_status, company_name
+  from crew
+ where company_name = 'CSCT';
+\x
+select crew_id, username, given_name, family_name, email_address, default_role, current_status, company_name
+  from crew
+ where company_name = 'CSCT';
+select crew_id, username, given_name, family_name, email_address, default_role, current_status, company_name
+  from crew
+ where company_name = 'CCT';
+select crew_id, username, given_name, family_name, email_address, default_role, current_status, company_name
+  from crew
+ where company_name = 'CCT' 
+  and current_status = 'ACTIVE';
+\q
+select current_user;
+\l
+select current_database;
+select current_database();
+\q
+\d
+\t
+\d
+\d+
+select *;
+\l
+select current_user;
+\d
+\d+
+\q
+\d
+\l
+select current_user;
+\dt dvdrental
+\dt
+\d
+\d+ dvdrental.actor
+\q
+\q
+select current_user;
+\d
+\d+
+\d
+\l
+\c dvdrental
+\d
+\d+
+\q
+\c dvdrental
+\e
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 195;
+\d
+\d
+\q
+whoami
+;
+select current_user;
+\d
+\l
+SELECT datname FROM pg_database
+WHERE datistemplate = false;
+SELECT table_schema,table_name
+FROM information_schema.tables
+ORDER BY table_schema,table_name;
+\du
+\q
+\d
+SELECT datname FROM pg_database
+WHERE datistemplate = false;
+\e
+SELECT table_schema
+      ,table_name
+FROM information_schema.tables
+ORDER BY table_schema,table_name;
+\e
+SELECT table_schema
+      ,table_name
+  FROM information_schema.tables
+ WHERE table_schema = 'DVDRENTAL'
+ ORDER BY table_schema,table_name;
+\e
+SELECT table_schema
+      ,table_name
+  FROM information_schema.tables
+ WHERE table_schema = 'dvdrental'
+ ORDER BY table_schema,table_name;
+\q
+\dn
+\dt
+\q
+\d
+\l
+\c dvdrental
+\d
+\q
+\q
+\q
+\d
+\q
+\q
+\l
+\q
+\l
+\q
+-d dvdrental
+;
+\c dvdrental
+\d
+\l
+\d
+\?
+\d
+\q
+ALTER DATABASE dvdrental OWNER TO postgres;
+\q
+ALTER DATABASE dvdrental OWNER TO postgres;
+\d
+\l
+\q
+\q
+\q
+\q
+\d
+\q
+\l
+\d dvdrental
+\q
+\d
+select * from actor;
+\d
+\l
+\d
+select * from customer;
+select customer_id, store_id, first_name, last_name, email from customer order by 1;
+select customer_id, store_id, first_name, last_name, email from customer where store_id = 2;
+select distinct store_id from customer;
+select count(*) from customer where store_id = 1;
+select count(*) from customer where store_id = 2;
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 195;
+SELECT table_schema
+      ,table_name
+  FROM information_schema.tables
+ WHERE table_schema = 'dvdrental'
+ ORDER BY table_schema,table_name;
+SELECT table_schema
+      ,table_name
+  FROM information_schema.tables
+ WHERE table_schema = 'dvdrental'
+ ORDER BY table_schema,table_name;
+SELECT table_schema
+      ,table_name
+FROM information_schema.tables
+ORDER BY table_schema,table_name;
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 195;
+SELECT table_schema
+      ,table_name
+  FROM information_schema.tables
+ WHERE table_name = 'dvdrental'
+ ORDER BY table_schema,table_name;
+select fi.title
+      ,fi.release_year
+      ,cat.name
+  from film fi
+  join film_category fc on fi.film_id = fc.film_id
+  join category cat on fc.category_id = cat.category_id
+  join film_actor fa on fa.film_id = fi.film_id
+ where fa.film_id = fi.film_id
+   and fa.actor_id = 195;
+\d
+\q
+\d
+show databases
+;
+\?
+\l
+\
+\q
+\l
+\?
+\c dvdrenatl
+\c dvdrental
+\d
+\q
+\q
+\c dvdrental
+\?
+\i dvdrental_dmp.sql 
+\d
+\q
+\d
+\l
+\q
+select current_user;
+select current_database
+;
+select current_database();
+\c dvdrental
+select current_user;
+select current_database();
+\i dvdrental_dmp.sql 
+\q
+\d roles_apps
+\c cnos2
+\d roles_apps
+\d
+\q
+\d cnos2
+\c cnos2
+\d
+\q
+\d
+\d+ roles_apps
+\q
+\d
+\c public
+\q
+\c public
+\dt public
+\dt public.*
+SELECT * FROM information_schema.tables 
+WHERE table_schema = 'public';
+\x
+SELECT * FROM information_schema.tables 
+WHERE table_schema = 'public';
+\q
+SELECT * FROM information_schema.tables 
+WHERE table_schema = 'public';
+set search_path = public;
+\d
+SELECT * FROM information_schema.tables 
+WHERE table_schema = 'public';
+\x
+\q
+\d
+\l
+\dn
+\c portal
+\dn
+set search_path to public;
+\d
+set search_path to portal;
+\d
+set search_path to contourportal;
+\d
+\q
+\d
+\dn
+set search_path to public;
+\dn
+\d
+select count(*) from roles_apps;
+\q
+\dn
+\d
+copy roles_apps to 'roles_apps.csv' csv HEADER;
+\copy roles_apps to 'roles_apps.csv' csv HEADER;
+\copy sec_apps to 'sec_apps.csv' csv HEADER;
+\w
+\q
+\copy sec_apps to 'sec_apps.csv' csv HEADER;
+\q
+\dn
+\d
+set search_path to public;
+\d
+\s gordaz.txt

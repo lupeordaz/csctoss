@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>task5631</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Implement better error message in ops_api_assign() DB function</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<pre>
+
+<FONT COLOR="#0000FF" size=6><b><I>Setup</I></b></FONT></SPAN>
+
+  <b><i>ops_api_assign</i></b> is the calling program and <b><i>ops_api_static_ip_assign</i></b>
+        is the function that must process the error messages.
+
+    <FONT COLOR="#009999"><I>Parameters for <b>ops_api_assign</b></I></FONT>
+      par_esn_hex
+      par_sales_order
+      par_billing_entity_id
+      par_groupname
+      par_static_ip_boolean
+
+    <FONT COLOR="#009999"><I>Proper testing requires:</I></FONT>
+
+      1.  Valid unique_identifier value with the type of 'ESN HEX'.
+      2.  Valid username
+      3.  Valid equipment_id
+
+    <FONT COLOR="#009999"><I>Test parameters for ops_api_assign_lo():</I></FONT>
+
+      par_esn_hex               A000001F54BFE1
+      par_sales_order           null
+      par_billing_entity_id     137
+      par_groupname             SERVICE-carolinaatm
+      par_static_ip_boolean     TRUE
+
+        var_equipment_id        
+        var_carrier             
+        var_mdn_min             
+        var_username            
+        var_serial_number       
+        var_billing_entity_address_id
+
+                                
+<FONT COLOR="#0000FF" size=6><b><I>Test Process</I></b></FONT></SPAN>
+
+  <FONT COLOR="#009999"><I>Test 1</I></FONT>
+
+    csctoss=# BEGIN;
+    BEGIN
+    csctoss=# select * from ops_api_assign_lo('A000001F54BFE1',null,137,'SERVICE-carolinaatm',TRUE);
+    NOTICE:  Sales Order: &ltNULL&gt
+    NOTICE:  ESN: A000001F54BFE1
+    NOTICE:  CARRIER: SPRINT
+    NOTICE:  MDN/MIN: 9172664953
+    NOTICE:  USERNAME: 9172664953@tsp18.sprintpcs.com USERGROUP: SERVICE-carolinaatm
+    NOTICE:  ops_api_static_ip_assign_lo is called: parameters => [carrier=SPRINT][vrf=SERVICE-carolinaatm][username=9172664953@tsp18.sprintpcs.com][line_id=45887][billing_entity_id=137]
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    NOTICE:  We found IP pool.
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    NOTICE:  We found an available IP address in the IP pool. [IP=10.60.156.10]
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    NOTICE:  Inserting Class attribute value into radreply table. [line_id=45887]
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    NOTICE:  Inserted Class attribute value into radreply table. [line_id=45887]
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    NOTICE:  Inserting Framed-IP-Address attribute value into radreply table. [IP=10.60.156.10]
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    NOTICE:  Inserted Framed-IP-Address attribute value into radreply table. [IP=10.60.156.10]
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    NOTICE:  Updating static_ip_pool table for [IP=10.60.156.10 / VRF=SERVICE-carolinaatm]
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    NOTICE:  STATIC IP: 10.60.156.10
+    NOTICE:  Calling Jbilling to get Product Name (internal number) from item table.
+    NOTICE:  MRC Product Code from Jbilling: &ltNULL&gt length: &ltNULL&gt
+    ERROR:  ERROR: Product code not present in Product table
+    csctoss=# ROLLBACK;
+    ROLLBACK
+    csctoss=#
+
+  <FONT COLOR="#009999"><I>Test 2</I></FONT>
+
+    csctoss=# BEGIN;
+    BEGIN
+    csctoss=# UPDATE static_ip_pool set is_assigned = TRUE where groupname = 'SERVICE-carolinaatm';
+    UPDATE 1524
+    csctoss=# select * from ops_api_assign_lo('A000001F54BFE1',null,137,'SERVICE-carolinaatm',TRUE);
+    NOTICE:  Sales Order: <NULL>
+    NOTICE:  ESN: A000001F54BFE1
+    NOTICE:  CARRIER: SPRINT
+    NOTICE:  MDN/MIN: 9172664953
+    NOTICE:  USERNAME: 9172664953@tsp18.sprintpcs.com USERGROUP: SERVICE-carolinaatm
+    <b>NOTICE:  ops_api_static_ip_assign_lo is called: parameters => [carrier=SPRINT][vrf=SERVICE-carolinaatm][username=9172664953@tsp18.sprintpcs.com][line_id=45888][billing_entity_id=137]</b>
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    NOTICE:  We found IP pool.
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    <b>NOTICE:  OSS: No avalible static IPs for ip block selected</b>
+    CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    ERROR:  control reached end of function without RETURN
+    CONTEXT:  PL/pgSQL function "ops_api_static_ip_assign_lo"
+    SQL statement "SELECT  * FROM ops_api_static_ip_assign_lo( $1 , $2 , $3 , $4 , $5 )"
+    PL/pgSQL function "ops_api_assign_lo" line 248 at select into variables
+    csctoss=# ROLLBACK;
+    ROLLBACK
+    csctoss=# SELECT COUNT(*) FROM static_ip_pool WHERE groupname = 'SERVICE-carolinaatm' AND is_assigned = FALSE;
+     count 
+    -------
+      1513
+    (1 row)
+
+csctoss=# 
+SELECT l.line_id
+      ,ui.equipment_id
+      ,ui.value
+  FROM line l
+  JOIN line_equipment le USING (line_id)
+  RIGHT OUTER JOIN unique_identifier ui USING (equipment_id)
+ WHERE ui.unique_identifier_type = 'ESN HEX'
+   AND le.end_date IS NULL
+   AND ui.equipment_id IN (select equipment_id from unique_identifier
+                            where unique_identifier_type = 'SERIAL NUMBER');
+                            
+25270 | A1000009420B9E
+25395 | A000001F54BFE1
+26287 | A000001F54DF27
+26396 | A000001F54D79D
+26422 | A000001F54D741
+26558 | A000001F54D734
+26824 | A000001F54D6F6
+
+
+select * from test_ops_params('A000001F54BFE1',null,137,'SERVICE-carolinaatm',TRUE);
+
+
+
+
+
+
+
+</BODY>
+</HTML>
+ 
+

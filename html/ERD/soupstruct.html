@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>SOUP Struct</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">SOUP Database Structure</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>Databases</I></FONT>
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| sdm                |
+| test               |
++--------------------+
+
+
+<FONT COLOR="#009999"><I>Tables</I></FONT>
++---------------+
+| Tables_in_sdm |
++---------------+
+| alerts        |
+| cellinfo      |
+| cellsignal    |
+| device        |
+| device_stats  |
+| group_device  |
+| group_info    |
+| group_user    |
+| port_stats    |
+| user          |
++---------------+
+
+
+<FONT COLOR="#009999"><I><b>alerts</b></I></FONT>
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| did           | int(10) unsigned  | NO   |     | NULL    |                |
+| srvtimestamp  | int(10) unsigned  | NO   |     | NULL    |                |
+| locltimestamp | int(10) unsigned  | NO   |     | NULL    |                |
+| service       | varchar(255)      | NO   |     | NULL    |                |
+| returncode    | int(10) unsigned  | NO   |     | NULL    |                |
+| output        | varchar(255)      | NO   |     | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+
+<FONT COLOR="#009999"><I><b>cellinfo</b></I></FONT>
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| did            | int(10) unsigned | NO   | PRI | NULL    |                |
+| esn            | varchar(255)     | NO   |     | NULL    |                |
+| imsi           | varchar(255)     | NO   |     | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+
+<FONT COLOR="#009999"><I><b>cellsignal</b></I></FONT>
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| esn            | varchar(255)     | NO   | MUL | NULL    |                |
+| cellsignal     | varchar(255)     | NO   |     | NULL    |                |
+| timestamp      | int(11)          | NO   |     | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+
+<FONT COLOR="#009999"><I><b>device</b></I></FONT>
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| did            | int(11)          | NO   | PRI | NULL    | auto_increment |
+| create_date    | int(10) unsigned | NO   |     | NULL    |                |
+| timestamp      | int(10) unsigned | NO   |     | NULL    |                |
+| eui            | char(12)         | NO   | UNI | NULL    |                |
+| model          | varchar(16)      | YES  |     | NULL    |                |
+| serial_number  | varchar(64)      | YES  |     | NULL    |                |
+| part_number    | varchar(64)      | YES  |     | NULL    |                |
+| description    | varchar(255)     | YES  |     | NULL    |                |
+| location       | varchar(255)     | YES  |     | NULL    |                |
+| lastip         | varchar(32)      | YES  |     | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+
+<FONT COLOR="#009999"><I><b>device_stats</b></I></FONT>
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| did            | int(10) unsigned | NO   | MUL | NULL    |                |
+| timestamp      | int(10) unsigned | NO   | MUL | NULL    |                |
+| firmware       | varchar(16)      | YES  |     | NULL    |                |
+| firmware_time  | int(10) unsigned | NO   |     | NULL    |                |
+| log_errors     | int(10) unsigned | YES  |     | NULL    |                |
+| log_warnings   | int(10) unsigned | YES  |     | NULL    |                |
+| pda_errors     | int(10) unsigned | YES  |     | NULL    |                |
+| uptime         | int(10) unsigned | YES  |     | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+
+<FONT COLOR="#009999"><I><b>group_device</b></I></FONT>
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| gid            | int(10) unsigned | NO   | PRI | NULL    |                |
+| did            | int(10) unsigned | NO   | PRI | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+
+<FONT COLOR="#009999"><I><b>group_info</b></I></FONT>
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| gid            | int(11)          | NO   | PRI | NULL    | auto_increment |
+| aid            | int(10) unsigned | NO   | MUL | NULL    |                |
+| name           | varchar(255)     | NO   |     | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+
+<FONT COLOR="#009999"><I><b>group_user</b></I></FONT>
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| gid            | int(10) unsigned | NO   | PRI | NULL    |                |
+| uid            | int(10) unsigned | NO   | PRI | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+
+<FONT COLOR="#009999"><I><b>port_stats</b></I></FONT>
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| did            | int(10) unsigned | NO   | MUL | NULL    |                |
+| port           | varchar(16)      | YES  |     | NULL    |                |
+| timestamp      | int(10) unsigned | NO   | MUL | NULL    |                |
+| opens          | int(10) unsigned | YES  |     | NULL    |                |
+| rx             | int(10) unsigned | YES  |     | NULL    |                |
+| tx             | int(10) unsigned | YES  |     | NULL    |                |
+| parity         | int(10) unsigned | YES  |     | NULL    |                |
+| framing        | int(10) unsigned | YES  |     | NULL    |                |
+| overrun        | int(10) unsigned | YES  |     | NULL    |                |
+| moffhook       | int(10) unsigned | YES  |     | NULL    |                |
+| monhook        | int(10) unsigned | YES  |     | NULL    |                |
+| mattempts      | int(10) unsigned | YES  |     | NULL    |                |
+| mconnects      | int(10) unsigned | YES  |     | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+
+<FONT COLOR="#009999"><I><b>user</b></I></FONT>
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| uid            | int(11)          | NO   | PRI | NULL    | auto_increment |
+| aid            | int(10) unsigned | NO   | MUL | NULL    |                |
+| login          | varchar(255)     | NO   | UNI | NULL    |                |
+| password       | varchar(255)     | NO   |     | NULL    |                |
+| name           | varchar(255)     | NO   |     | NULL    |                |
+| inherit_groups | blob             | YES  |     | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+
+   <FONT COLOR="#0000FF"><b><I>SOUP Database Structure</I></b></FONT>
+
+         +---------------+--------------------+---------------------------------------+-------------+
+         | table_catalog | table_schema       | table_name                            | table_type  |
+         +---------------+--------------------+---------------------------------------+-------------+
+         | NULL          | information_schema | CHARACTER_SETS                        | SYSTEM VIEW |
+         | NULL          | information_schema | COLLATIONS                            | SYSTEM VIEW |
+         | NULL          | information_schema | COLLATION_CHARACTER_SET_APPLICABILITY | SYSTEM VIEW |
+         | NULL          | information_schema | COLUMNS                               | SYSTEM VIEW |
+         | NULL          | information_schema | COLUMN_PRIVILEGES                     | SYSTEM VIEW |
+         | NULL          | information_schema | ENGINES                               | SYSTEM VIEW |
+         | NULL          | information_schema | EVENTS                                | SYSTEM VIEW |
+         | NULL          | information_schema | FILES                                 | SYSTEM VIEW |
+         | NULL          | information_schema | GLOBAL_STATUS                         | SYSTEM VIEW |
+         | NULL          | information_schema | GLOBAL_VARIABLES                      | SYSTEM VIEW |
+         | NULL          | information_schema | KEY_COLUMN_USAGE                      | SYSTEM VIEW |
+         | NULL          | information_schema | PARTITIONS                            | SYSTEM VIEW |
+         | NULL          | information_schema | PLUGINS                               | SYSTEM VIEW |
+         | NULL          | information_schema | PROCESSLIST                           | SYSTEM VIEW |
+         | NULL          | information_schema | PROFILING                             | SYSTEM VIEW |
+         | NULL          | information_schema | REFERENTIAL_CONSTRAINTS               | SYSTEM VIEW |
+         | NULL          | information_schema | ROUTINES                              | SYSTEM VIEW |
+         | NULL          | information_schema | SCHEMATA                              | SYSTEM VIEW |
+         | NULL          | information_schema | SCHEMA_PRIVILEGES                     | SYSTEM VIEW |
+         | NULL          | information_schema | SESSION_STATUS                        | SYSTEM VIEW |
+         | NULL          | information_schema | SESSION_VARIABLES                     | SYSTEM VIEW |
+         | NULL          | information_schema | STATISTICS                            | SYSTEM VIEW |
+         | NULL          | information_schema | TABLES                                | SYSTEM VIEW |
+         | NULL          | information_schema | TABLE_CONSTRAINTS                     | SYSTEM VIEW |
+         | NULL          | information_schema | TABLE_PRIVILEGES                      | SYSTEM VIEW |
+         | NULL          | information_schema | TRIGGERS                              | SYSTEM VIEW |
+         | NULL          | information_schema | USER_PRIVILEGES                       | SYSTEM VIEW |
+         | NULL          | information_schema | VIEWS                                 | SYSTEM VIEW |
+         | NULL          | mysql              | columns_priv                          | BASE TABLE  |
+         | NULL          | mysql              | db                                    | BASE TABLE  |
+         | NULL          | mysql              | event                                 | BASE TABLE  |
+         | NULL          | mysql              | func                                  | BASE TABLE  |
+         | NULL          | mysql              | general_log                           | BASE TABLE  |
+         | NULL          | mysql              | help_category                         | BASE TABLE  |
+         | NULL          | mysql              | help_keyword                          | BASE TABLE  |
+         | NULL          | mysql              | help_relation                         | BASE TABLE  |
+         | NULL          | mysql              | help_topic                            | BASE TABLE  |
+         | NULL          | mysql              | host                                  | BASE TABLE  |
+         | NULL          | mysql              | ndb_binlog_index                      | BASE TABLE  |
+         | NULL          | mysql              | plugin                                | BASE TABLE  |
+         | NULL          | mysql              | proc                                  | BASE TABLE  |
+         | NULL          | mysql              | procs_priv                            | BASE TABLE  |
+         | NULL          | mysql              | servers                               | BASE TABLE  |
+         | NULL          | mysql              | slow_log                              | BASE TABLE  |
+         | NULL          | mysql              | tables_priv                           | BASE TABLE  |
+         | NULL          | mysql              | time_zone                             | BASE TABLE  |
+         | NULL          | mysql              | time_zone_leap_second                 | BASE TABLE  |
+         | NULL          | mysql              | time_zone_name                        | BASE TABLE  |
+         | NULL          | mysql              | time_zone_transition                  | BASE TABLE  |
+         | NULL          | mysql              | time_zone_transition_type             | BASE TABLE  |
+         | NULL          | mysql              | user                                  | BASE TABLE  |
+         | NULL          | sdm                | alerts                                | BASE TABLE  |
+         | NULL          | sdm                | cellinfo                              | BASE TABLE  |
+         | NULL          | sdm                | cellsignal                            | BASE TABLE  |
+         | NULL          | sdm                | device                                | BASE TABLE  |
+         | NULL          | sdm                | device_stats                          | BASE TABLE  |
+         | NULL          | sdm                | group_device                          | BASE TABLE  |
+         | NULL          | sdm                | group_info                            | BASE TABLE  |
+         | NULL          | sdm                | group_user                            | BASE TABLE  |
+         | NULL          | sdm                | port_stats                            | BASE TABLE  |
+         | NULL          | sdm                | user                                  | BASE TABLE  |
+         +---------------+--------------------+---------------------------------------+-------------+
+
+</BODY>
+</HTML>

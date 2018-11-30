@@ -1,0 +1,297 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Linux/Unix</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+<!--  
+<table border="border" width = 800>
+  <tr align="Left">
+    <th width="45%">Function</th>
+    <th width="55%">Command</th>
+  </tr>
+  <tr align="Left">
+    <td>db2cmd </td>
+    <td>Open DB2 Command line Tool</td>
+  <tr align="Left">
+    <td>db2cc </td>
+    <td>Open DB2 Control Centre</td>
+  </tr>
+  </tr>
+</table>
+-->
+
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Linux/Unix Commands</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#0000FF" size=6><I>List Command - ls</I></FONT>
+
+  <b>ls</b>   lists files in current directory
+
+  <b>ls -l</b>  long format listing which contains permissions, owner, file size, 
+      date modified, and file name in current directory.
+
+  <b>ls -a</b>  list all files including hidden files (begin in a dot) in
+    current directory
+
+  <FONT COLOR="#009999"><I>List all files in sorted order by date</I></FONT>
+
+    <b>ls -lrt</b>  
+
+
+<FONT COLOR="#0000FF" size=6><I>Basic Commands</I></FONT>
+
+  <b>head</b> Display the first ten lines of a file.  
+      head &lt<i>filename</i>&gt
+
+    Display the first twenty lines of a file:
+    head -20 &lt<i>filename</i>&gt
+
+  <b>tail</b> Display the last ten lines of a file.  
+        tail &lt<i>filename</i>&gt
+
+    Display the last twenty lines of a file:
+    tail -20 &lt<i>filename</i>&gt
+
+  <b>nm</b>   Displays the contents of a library.
+                     nm /opt/isis/solaris/qa_test/solaris/lib/libvest_v2.so
+
+  <b>df -k</b>  Displays percentage of space left on a disk.
+
+  <b>bg</b>   Put jobs in background with the bg command.  Most often,
+    you will use <b>Ctl-Z</b> if you are already in an interactive
+    job.  Use <b>fg</b> to bring it back to the foreground.
+
+  <b>pwd</b>    Display your current directory
+    
+  <b>lpstat</b> Display status of printers
+              -p option lists the available printers
+
+  <b>scp</b>        Copy file to remote host/directrory:  scp truncDB.sh dbadmin@db2DevRev:bin/truncDB.sh
+              Copy file from remote host/directory:   scp dbadmin@db2DevRev:bin/truncdb.sh .
+
+  <b>ln -s</b>      Create a symbolic link.
+            ln -s &lt<i>directory_name(s)</i>&gt &lt<i>directory_name</i>&gt
+
+        cd /
+        ln -s /usr/uv uv
+
+        This creates a directory symbolic link on root, /uv, that points to the directory /usr/uv
+
+  <b>hostname -i</b> - <i>Display server name
+
+<FONT COLOR="#0000FF" size=6><i>Find Command</i></FONT>
+
+  <b>Find a <i>file</i> in the sub directories of your current location:</b>
+    
+      find . -name &lt<i>filename</i>&gt -print
+             
+  <b>Find a <i>directory</i> in the sub directories of your current location:</b>
+        
+      find . -name &lt<i>directory name</i>&gt -type d -print
+
+  <b>Find a <i>string</i> in all subdirectories</b>
+
+      find . -type f -exec grep -n &lt<i>"<b>any string; can include 'quotes'</b>"</i>&gt {} \; -printers
+
+  <b>Find a file but exclude the 'Permission Denied' error message</b>
+
+      find . -name mutt* -print 2>/dev/null
+
+  <b>Copy a directory using find & cpio commands; include only files and directories, no symlinks</b>
+      
+      find . -depth -type f -o -type d | cpio -pamvd ../TCA.INT
+
+      <i>This finds types of f(ile) and d(irectories) and pipes to the cpio command.
+        The directory to copy to (../TCA.INT) must already exist.</i>
+
+  <b>Find the ten largest files in a directory and its sub directories</b>
+      find . -printf '%s %p\n'|sort -nr|head
+
+  <b>
+
+--
+<FONT COLOR="#0000FF" size=6><I>Archive Files (.zip, .gz)</I></FONT>
+  <b>zip -jql</b> Archive file/files into a zip file</b>
+        zip</b> -jql &lt<i>zipfile_name</i>&gt.zip &lt<i>filename</i>&gt
+          
+  <b>tar a directory and send it to netcat</b>
+    
+    The &lt<i>filename</i>&gt value could also be a mask.
+
+    &lt<i>Sending server (sam_rev)</i>&gt
+      tar cf - /sam8/TCA.DEV | nc -l -p 50892
+
+    &lt<i>Receiving server (sam_win)</i>&gt
+    nc sam_rev 50892 | tar xf -
+
+    The directory TCA.DEV under /sam8 is tarred on the sencding server, received by the receiving server
+    and extracted and restored to directory /sam8/TCA.DEV on sam_win.  If the directory TCA.DEV already 
+    exists, it will be overlayed.
+
+  <b>tar and zip in one command:</b>
+    tar -cvzf /home/uvadmin/backups/CST.20141121.tar.gz /opt/GEMDATA/CST
+
+    This creates the tar file CST.20141121.tar.gz in the directory /home/uvadmin/backups.  The source is 
+    /opt/GEMDATA/CST.
+
+  <b>gunzip and extract tar in one command:</b>
+
+    Go to the directory (cd) where the extract will be located and issue the following command:
+
+      gunzip -c &lt<i>zipped tar file name</i>&gt | tar xvf -
+
+    The <b>-c</b> option keeps the tar file zipped in the original location.  Example:
+
+      &gt cd /restore
+      &gt gunzip -c /mnt/db2_code/v10_5/DB2_Svr_V10.5_AIX.tar.gz | tar xvf -
+
+<FONT COLOR="#0000FF" size=6><I>Find a string (grep):</I></FONT>
+
+    grep &lt<i>string</i>&gt *
+
+  <b>Find string recursively</b>
+
+    grep -r &lt<i>string</i>&gt .
+
+<FONT COLOR="#0000FF" size=6><I>Display directory size recursively</I></FONT><BR>&nbsp;
+  ls -lR
+
+<FONT COLOR="#0000FF" size=6><I>CHOWN</I></FONT>
+  
+  change the ownership of a directory (and its contents) recursively
+
+  <b>chown -R user:group &lt<i>direcory_to_be_changed</i>&gt</b>
+
+  if you're in the directory:
+
+  <b>chown -R user:group *</b>
+
+<FONT COLOR="#0000FF" size=6><I>Run a loop process at the command line</I></FONT>
+    for x in `ls -l TRANSA* | grep Feb | awk '{print $NF}'`
+    > do
+    > echo $x
+    > done
+
+<FONT COLOR="#0000FF" size=6><I>Symbolic Links</I></FONT>
+  <i>Format to create a symbolic link:</i>
+    
+    ln -s &lt<i>directory or file name</i>&gt &lt<i>symbolic link name</i>&gt
+
+    Example:
+
+    ln -s /usr/local/groovy-2.1.3 groovy
+
+  <i>Change existing symbolic link</i>
+
+    ln -f -s &lt<i>new directory or file name</i>&gt &lt<i>symbolic link name</i>&gt
+
+    Example:
+
+    ln -f -s /usr/local/groovy-2.3.7 groovy
+
+<FONT COLOR="#0000FF" size=6><i>Remove/Delete Commands</i></FONT>
+
+    Remove directory
+
+      rmdir &lt<i>directory</i>&gt
+
+    Remove a directory and all its contents
+
+      rm -rf  &lt<i>directory</i>&gt
+
+
+<FONT COLOR="#0000FF" size=6><I>View a core file</I></FONT>
+  <i>Use the strings utility and pipe it to more, ie. :</i>
+
+    strings core | more
+
+  <i>Displays like this:</i>
+    uvsh.new
+    Unclassified
+    0uvsh.new
+    /usr/ccs/bin/usla64
+    /usr/uv/bin/libsslU2.so
+    /usr/uv/bin/libcryptoU2.so
+    /usr/lib/security/LDAP64
+    wwww
+    /usr/lib/libodm.a
+    shr_64.o
+    6D/usr/lib/libmlsenc.a
+    shr_64.o
+    /usr/lib/libcrypt.a
+    shr_64.o
+    /usr/lib/libmls.a
+    shr_64.o
+    /usr/lib/libC.a
+    ansicore_64.o
+    /usr/lib/libC.a
+    shrcore_64.o
+    /usr/lib/libc.a
+    shr_64.o
+    /usr/lib/libpam.a
+    shr_64.o
+    /usr/lib/libC.a
+    ansi_64.o
+    wwwwww
+    /usr/lib/libC.a
+    shr3_64.o
+    wwwwww
+    /usr/lib/libC.a
+    shr2_64.o
+    wwwwww
+    /usr/lib/libC.a
+    shr_64.o
+    ,/usr/lib/libpthread.a
+    shr_xpg5_64.o
+    /.uvlibs/libodbc.so
+    ECTX
+    @ECTX
+    ECTX
+    BBd(
+    RBH2015-08-12-09.47.04.
+    2015-08-12-09.47.04.235332|DB2_execSQL|16449742|UNKNOWN|FATAL|ftok () for file <%s> (ID=%d) failed.
+    @Bd(
+    /uv/DataSync/log/sqlErr.log
+    D}p$DB2_execSQL
+    <i><b>stdin</b></i>
+
+</BODY>
+</HTML>

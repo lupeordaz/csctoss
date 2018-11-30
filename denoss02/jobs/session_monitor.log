@@ -1,0 +1,127 @@
+Current Date in test file: Mon May 20 23:13:01 UTC 2013
+TIME OK : 00:00:59 since last successful run
+ SUCCESS
+ SUCCESS
+ SUCCESS
+END: 20130520231301
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520231401
+ SUCCESS
+ SUCCESS
+ POD STRING: 00593603,9172665221@tsp17.sprintpcs.com,10.60.1.111,10.16.4.5,1739,CSCT80pod
+ SUCCESS
+END: 20130520231402
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520231502
+ SUCCESS
+ SUCCESS
+ POD STRING: 0056BFD7,9172664506@tsp17.sprintpcs.com,10.48.73.28,10.17.4.5,1739,CSCT80pod
+ SUCCESS
+END: 20130520231502
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520231601
+ SUCCESS
+ SUCCESS
+ SUCCESS
+END: 20130520231602
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520231701
+ SUCCESS
+ SUCCESS
+ POD STRING: 0056F5B4,9177681175@tsp18.sprintpcs.com,10.60.2.228,10.17.4.5,1739,CSCT80pod
+ SUCCESS
+END: 20130520231702
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520231801
+ SUCCESS
+ SUCCESS
+ SUCCESS
+END: 20130520231802
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520231901
+ SUCCESS
+ SUCCESS
+ POD STRING: 00595923,5662103958@tsp17.sprintpcs.com,66.239.111.42,10.16.4.5,1739,CSCT80pod
+ SUCCESS
+END: 20130520231901
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520232002
+ SUCCESS
+ SUCCESS
+ SUCCESS
+END: 20130520232003
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520232101
+ SUCCESS
+ SUCCESS
+ POD STRING: 00595898,9174053469@tsp18.sprintpcs.com,10.48.70.6,10.16.4.5,1739,CSCT80pod
+ SUCCESS
+END: 20130520232101
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520232202
+ SUCCESS
+ SUCCESS
+ POD STRING: 00595645,9172756173@tsp18.sprintpcs.com,74.115.156.184,10.16.4.5,1739,CSCT80pod
+ SUCCESS
+END: 20130520232202
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520232301
+ SUCCESS
+ SUCCESS
+ POD STRING: 0059554E,9172618224@tsp18.sprintpcs.com,10.48.80.17,10.16.4.5,1739,CSCT80pod
+ POD STRING: 0056E06B,9173048445@tsp17.sprintpcs.com,74.115.155.181,10.17.4.5,1739,CSCT80pod
+ POD STRING: 0056B076,9176861759@tsp18.sprintpcs.com,10.48.78.153,10.17.4.5,1739,CSCT80pod
+ SUCCESS
+END: 20130520232303
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520232401
+ SUCCESS
+ SUCCESS
+ POD STRING: 0056E2B6,9172618718@tsp18.sprintpcs.com,10.47.218.29,10.17.4.5,1739,CSCT80pod
+ POD STRING: 0059594C,9174053469@tsp18.sprintpcs.com,10.48.85.121,10.16.4.5,1739,CSCT80pod
+ SUCCESS
+END: 20130520232402
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520232501
+ SUCCESS
+ SUCCESS
+ SUCCESS
+END: 20130520232501
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520232601
+ SUCCESS
+ SUCCESS
+ POD STRING: 00593FE4,9175313889@tsp18.sprintpcs.com,10.48.86.100,10.16.4.5,1739,CSCT80pod
+ SUCCESS
+END: 20130520232602
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520232701
+ SUCCESS
+ SUCCESS
+ SUCCESS
+END: 20130520232702
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520232801
+ SUCCESS
+ SUCCESS
+ SUCCESS
+END: 20130520232802
+------------------------------end of dupe session check report------------------------------
+BEG: 20130520232901
+ SUCCESS
+ SUCCESS
+ SUCCESS
+END: 20130520232901
+------------------------------end of dupe session check report------------------------------
+BEG: 20130521164932
+ SUCCESS
+ SUCCESS
+ SUCCESS
+END: 20130521164933
+------------------------------end of dupe session check report------------------------------
+BEG: 20130521164944
+ SUCCESS
+ SUCCESS
+ SUCCESS
+END: 20130521164945
+------------------------------end of dupe session check report------------------------------

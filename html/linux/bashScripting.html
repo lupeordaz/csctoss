@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>bashScripts</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Blue           #0000FF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Bash Scripting</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>Exit bash script, but not quitting the terminal</I></FONT>
+
+Using the exit command in a shell script caused the script to end the terminal session.
+
+<b><i>Solutions:</i></b>
+
+  The "problem" really is that you're sourcing and not executing the script. When you 
+  source a file, its contents will be executed in the current shell, instead of spawning 
+  a subshell. So everything, including exit, will affect the current shell (thus exiting
+  the session).
+
+  Instead of using exit, you will want to use <b>return</b>.  
+
+  Also, instead of running the code using:
+
+      <b>. run2.sh</b>
+
+  But rather, run the script using sh run2.sh or bash run2.sh.  
+
+<FONT COLOR="#009999"><I>IF Statements</I></FONT>
+
+The square brackets ( [ ] ) in the if statement above are actually a reference to the 
+command test. This means that all of the operators that test allows may be used here 
+s well. Look up the man page for test to see all of the possible operators (there are 
+quite a few) but some of the more common ones are listed below.
+
+<table border="border" width = 800>
+  <tr align="Left">
+    <th width="20%">Operator</th>
+    <th width="80%">Description</th>
+  </tr>
+  <tr align="Left">
+    <td>! EXPRESSION</td>
+    <td>The EXPRESSION is false.</td>
+  </tr>
+  <tr align="Left">
+    <td>-n STRING</td>
+    <td>The length of STRING is greater than zero.</td>
+  </tr>
+  <tr align="Left">
+    <td>-z STRING</td>
+    <td>The lengh of STRING is zero (ie it is empty).</td>
+  </tr>
+  <tr align="Left">
+    <td>STRING1 =</td>
+    <td>STRING2 STRING1 is equal to STRING2</td>
+  </tr>
+  <tr align="Left">
+    <td>STRING1 !=</td>
+    <td>STRING2  STRING1 is not equal to STRING2</td>
+  </tr>
+  <tr align="Left">
+    <td>INTEGER1 -eq</td>
+    <td>INTEGER2 INTEGER1 is numerically equal to INTEGER2</td>
+  </tr>
+  <tr align="Left">
+    <td>INTEGER1 -gt</td>
+    <td>INTEGER2 INTEGER1 is numerically greater than INTEGER2</td>
+  </tr>
+  <tr align="Left">
+    <td>INTEGER1 -lt</td>
+    <td>INTEGER2 INTEGER1 is numerically less than INTEGER2</td>
+  </tr>
+  <tr align="Left">
+    <td>-d FILE</td>
+    <td>FILE exists and is a directory.</td>
+  </tr>
+  <tr align="Left">
+    <td>-e FILE</td>
+    <td>FILE exists.</td>
+  </tr>
+  <tr align="Left">
+    <td>-r FILE</td>
+    <td>FILE exists and the read permission is granted.</td>
+  </tr>
+  <tr align="Left">
+    <td>-s FILE</td>
+    <td>FILE exists and it's size is greater than zero (ie. it is not empty).</td>
+  </tr>
+  <tr align="Left">
+    <td>-w FILE</td>
+    <td>FILE exists and the write permission is granted.</td>
+  </tr>
+  <tr align="Left">
+    <td>-x FILE</td>
+    <td>FILE exists and the execute permission is granted.</td>
+  </tr>
+</table>
+
+<FONT COLOR="#009999"><I>LIKE equivalent or search for a string in a string</I></FONT>
+
+    <FONT COLOR="#0000FF"><I>In the following example, we examine a string to see if it contains a comma (",").  The code is in a bash script. </I></FONT>
+
+        ESN = "802F917A, A10000157E3C61"
+        .
+        .
+        .
+        if [[ $ESN = *","* ]]; then
+            echo "$ESN contains comma" 
+        fi
+        .
+        .
+        
+
+    <FONT COLOR="#0000FF"><I>The result of this test is the following:</I></FONT>
+
+        <b>ESN contains comma</b>
+
+<FONT COLOR="#009999"><I>Find files > 3 months old</I></FONT>
+
+    <b>find csctoss_logs/*.log -type f -mtime "+$(( ( $(date '+%s') - $(date -d '3 months ago' '+%s') ) / 86400 ))"</b>
+
+<FONT COLOR="#009999"><I>Find files > 3 months old and delete them</I></FONT>
+
+    <b>find csctoss_logs/*.log -type f -mtime "+$(( ( $(date '+%s') - $(date -d '3 months ago' '+%s') ) / 86400 ))" -delete</b>
+
+
+</BODY>
+</HTML>
+ 
+

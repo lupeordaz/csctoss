@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>User Maint</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">User Maintenance on Unix/AIX</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><i>Add Users</i></FONT>
+
+  adduser -c "Lupe Ordaz" -g 504 -u 31 -m lordaz
+
+    <i>Adds user "lordaz" to system.  Comment in the /etc/passwd file is "Lupe Ordaz".  The
+    -g tells system to add lordaz to group 504 (cst, in this case).  The -u forces unix to
+    set the user id to 31.  The -m tells system to create the directory /home/lordaz for 
+    the user to log on to.</i>
+
+<FONT COLOR="#009999"><i>Add Group</i></FONT>
+
+  groupadd scpuser
+
+    <i>Adds group "scpuser" to system.  Can now add users to this group</i>
+
+<FONT COLOR="#009999"><i>Add user to a group</i></FONT>
+
+  usermod -G cst,scpuser lordaz 
+
+    <i>Add user lordaz to the group scpuser while preserving lordaz being part of group cst.</i>
+
+<FONT COLOR="#009999"><i>Manage user passwords</i></FONT>
+
+  Change a users password:
+
+    <b>echo lordaz:set2go | chpasswd</b>
+
+    This is the shortcut way to set the password for user lordaz to "<i>set2go</i>".  When he 
+    logs in, he will be prompted to change it.
+
+  Quick and easy way to expire a password - linux:
+
+    <b>passwd -e lordaz</b>
+
+<FONT COLOR="#009999"><i>Force password change (Linux)</i></FONT>
+  chage -d 0 &lt<i>user name</i>&gt
+
+<FONT COLOR="#009999"><i>Disable a user on a server</i></FONT>
+
+  chuser account_locked=true vguidry
+
+<FONT COLOR="#009999"><i>Remove a user</i></FONT>
+  The <b><i>rmuser</i></b> command removes a user account from the system.
+
+    <b>rmuser db2inst1</b>
+
+  This command removes the user account <i>db2inst1</i> from the system but retains password
+  information (/etc/passwd).  To remove fully including pasword information, run the following:
+
+    <b>rmuser -p db2inst1</b>
+
+  Note that rmuser does not remove the user's home directory. If a user has important data in 
+  his or her home directory that should be kept, it is up to you to remove the home directories 
+  when you deem it safe.
+
+
+<FONT COLOR="#009999"><i>lsuser (Unix only) - display user account attributes</i></FONT>
+
+    lsuser -f lordaz
+    lsuser -f lordaz | grep expire
+    lsuser -a maxage lordaz
+    lsuser -f lordaz| grep locked
+    passwd lordaz
+
+<FONT COLOR="#009999"><i>User can't log in</i></FONT>
+  If it isn't the password problem, it's probably the unsuccessful login count that's too high.
+  To reset the count:
+
+  <b>chsec -f /etc/security/lastlog -a unsuccessful_login_count=0 -s bschneid</b>
+
+  The chsec command also changes security using other files.
+
+
+
+</BODY>
+</HTML>
+ 
+

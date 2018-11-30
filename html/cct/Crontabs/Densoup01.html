@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Densoup01</TITLE>
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Densoup01 Crontab</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+
+<pre>
+<FONT COLOR="#009999"><I>Crontab entries for SOUP</I></FONT>
+
+# ############################################################# #
+# Min | HR | Day of Month | Month | Day of Week | File | Output #
+# ############################################################# #
+
+# NOTE : This server on UTC. 7am UTC = 12 Midnight MST
+
+# SOUP database synchronization script (densoup01 => denoss01)
+10 * * * * /opt/soup-scripts/copy_cellsignal_to_csctoss.sh 2>&1 > /tmp/copy_cellsignal_to_csctoss.log
+15 * * * * /opt/soup-scripts/copy_device_to_csctoss.sh 2>&1 > /tmp/copy_device_to_csctoss.log
+20 * * * * /opt/soup-scripts/copy_device_stats_to_csctoss.sh 2>&1 > /tmp/copy_device_stats_to_csctoss.log
+25 * * * * /opt/soup-scripts/copy_alerts_to_csctoss.sh 2>&1 > /tmp/copy_alerts_to_csctoss.log
+
+# Purge old cellsignal records (Keep for last 30 days)
+0 6 * * * /opt/soup-adminscripts/purge_old_cellsignal.sh > /dev/null 2>&1
+
+#clean alerts
+0 8 * * * /opt/soup-adminscripts/cleanupalerts2.sh 2>&1 /dev/null
+
+#clean up logs from /opt/soup-adminscripts
+0 8 * * * /opt/soup-adminscripts/logclean.sh
+
+#cleanup no.hup.out in /opt/t folder
+0 9 * * * /opt/t/clean.sh
+
+#clean souplinkfiles older than 3 days
+0 8 * * * /opt/soup-adminscripts/linkcleanup.sh 2>&1 /dev/null
+
+# prl update 
+0 7 * * * /opt/soup-adminscripts/getdailylogsprl.sh 2>&1 /dev/null
+0 7 * * * /opt/soup-adminscripts/getdailylogs2.sh 2>&1 /dev/null
+0 7 * * * /opt/soup-adminscripts/getdailylogs.sh 2>&1 /dev/null
+0 5 * * * /opt/soup-adminscripts/atmaficiando.sh 2>&1 /dev/null
+
+# update digi information to soup ever hour on the 1/2 hour
+30 * * * * /opt/digiupdate.sh 2>&1 /dev/null
+
+# check for config files and remove if deliveredi
+*/2 * * * * /opt/soup-adminscripts/cfgclean.sh
+*/2 * * * * /opt/soup-adminscripts/fwclean.sh
+*/2 * * * * /opt/soup-adminscripts/fwcleansyslink.sh
+*/2 * * * * /opt/soup-adminscripts/fsclean.sh
+</BODY>
+</HTML>

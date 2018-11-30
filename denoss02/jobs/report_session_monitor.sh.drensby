@@ -1,0 +1,162 @@
+# !/bin/bash
+# 
+# drensby 2011325 : created
+#
+# Daily dupe session and short session report emailed to appropriate recipients.
+#
+# $Id: $
+#
+
+source /home/postgres/.bash_profile
+BASEDIR=/home/postgres/dba
+LOGFILE=$BASEDIR/logs/report_session_monitor.out
+DUPFILE=$BASEDIR/logs/report_dupe_session_check.txt
+SHSFILE=$BASEDIR/logs/report_short_session_check.txt
+
+YESTERDAY=`date --date='yesterday' +%Y-%m-%d`
+TODAY=`date +%Y-%m-%d`
+
+START="START TIMESTAMP: `date +%Y%m%d`.`date +%H%M%S`"
+
+# message body header
+echo "----------------------------------------"  > $LOGFILE
+echo "Session Monitor Report For:   $YESTERDAY" >> $LOGFILE
+echo "----------------------------------------" >> $LOGFILE
+echo                                            >> $LOGFILE
+
+# get the summary data for dupe session check and output to log file
+DEVICES=`psql -qt -c "SELECT COUNT(DISTINCT(username))
+                        FROM csctmon.incident
+                       WHERE incident_timestamp at time zone 'EST' >= '$YESTERDAY'
+                         AND incident_timestamp at time zone 'EST' <  '$TODAY'
+                         AND incident_type = 'DUPLICATE SESSION'"`
+
+INCIDENTS=`psql -qt -c "SELECT COUNT(*)
+                          FROM csctmon.incident
+                         WHERE incident_timestamp at time zone 'EST' >= '$YESTERDAY'
+                           AND incident_timestamp at time zone 'EST' <  '$TODAY'
+                           AND incident_type = 'DUPLICATE SESSION'"`
+
+DISCONNECTED=`psql -qt -c "SELECT COUNT(*)
+                             FROM csctmon.incident_detail
+                             JOIN csctmon.incident USING (incident_id)
+                            WHERE pod_timestamp at time zone 'EST' >= '$YESTERDAY'
+                              AND pod_timestamp at time zone 'EST' <  '$TODAY'
+                              AND incident_type = 'DUPLICATE SESSION'"`
+
+echo "DUPLICATE SESSION SUMMARY" >> $LOGFILE
+echo "----------------------------------------"             >> $LOGFILE
+echo "Total Devices with Incidents : $DEVICES"              >> $LOGFILE
+echo "Total Incidents              : $INCIDENTS"            >> $LOGFILE
+echo "Total Sessions Disconnected  : $DISCONNECTED"         >> $LOGFILE
+echo ""                                                     >> $LOGFILE
+
+# get the summary data for short session check and output to log file
+DEVICES=`psql -qt -c "SELECT COUNT(DISTINCT(username))
+                        FROM csctmon.incident
+                       WHERE incident_timestamp at time zone 'EST' >= '$YESTERDAY'
+                         AND incident_timestamp at time zone 'EST' <  '$TODAY'
+                         AND incident_type = 'SHORT SESSION'"`
+
+INCIDENTS=`psql -qt -c "SELECT COUNT(*)
+                          FROM csctmon.incident
+                         WHERE incident_timestamp at time zone 'EST' >= '$YESTERDAY'
+                           AND incident_timestamp at time zone 'EST' <  '$TODAY'
+                           AND incident_type = 'SHORT SESSION'"`
+
+SESSIONS=`psql -qt -c "SELECT COUNT(*)
+                         FROM csctmon.incident_detail
+                         JOIN csctmon.incident USING (incident_id)
+                        WHERE pod_timestamp at time zone 'EST' >= '$YESTERDAY'
+                          AND pod_timestamp at time zone 'EST' <  '$TODAY'
+                          AND incident_type = 'SHORT SESSION'"`
+
+echo "SHORT SESSION SUMMARY"                                >> $LOGFILE
+echo "----------------------------------------"             >> $LOGFILE
+echo "Total Devices with Incidents : $DEVICES"              >> $LOGFILE
+echo "Total Incidents              : $INCIDENTS"            >> $LOGFILE
+echo "Total Short Sessions         : $SESSIONS"             >> $LOGFILE
+echo ""                                                     >> $LOGFILE
+
+# call the report_dupe_session_check(date,date) function and capture results
+qry=`psql -q -t -o "$DUPFILE" << EOF
+  select * from csctmon.report_dupe_session_check('$YESTERDAY','$TODAY') ;
+\q`
+
+# call the report_short_session_check(date,date) function and capture results
+qry=`psql -q -t -o "$SHSFILE" << EOF
+  select * from csctmon.report_short_session_check('$YESTERDAY','$TODAY') ;
+\q`
+
+echo                                                        >> $LOGFILE
+echo "----------------------------------------"             >> $LOGFILE
+echo "$START"                                               >> $LOGFILE
+echo "END   TIMESTAMP: `date +%Y%m%d`.`date +%H%M%S`"       >> $LOGFILE
+
+# email the report
+###mutt -i $LOGFILE -a $DUPFILE -a $SHSFILE -s "Session Monitor Report For: $YESTERDAY" "ops@contournetworks.net" < /dev/null
+mutt -i $LOGFILE -a $DUPFILE -a $SHSFILE -s "Session Montior Report For: $YESTERDAY" "drensby@cctus.com" < /dev/null
+
+rm -f $TMPFILE
+
+# ################################################################## #
+# THIS SECTION FOR ADDING USERNAMES BY BILLING ENTITY FOR MONITORING #
+# ################################################################## #
+
+# ################################################################## #
+# 238  Prism Systems Inc.
+# 293  Digital Network Solutions
+# 507  Starlight Entertainment, Inc.
+# ################################################################## #
+
+# connect to oss and pull all  usernames to monitor for selected billing entities
+psql -q -t -h denoss01 -p 5450 -d csctoss -U slony -c \
+"select username from csctoss.username where billing_entity_id in (238,293,507)" > ./username_monitor.dat
+
+# remove blank lines
+sed '/^$/d' ./username_monitor.dat > ./username_monitor.temp
+
+# remove white spaces
+sed 's/^[ \t]*//;s/[ \t]*$//' ./username_monitor.temp > ./username_monitor.tmp
+
+# put the file together for COPY
+echo "truncate table csctmon.username_add;" > ./username_monitor.dat
+echo "COPY csctmon.username_add (username) FROM stdin;" >> ./username_monitor.dat
+cat ./username_monitor.tmp >> ./username_monitor.dat
+echo "\." >> ./username_monitor.dat
+
+# load the username add table and insert the excepts into username_monitor
+sql=`psql -U csctmon_owner -q << EOF
+
+  \i ./username_monitor.dat
+
+  insert into csctmon.username_monitor
+  (select username from csctmon.username_add
+   except
+   select username from csctmon.username_monitor) ;
+
+  \q`
+
+# ################################################################## #
+# FINALLY, THIS SECTION AGES OFF EXPIRED INCIDENTS AND DETAILS
+# ################################################################## #
+sql=`psql -U csctmon_owner -q << EOF
+
+  update incident_detail
+     set pod_status = 'TIME EXPIRED'
+   where pod_status = 'WORKING'
+     and incident_id in (select incident_id
+                           from incident
+                          where status = 'OPEN'
+                            and incident_timestamp < current_timestamp - interval '1 day') ;
+
+  update csctmon.incident
+     set status = 'TIME EXPIRED'
+   where status = 'OPEN'
+     and incident_timestamp < current_timestamp - interval '1 day' ;
+
+  \q`
+
+rm -f ./username_monitor.temp ./username_monitor.tmp ./username_monitor.dat
+
+exit 0

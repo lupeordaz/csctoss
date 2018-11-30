@@ -1,0 +1,10 @@
+699|Fiserv Cash and Logistics|47175|||TBD|||Managed
+699|Fiserv Cash and Logistics|47256|||TBD|||Managed
+699|Fiserv Cash and Logistics|47052|Sirivan Sisouvong, (718) 497-2407|Union Beer|Union Beer|46 Meadowlands Pkwy, Hudson, NJ 07094|46 Meadowlands Pkwy, Hudson, NJ 07094|Managed
+699|Fiserv Cash and Logistics|44837|Akinade Adebukola, (301) 919-5909|MD0165|Fixlinks Technology LLC|8627 Liberty St, Randallstown, MD|TransFast Remittance, LLC|Managed
+699|Fiserv Cash and Logistics|44859|Alex Tullo, (551) 427-6183|Flying T|Flying T Truck Stop|1 North Hackensack Ave, Kearny, NJ 07032|FLYING T INC T/A NEW JERSEY TRUCK STOP|Managed
+699|Fiserv Cash and Logistics|47229|Alex Williams|Hammer Williams Company|Hammer Williams Company|3001 N 14th St, Ponca City, OK 74601|Hammer Williams Company|Managed
+699|Fiserv Cash and Logistics|44861|ARLENE SISON 323-335-8652|CA1569|ALAS CARGO LLC (5)|627 N VERMONT AVE, LOS ANGELES,CA 90004|TransFast Remittance, LLC|Managed
+699|Fiserv Cash and Logistics|46279|Bernardo Brea, (347) 218-9242|2454|CMCS Services LLC|1535 Westchester Ave, Bronx, NY 10472|Choice Money Transfer, Inc|Managed
+699|Fiserv Cash and Logistics|44880|CARMELITA SUNGA/ELSA CUSTODIO: 626-820-8870/626-820-8871|CA1592|ALAS CARGO LLC (7)|1512 E AMAR RD UNIT D, WEST COVINA, CA 91792|TransFast Remittance, LLC|Managed
+699|Fiserv Cash and Logistics|47257|Choice Money- Undeployed|Choice Money- Undeployed|Choice Money- Undeployed|Choice Money- Undeployed||Managed

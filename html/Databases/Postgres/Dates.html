@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>PSQL Dates</TITLE>
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+<A NAME="FormTop"></A>
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<FONT COLOR="#E69900">PostgreSql Dates</FONT>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+
+<pre>
+
+SELECT create_date
+      , old_esn_hex
+      , email
+      , new_esn_hex
+  FROM csctoss.rma_form
+ WHERE create_date between '2018-05-01 00:00:00'::timestamp(0) AND '2018-06-01 00:00:00'::timestamp(0)
+ order by 1;
+
+      create_date       |   old_esn_hex   |             email             |   new_esn_hex   
+------------------------+-----------------+-------------------------------+-----------------
+ 2018-05-03 16:03:34+00 | A10000157E5DC5  | gershon@acfnsupport.com       | A10000157E5E18
+ 2018-05-04 18:01:52+00 | 353238060037230 | support@contournetworks.com   | 353238060021762
+ 2018-05-08 20:22:57+00 | A10000157EA5AB  | gershon@acfnsupport.com       | A1000036983FAA
+ 2018-05-10 10:03:01+00 | A1000015771AE9  | mikepark815@gmail.com         | A10000157E3A72
+ 2018-05-10 11:23:23+00 | A100000941D41E  | crichardson@cctus.com         | 
+ 2018-05-10 15:22:58+00 | 352613070136233 | peacepizzo@mac.com            | 352613070345560
+ 2018-05-11 18:35:55+00 | A10000369E52C9  | crichardson@cctus.com         | A100001574C77C
+ 2018-05-11 19:10:31+00 | A100004394E9C2  | crichardson@cctus.com         | A100004394E8B4
+ 2018-05-14 16:54:55+00 | A100001578C7F5  | philatms@gmail.com            | A10000157ECFCD
+ 2018-05-15 17:09:36+00 | A100004394E8B4  | crichardson@cctus.com         | A1000051C2DD68
+ 2018-05-15 17:13:11+00 | A100001574C77C  | crichardson@cctus.com         | A1000043951158
+ 2018-05-22 12:37:02+00 | A10000369853B5  | tpcash@sbcglobal.net          | A1000036929C9B
+ 2018-05-24 15:16:33+00 | A10000157E50B9  | gershon@acfnsupport.com       | A10000369BF01B
+ 2018-05-24 15:23:32+00 | 352613070275775 | peacepizzo@icloud.com         | 
+ 2018-05-24 15:25:00+00 | 352613070275775 | peacepizzo@icloud.com         | 352613070189760
+ 2018-05-24 15:59:15+00 | 352613070275775 | tstovicek@cctus.com           | 352613070189760
+ 2018-05-24 16:54:44+00 | 352613070275775 | tstovicek@cctus.com           | 352613070189760
+ 2018-05-24 17:57:17+00 | A10000157EE728  | BRANDEL@BANDETRANSACTIONS.COM | A10000369C038C
+ 2018-05-29 16:36:55+00 | A1000012C284F7  | gershon@acfnsupport.com       | A1000043894665
+ 2018-05-30 16:00:39+00 | A100001578C8DA  | valleybargames@gmail.com      | 
+
+
+</pre>
+</BODY>
+</HTML>

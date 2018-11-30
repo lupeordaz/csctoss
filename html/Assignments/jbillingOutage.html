@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>JbillOutage</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Getting errors when attempting to cancel ESN: F61451B3 </FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<pre>
+
+<FONT COLOR="#009999"><I>Response</I></FONT>
+
+Search for value <b>F61451B3</b> in the <b>unique_identifier</b> table in OSS
+
+csctoss=# select * from unique_identifier where value = <b>'F61451B3'</b>;
+
+ equipment_id | unique_identifier_type |  value   | notes | date_created | date_modified
+--------------+------------------------+----------+-------+--------------+---------------
+<b>         2745 | ESN HEX                | F61451B3 |       | 2009-04-23   |</b>
+(1 row)
+
+
+From this result, we search the line_equipment table for <i>equipment_id</i> = <b>2745</b>
+
+
+csctoss=# select * from line_equipment where equipment_id = 2745;
+ line_id | equipment_id | start_date |  end_date  | billing_entity_address_id | ship_date | install_date | installed_by
+---------+--------------+------------+------------+---------------------------+-----------+--------------+--------------
+     282 |         2745 | 2009-04-23 | 2009-05-15 |                        28 |           |              |
+    1491 |         2745 | 2009-05-16 |            |                        60 |           |              |
+(2 rows)
+
+
+Based on this, line_id 1491 is the culprit.  Need to install a record in Jbillings prov_line with correct 
+information
+
+
+line doesn't exist in JBilling, so I am going to create the line in JBilling manually.
+
+INSERT INTO prov_line (order_id, item_id, line_id, esn_hex, username, start_date, sn)
+   VALUES (X, 708, 1491, 'F61451B3', '3123886134@uscc.net', '2009-05-16','00C67B');
+
+
+The fields required on the Jbilling table prov_line are the following:
+
+order_id
+item_id			708
+line_id 		1491
+esn_hex			F61451B3
+username 		3123886134@uscc.net
+start_date 		
+--
+
+We already know the esn_hex and the start_date.
+
+To get the item_id:
+
+csctoss=# select * from plan where line_id = 1491;
+-[ RECORD 1 ]---------+------------------------------------------
+plan_id               | 1376
+length_days           | 1000000
+plan_type_id          | 1
+comment               | Mass insert during line model conversion.
+create_timestamp      | 2009-06-16 16:49:22.78457-06
+product_id            | 33
+staff_id              | 104
+line_id               | 1491
+start_date            | 2009-05-16
+end_date              |
+prepaid_unit          |
+prepaid_allowance     |
+prepaid_balance       |
+accounting_start_date | 2009-05-16
+sales_order_number    |
+
+csctoss=# select * from product where product_id = 33;
+-[ RECORD 1 ]-------+-----------------------------------------
+product_id          | 33
+product_code        | MRC-005-01RP-1XU
+plan_type_id        | 4
+length_days         | 1000000
+obsolete            | f
+product_desc        | MRC 5MB Pooled, Monthly Recurring, 1xRTT
+prepaid_unit        | MB
+prepaid_allowance   | 5
+default_logical_apn |
+sales_price         | 0.00
+
+
+Use the product_code to query item on jbilling:
+
+jbilling=# select * from item where internal_number = 'MRC-005-01RP-1XU';
+-[ RECORD 1 ]---+-----------------
+id              | 708
+internal_number | MRC-005-01RP-1XU
+entity_id       | 1
+percentage      |
+price_manual    | 1
+deleted         | 0
+has_decimals    | 0
+is_monthly      | 1
+taxable         | 2
+term            | 0
+external_id     | 33
+optlock         | 11
+allowance_kb    | 5120
+is_annual       | 0
+cost            |
+mvno_plan_id    | 1
+oss_match       | t
+noroam          | f
+
+jbilling=#
+
+
+Item id = 708
+--  
+
+For the username:
+
+select radius_username from line where line_id = 1491;
+
+
+
+
+INSERT INTO prov_line (order_id, item_id, line_id, esn_hex, username, start_date, sn)
+   VALUES (X, 708, 1491, 'F61451B3', '3123886134@uscc.net', '2009-05-16','00C67B');
+
+
+</BODY>
+</HTML>
+   

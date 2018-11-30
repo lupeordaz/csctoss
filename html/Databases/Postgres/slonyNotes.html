@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Slony</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Slony Notes</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>_csctoss_repl is the slony schema to be monitored</I></FONT>
+
+
+  csctoss=# \dn 
+            List of schemas
+          Name        |     Owner     
+  --------------------+---------------
+   <b><i>_csctoss_repl      | slony</i></b>
+   carrier            | carrier_owner
+   csctoss            | csctoss_owner
+   information_schema | postgres
+   invoice            | invoice_owner
+   oss_sync           | alert_writer
+   pg_catalog         | postgres
+   pg_toast           | postgres
+   public             | postgres
+   rt3                | rt_user
+   rtnew              | postgres
+  (11 rows)
+
+  csctoss=# select * from _csctoss_repl.sl_status;
+   st_origin | st_received | st_last_event |      st_last_event_ts      | st_last_received |    st_last_received_ts     | st_last_received_event_ts  | st_lag_num_events |   st_lag_time    
+  -----------+-------------+---------------+----------------------------+------------------+----------------------------+----------------------------+-------------------+------------------
+         201 |         301 |      14691852 | 2018-03-19 23:03:18.060765 |         14691851 | 2018-03-19 23:03:08.554918 | 2018-03-19 23:03:08.040161 |                 1 | -05:59:49.456987
+         201 |         101 |      14691852 | 2018-03-19 23:03:18.060765 |         14691851 | 2018-03-19 23:03:08.706733 | 2018-03-19 23:03:08.040161 |                 1 | -05:59:49.456987
+  (2 rows)
+
+  csctoss=# select * from _csctoss_repl.sl_node;
+   no_id | no_active |              no_comment              | no_spool 
+  -------+-----------+--------------------------------------+----------
+     201 | t         | Primary CSCTOSS Master (denoss01)    | f
+     101 | t         | Secondary CSCTOSS Slave (denoss06)   | f
+     301 | t         | Secondary CSCTOSS Slave (awsusoss02) | f
+  (3 rows)
+
+<FONT COLOR="#009999"><I>Monitor status in 'UTC' time</I></FONT>
+
+  csctoss=# show timezone;
+
+   TimeZone 
+  ----------
+   mst7mdt
+  (1 row)
+
+  csctoss=# set timezone to 'UTC';
+  SET
+  csctoss=# show timezone;
+   TimeZone 
+  ----------
+   UTC
+  (1 row)
+
+  csctoss=# select * from _csctoss_repl.sl_status;
+   st_origin | st_received | st_last_event |      st_last_event_ts      | st_last_received |    st_last_received_ts     | st_last_received_event_ts  | st_lag_num_events |   st_lag_time   
+  -----------+-------------+---------------+----------------------------+------------------+----------------------------+----------------------------+-------------------+-----------------
+         201 |         101 |      14691875 | 2018-03-19 23:07:09.128993 |         14691874 | 2018-03-19 23:07:05.079452 | 2018-03-19 23:06:59.085528 |                 1 | 00:00:18.044604
+         201 |         301 |      14691875 | 2018-03-19 23:07:09.128993 |         14691875 | 2018-03-19 23:07:11.216177 | 2018-03-19 23:07:09.128993 |                 0 | 00:00:08.001139
+  (2 rows)
+
+  csctoss=# select * from _csctoss_repl.sl_status;
+   st_origin | st_received | st_last_event |     st_last_event_ts      | st_last_received |    st_last_received_ts     | st_last_received_event_ts | st_lag_num_events |   st_lag_time   
+  -----------+-------------+---------------+---------------------------+------------------+----------------------------+---------------------------+-------------------+-----------------
+         201 |         301 |      14691879 | 2018-03-19 23:07:49.26258 |         14691879 | 2018-03-19 23:07:51.270948 | 2018-03-19 23:07:49.26258 |                 0 | 00:00:10.018636
+         201 |         101 |      14691879 | 2018-03-19 23:07:49.26258 |         14691879 | 2018-03-19 23:07:51.134638 | 2018-03-19 23:07:49.26258 |                 0 | 00:00:10.018636
+  (2 rows)
+
+  csctoss=# select * from _csctoss_repl.sl_status;
+   st_origin | st_received | st_last_event |      st_last_event_ts      | st_last_received |    st_last_received_ts     | st_last_received_event_ts  | st_lag_num_events |   st_lag_time   
+  -----------+-------------+---------------+----------------------------+------------------+----------------------------+----------------------------+-------------------+-----------------
+         201 |         101 |      14691882 | 2018-03-19 23:08:19.368075 |         14691881 | 2018-03-19 23:08:11.159081 | 2018-03-19 23:08:09.318082 |                 1 | 00:00:17.499182
+         201 |         301 |      14691882 | 2018-03-19 23:08:19.368075 |         14691882 | 2018-03-19 23:08:20.542037 | 2018-03-19 23:08:19.368075 |                 0 | 00:00:07.449189
+  (2 rows)
+
+
+</BODY>
+</HTML>
+ 
+

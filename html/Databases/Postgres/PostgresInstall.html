@@ -1,0 +1,356 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>PgresInstall</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Postgres Install Notes</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>Command line login</I></FONT>
+  
+	[lordaz@localhost ~]$ psql
+	Password:  &lt&lt<i>Password</i>&gt&gt
+	psql (9.6.5)
+	Type "help" for help.
+
+	lordaz=> 
+
+
+<FONT COLOR="#009999"><I>Install Postgres with Yum</I></FONT>
+
+Instructions are on https://www.postgresql.org/download/linux/redhat/
+
+ The PostgreSQL yum repository currently supports Red Hat Enterprise Linux, CentOS, Oracle Enterprise Linux and Scientific Linux, as well as current versions of Fedora. Note that due to the shorter support cycle on Fedora, all versions are not available on this platform, and we recommend not using Fedora for server deployments.
+
+To use the yum repository, follow these steps:
+
+    Select version: 
+
+
+Select platform:
+Select architecture: Install the repository RPM:
+
+====
+
+[lordaz@localhost ~]$ yum install https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+Loaded plugins: fastestmirror, langpacks
+You need to be root to perform this command.
+[lordaz@localhost ~]$ sudo yum install https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+[sudo] password for lordaz: 
+Loaded plugins: fastestmirror, langpacks
+pgdg-centos96-9.6-3.noarch.rpm                                              | 4.7 kB  00:00:00     
+Examining /var/tmp/yum-root-XGWyhg/pgdg-centos96-9.6-3.noarch.rpm: pgdg-centos96-9.6-3.noarch
+Marking /var/tmp/yum-root-XGWyhg/pgdg-centos96-9.6-3.noarch.rpm to be installed
+Resolving Dependencies
+--> Running transaction check
+---> Package pgdg-centos96.noarch 0:9.6-3 will be installed
+--> Finished Dependency Resolution
+base/7/x86_64                                                               | 3.6 kB  00:00:00     
+extras/7/x86_64                                                             | 3.4 kB  00:00:00     
+mysql-connectors-community/x86_64                                           | 2.5 kB  00:00:00     
+mysql-tools-community/x86_64                                                | 2.5 kB  00:00:00     
+mysql57-community/x86_64                                                    | 2.5 kB  00:00:00     
+updates/7/x86_64                                                            | 3.4 kB  00:00:00     
+updates/7/x86_64/primary_db                                                 | 2.7 MB  00:00:13     
+
+Dependencies Resolved
+
+===================================================================================================
+ Package                Arch            Version         Repository                            Size
+===================================================================================================
+Installing:
+ pgdg-centos96          noarch          9.6-3           /pgdg-centos96-9.6-3.noarch          2.7 k
+
+Transaction Summary
+===================================================================================================
+Install  1 Package
+
+Total size: 2.7 k
+Installed size: 2.7 k
+Is this ok [y/d/N]: Y
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : pgdg-centos96-9.6-3.noarch                                                      1/1 
+  Verifying  : pgdg-centos96-9.6-3.noarch                                                      1/1 
+
+Installed:
+  pgdg-centos96.noarch 0:9.6-3                                                                     
+
+Complete!
+
+
+====
+
+Install the client packages:
+
+====
+
+[lordaz@localhost ~]$ sudo yum install postgresql96
+[sudo] password for lordaz: 
+Loaded plugins: fastestmirror, langpacks
+base                                                                        | 3.6 kB  00:00:00     
+extras                                                                      | 3.4 kB  00:00:00     
+mysql-connectors-community                                                  | 2.5 kB  00:00:00     
+mysql-tools-community                                                       | 2.5 kB  00:00:00     
+mysql57-community                                                           | 2.5 kB  00:00:00     
+pgdg96                                                                      | 4.1 kB  00:00:00     
+updates                                                                     | 3.4 kB  00:00:00     
+Loading mirror speeds from cached hostfile
+ * base: mirror.oss.ou.edu
+ * extras: mirror.raystedman.net
+ * updates: linux.mirrors.es.net
+Resolving Dependencies
+--> Running transaction check
+---> Package postgresql96.x86_64 0:9.6.5-1PGDG.rhel7 will be installed
+--> Processing Dependency: postgresql96-libs(x86-64) = 9.6.5-1PGDG.rhel7 for package: postgresql96-9.6.5-1PGDG.rhel7.x86_64
+--> Processing Dependency: libpq.so.5()(64bit) for package: postgresql96-9.6.5-1PGDG.rhel7.x86_64
+--> Running transaction check
+---> Package postgresql96-libs.x86_64 0:9.6.5-1PGDG.rhel7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+===================================================================================================
+ Package                     Arch             Version                       Repository        Size
+===================================================================================================
+Installing:
+ postgresql96                x86_64           9.6.5-1PGDG.rhel7             pgdg96           1.4 M
+Installing for dependencies:
+ postgresql96-libs           x86_64           9.6.5-1PGDG.rhel7             pgdg96           312 k
+
+Transaction Summary
+===================================================================================================
+Install  1 Package (+1 Dependent package)
+
+Total download size: 1.7 M
+Installed size: 8.1 M
+Is this ok [y/d/N]: Y
+Downloading packages:
+(1/2): postgresql96-libs-9.6.5-1PGDG.rhel7.x86_64.rpm                       | 312 kB  00:00:01     
+(2/2): postgresql96-9.6.5-1PGDG.rhel7.x86_64.rpm                            | 1.4 MB  00:00:03     
+---------------------------------------------------------------------------------------------------
+Total                                                              430 kB/s | 1.7 MB  00:00:03     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : postgresql96-libs-9.6.5-1PGDG.rhel7.x86_64                                      1/2 
+  Installing : postgresql96-9.6.5-1PGDG.rhel7.x86_64                                           2/2 
+  Verifying  : postgresql96-9.6.5-1PGDG.rhel7.x86_64                                           1/2 
+  Verifying  : postgresql96-libs-9.6.5-1PGDG.rhel7.x86_64                                      2/2 
+
+Installed:
+  postgresql96.x86_64 0:9.6.5-1PGDG.rhel7                                                          
+
+Dependency Installed:
+  postgresql96-libs.x86_64 0:9.6.5-1PGDG.rhel7                                                     
+
+Complete!
+
+====
+
+Install postgresql96-server
+
+====
+
+[lordaz@localhost ~]$ sudo yum install postgresql96-server
+[sudo] password for lordaz: 
+Loaded plugins: fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * base: centos-distro.cavecreek.net
+ * extras: denver.gaminghost.co
+ * updates: mirrors.unifiedlayer.com
+Resolving Dependencies
+--> Running transaction check
+---> Package postgresql96-server.x86_64 0:9.6.5-1PGDG.rhel7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=========================================================================================================
+ Package                        Arch              Version                        Repository         Size
+=========================================================================================================
+Installing:
+ postgresql96-server            x86_64            9.6.5-1PGDG.rhel7              pgdg96            4.3 M
+
+Transaction Summary
+=========================================================================================================
+Install  1 Package
+
+Total download size: 4.3 M
+Installed size: 18 M
+Is this ok [y/d/N]: Y
+Downloading packages:
+postgresql96-server-9.6.5-1PGDG.rhel7.x86_64.rpm                                  | 4.3 MB  00:00:04     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : postgresql96-server-9.6.5-1PGDG.rhel7.x86_64                                          1/1 
+  Verifying  : postgresql96-server-9.6.5-1PGDG.rhel7.x86_64                                          1/1 
+
+Installed:
+  postgresql96-server.x86_64 0:9.6.5-1PGDG.rhel7                                                         
+
+Complete!
+
+====
+
+[lordaz@localhost ~]$ sudo /usr/pgsql-9.6/bin/postgresql96-setup initdb
+Initializing database ... OK
+
+[lordaz@localhost ~]$ sudo systemctl enable postgresql-9.6
+Created symlink from /etc/systemd/system/multi-user.target.wants/postgresql-9.6.service to /usr/lib/systemd/system/postgresql-9.6.service.
+[lordaz@localhost ~]$ sudo systemctl start postgresql-9.6
+[lordaz@localhost ~]$ 
+
+[lordaz@localhost ~]$ sudo service postgresql-9.6 start
+[sudo] password for lordaz: 
+Redirecting to /bin/systemctl start  postgresql-9.6.service
+[lordaz@localhost ~]$ sudo chkconfig postgresql-9.6 on
+Note: Forwarding request to 'systemctl enable postgresql-9.6.service'.
+
+====
+[lordaz@localhost ~]$ su -
+Password: Bztg2s@01
+Last login: Tue Oct  3 10:19:47 MDT 2017 on pts/0
+[root@localhost ~]# su - postgres
+Last login: Tue Oct  3 16:40:57 MDT 2017 on pts/0
+-bash-4.2$ psql
+psql (9.6.5)
+Type "help" for help.
+
+postgres=# \password
+Enter new password: Bztg2s@01
+Enter it again: Bztg2s@01
+postgres=# 
+postgres-# 
+postgres-# 
+postgres-# 
+postgres-# \q
+-bash-4.2$ 
+-bash-4.2$ exit
+logout
+[root@localhost ~]# exit
+logout
+[lordaz@localhost ~]$ 
+
+====
+
+Must edit the file /var/lib/pgsql/9.6/data/pg_hba.conf according to the following:
+
+local   all             postgres                                peer
+
+Should be
+
+local   all             postgres                                md5
+
+*** After altering this file, don't forget to restart your PostgreSQL server. If you're on Linux, that would be sudo service postgresql restart
+
+====
+
+[lordaz@localhost ~]$ su -
+Password: 
+Last login: Tue Oct  3 16:41:58 MDT 2017 on pts/0
+[root@localhost ~]# vi /var/lib/pgsql/9.6/data/pg_hba.conf 
+[root@localhost ~]# view /var/lib/pgsql/9.6/data/pg_hba.conf 
+[root@localhost ~]# clear
+
+[root@localhost ~]# sudo systemctl restart postgresql.service
+Failed to restart postgresql.service: Unit not found.
+[root@localhost ~]# service postgresql-9.6 restart
+Redirecting to /bin/systemctl restart  postgresql-9.6.service
+[root@localhost ~]# exit
+logout
+[lordaz@localhost ~]$ sudo su postgres
+[sudo] password for lordaz: 
+bash-4.2$ psql -U postgres
+could not change directory to "/home/lordaz": Permission denied
+Password for user postgres: <<Bztg2s@01>>
+psql (9.6.5)
+Type "help" for help.
+
+postgres=# CREATE DATABASE lordaz;
+CREATE DATABASE
+postgres=# \connect template1;
+You are now connected to database "template1" as user "postgres".
+template1=# CREATE USER lordaz WITH PASSWORD 'A1rb0rne';
+CREATE ROLE
+template1=# GRANT ALL PRIVILEGES ON DATABASE "lordaz" TO lordaz;
+GRANT
+template1=# 
+
+====
+
+Open a new tab and log in as lordaz
+
+====
+
+[lordaz@localhost ~]$ psql -U lordaz -d lordaz
+Password for user lordaz: 
+psql (9.6.5)
+Type "help" for help.
+
+lordaz=> \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   
+-----------+----------+----------+-------------+-------------+-----------------------
+ lordaz    | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =Tc/postgres         +
+           |          |          |             |             | postgres=CTc/postgres+
+           |          |          |             |             | lordaz=CTc/postgres
+ postgres  | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ template0 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
+           |          |          |             |             | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
+           |          |          |             |             | postgres=CTc/postgres
+(4 rows)
+
+lordaz=> 
+
+
+</pre>
+</BODY>
+</HTML>
+ 
+

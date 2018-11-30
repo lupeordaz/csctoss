@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <TITLE>Rsyslog</TITLE>
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+
+<HR>
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Using Rsyslog</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>Restart rsyslog</I></FONT>
+
+    <b>sudo service rsyslog restart</b>
+
+<FONT COLOR="#009999"><I>rsyslogd -N1</I></FONT>
+
+      rsyslogd: version 8.24.0, config validation run (level 1), master config /etc/rsyslog.conf
+      
+      rsyslogd: invalid or yet-unknown config file command 'mmnormalizeUseRawMSG' - have you forgotten to load a module? 
+          [v8.24.0 try http://www.rsyslog.com/e/3003 ]
+      
+      rsyslogd: invalid or yet-unknown config file command 'mmnormalizeRuleBase' - have you forgotten to load a module? 
+          [v8.24.0 try http://www.rsyslog.com/e/3003 ]
+      
+      rsyslogd: error during parsing file /etc/rsyslog.conf, on or before line 30: errors occured in file '/etc/rsyslog.conf' around line 30 
+          [v8.24.0 try http://www.rsyslog.com/e/2207 ]
+      
+      rsyslogd: module 'ommysql' already in this config, cannot be added  
+          [v8.24.0 try http://www.rsyslog.com/e/2221 ]
+      
+      rsyslogd:  Could not find template 0 'database' - action disabled 
+          [v8.24.0 try http://www.rsyslog.com/e/3003 ]
+      
+      rsyslogd: error during parsing file /etc/rsyslog.d/rds.conf, on or before line 3: errors occured in file '/etc/rsyslog.d/rds.conf' around line 3 
+          [v8.24.0 try http://www.rsyslog.com/e/2207 ]
+      
+      rsyslogd: unknown facility name "ommysql" 
+          [v8.24.0]
+      
+      rsyslogd: user name 'mmnormal...' too long - ignored 
+          [v8.24.0]
+      
+      rsyslogd: error during parsing file /etc/rsyslog.d/rds.conf, on or before line 22: warnings occured in file '/etc/rsyslog.d/rds.conf' around line 22 
+          [v8.24.0 try http://www.rsyslog.com/e/2207 ]
+      
+      rsyslogd: imudp: ruleset 'linux' for *:13515 not found - using default ruleset instead 
+          [v8.24.0]
+
+<FONT COLOR="#009999"><I>lognormalizer</I></FONT>
+
+      lognormalizer -r /rsyslog/rulebase.rb -e json < /var/log/policyid1623.log -p
+
+      { "reason": "Close - TCP RST", "session_id": "125693", "dstxlatedport": "443", "dst_xtranslateip": "172.217.8.174", "srxxlatedport": "37734", "srx_xtranslateip": "74.115.157.233", "dst_port": "443", "src_port": "59089", "dst_ip": "172.217.8.174", "src_ip": "10.82.8.9", "rcvd": "68", "sent": "136", "action": "Permit", "dst_zone": "Untrust", "src_zone": "private_atm", "proto": "6", "service": "https", "policy_id": "1623", "duration": "4", "fwstart_time": "2018-08-30 17:55:03", "filler1": " [Root]system-notification-00257(traffic)", "device_id": "dencfw01", "fw_type": "NetScreen", "device": "dencfw01:", "host": "dencfw01.contournetworks.net", "start_time": "Aug 30 19:55:07" }
+      { "reason": "Close - TCP RST", "session_id": "80433", "dstxlatedport": "443", "dst_xtranslateip": "172.217.6.110", "srxxlatedport": "37742", "srx_xtranslateip": "74.115.157.233", "dst_port": "443", "src_port": "61350", "dst_ip": "172.217.6.110", "src_ip": "10.82.8.20", "rcvd": "68", "sent": "136", "action": "Permit", "dst_zone": "Untrust", "src_zone": "private_atm", "proto": "6", "service": "https", "policy_id": "1623", "duration": "2", "fwstart_time": "2018-08-30 17:55:06", "filler1": " [Root]system-notification-00257(traffic)", "device_id": "dencfw01", "fw_type": "NetScreen", "device": "dencfw01:", "host": "dencfw01.contournetworks.net", "start_time": "Aug 30 19:55:08" }
+      { "reason": "Close - TCP RST", "session_id": "125433", "dstxlatedport": "443", "dst_xtranslateip": "172.217.6.14", "srxxlatedport": "37744", "srx_xtranslateip": "74.115.157.233", "dst_port": "443", "src_port": "63436", "dst_ip": "172.217.6.14", "src_ip": "10.82.8.10", "rcvd": "68", "sent": "136", "action": "Permit", "dst_zone": "Untrust", "src_zone": "private_atm", "proto": "6", "service": "https", "policy_id": "1623", "duration": "4", "fwstart_time": "2018-08-30 17:55:06", "filler1": " [Root]system-notification-00257(traffic)", "device_id": "dencfw01", "fw_type": "NetScreen", "device": "dencfw01:", "host": "dencfw01.contournetworks.net", "start_time": "Aug 30 19:55:10" }
+
+
+</BODY>
+</HTML>
+ 
+

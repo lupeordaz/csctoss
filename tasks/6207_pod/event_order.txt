@@ -1,0 +1,59 @@
+1.  DENOSS02 contains the session_monitor3.sh script that runs every minute.  The job is in the 
+    crontab for denoss02:
+
+    # session monitor - every minute
+	#* * * * * /home/postgres/dba/jobs/session_monitor.sh > /home/postgres/dba/logs/session_monitor.log 2>&1
+	#* * * * * /home/postgres/dba/jobs/session_monitor.20130520.sh > /home/postgres/dba/logs/session_monitor.log 2>&1
+	* * * * * /home/postgres/dba/jobs/session_monitor3.sh > /home/postgres/dba/logs/session_monitor3.log 2>&1
+
+2.  Shell script session_monitor3.sh calls packet_of_disconnect() function.  Here is the entry:
+
+	psql -U csctmon_owner -d csctmon -q -t -c "select * from csctmon.packet_of_disconnect(128)"      >> $TEMPFILE
+
+3.  packet_of_disconnect.sql scan's the database 
+
+[postgres@denoss02 logs]$ cat session_monitor.out 
+
+
+ SUCCESS
+
+ SUCCESS
+
+ POD STRING: 06744465,3128545470@cn01.sprintpcs.com,10.56.4.188,10.17.4.6,1739,CSCT80pod
+ SUCCESS
+
+
+
+[postgres@denoss02 logs]$ cat pod.tmp
+
+06744465,3128545470@cn01.sprintpcs.com,10.56.4.188,10.17.4.6,1739,CSCT80pod
+
+
+
+[postgres@denoss02 logs]$ cat pod.dat
+
+Acct-Session-Id=06744465
+User-Name=3128545470@cn01.sprintpcs.com
+Framed-IP-Address=10.56.4.188
+
+
+
+[postgres@denoss02 logs]$ tail -12 pod.20180308
+
+
+--------------------end of pod report--------------------
+START  : 20180308224402
+COMMAND: radclient -x -c 1 10.17.4.6:1739 -f /home/postgres/dba/logs/pod.dat disconnect CSCT80pod
+Acct-Session-Id=06744465
+User-Name=3128545470@cn01.sprintpcs.com
+Framed-IP-Address=10.56.4.188
+Sending Disconnect-Request of id 179 to 10.17.4.6 port 1739
+	Acct-Session-Id = "06744465"
+	User-Name = "3128545470@cn01.sprintpcs.com"
+	Framed-IP-Address = 10.56.4.188
+rad_recv: Disconnect-ACK packet from host 10.17.4.6 port 1739, id=179, length=20
+--------------------end of pod report--------------------
+
+
+[postgres@denoss02 logs]$
+

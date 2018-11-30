@@ -1,0 +1,17 @@
+# ############################################################# #
+# Min | HR | Day of Month | Month | Day of Week | File | Output #
+# ############################################################# #
+
+# NOTE : This server on UTC. 7am UTC = 12 Midnight MST
+
+# restart nscd because of command failures - every night at 1:15 am MST
+08 15 * * * /etc/init.d/nscd restart > /var/log/nscd_restart.log 2>&1
+
+# 0 * * * * /usr/sbin/ntpdate -s atlsvc01 2>&1 > /dev/null
+
+# ONLY ENABLE THIS JOB IF THIS SERVER IS THE MASTER !!!
+#30 10 * * * /opt/jbilling/ossupdate.sh 2>&1 > /dev/null
+
+30 10 * * * /root/denjbi02-scripts/ossupdate.sh 2>&1 > /root/denjbi02-scripts/logs/ossupdate.denjbi02.log
+
+#15 03 * * * /root/denjbi02-scripts/ossupdate.sh 2>&1 > /root/denjbi02-scripts/logs/ossupdate.denjbi02.log

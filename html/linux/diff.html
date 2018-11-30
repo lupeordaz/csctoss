@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <TITLE>Diff</TITLE>
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Diff - unix/linux utility</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<pre>
+
+<FONT COLOR="#009999"><I>diff Command:</I></FONT>
+
+    diff analyzes two files and prints the lines that are different. Essentially, it outputs a set 
+    of instructions for how to change one file to make it identical to the second file.
+
+<FONT COLOR="#009999"><I>Using diff to extract </I></FONT>
+
+    <b>diff -u mac1 mac2 | grep '^-[^-]' | sed 's/^-//'</b>
+
+<FONT COLOR="#009999"><I>Display file differences side by side</I></FONT>
+
+    From man diff, you can use -y to do side-by-side.
+
+      -y, --side-by-side
+             output in two columns
+
+    [gordaz@cctlix03 5653]$ <b>diff -y mac2 mac1 </b>
+    3490                3490
+                        > 3824
+                        > 4106
+    4642                4642
+                        > 4769
+                        > 4775
+                        > 4844
+                        > 4871
+    4909                4909
+                        > 5231
+
+<FONT COLOR="#009999"><I>Display file entries from file1 that don't appear in file2</I></FONT>
+
+    <b>diff -u mac1 mac2 | grep '^-[^-]' | sed 's/^-//' </b>
+
+
+
+
+</BODY>
+</HTML>
+ 
+

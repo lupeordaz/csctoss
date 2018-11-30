@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Denoss01</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Denoss01 crontab</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+# ############################################################# #
+# Min | HR | Day of Month | Month | Day of Week | File | Output #
+# ############################################################# #
+
+# NOTE : This server on UTC. 7am UTC = 12 Midnight MST
+
+# execute radius_updater() function to replicate radius data - every minute
+*/3 * * * * <FONT COLOR="#009999"><b>/home/postgres/dba/jobs/radius_updater.sh</b></FONT> 2&gt&amp1 &gt /dev/null
+
+# check slony replication - hourly
+#55 0-5,7-23 * * * /home/postgres/dba/jobs/test_slony_state-dbi.sh &gt /home/postgres/dba/logs/test_slony_state-dbi.log 2&gt&amp1
+
+# database sizing report - monthly
+30 12 1 * * /home/postgres/dba/jobs/db_sizing_report.sh csctoss /home/postgres &gt /home/postgres/dba/logs/db_sizing_report.log 2&gt&amp1
+
+# backup and gzip the csctoss database - once a day
+#00 */6 * * * /home/postgres/dba/jobs/dbbackup.sh &gt /home/postgres/dba/logs/csctoss_backup.log 2&gt&amp1
+00 10 * * * <FONT COLOR="#009999"><b>/home/postgres/dba/jobs/dbbackup.sh</b></FONT> &gt /home/postgres/dba/logs/csctoss_backup.log 2&gt&amp1
+
+# database schema backup - daily
+00 09 * * * /home/postgres/dba/schema_backups/schema_backup.sh 2&gt&amp1 &gt /home/postgres/dba/schema_backups/run.log
+
+# ############################################################################### #
+# THESE ARE ONCE DAILY JOBS GROUPED TOGETHER TO AVOID RESOURCE COLLISION          #
+# ############################################################################### #
+
+# vacuum analyze the csctoss database - daily
+00 06 * * * /home/postgres/dba/jobs/dbvacuum.sh &gt /home/postgres/dba/logs/csctoss_vacuum.log 2&gt&amp1
+
+# remove stale log files from all postgres database installs - daily
+05 06 * * * /home/postgres/dba/jobs/log_file_maint.sh &gt /home/postgres/dba/logs/log_file_maint.log 2&gt&amp1
+
+# line class mismatch report - daily
+10 06 * * * <FONT COLOR="#009999"><b>/home/postgres/dba/jobs/line_class_updater.sh</b></FONT> &gt /home/postgres/dba/logs/line_class_updater.log 2&gt&amp1
+
+# execute set_plan_acct_start_date() function - daily
+15 06 * * * /home/postgres/dba/jobs/set_plan_acct_start_date.sh &gt /home/postgres/dba/logs/set_plan_acct_start_date.log 2&gt&amp1
+
+# execute equipment_credential_populate() function - daily
+30 06 * * * /home/postgres/dba/jobs/equipment_credential_populate.sh &gt /home/postgres/dba/logs/equipment_credential_populate.log 2&gt&amp1
+
+# execute consolidated alerting functions and report - daily
+#45 06 * * * /home/postgres/dba/jobs/alert_consolidated.sh &gt /home/postgres/dba/logs/alert_consolidated.log 2&gt&amp1
+
+# check for and report any replication failures - daily</b></I></FONT>
+55 06 * * * <FONT COLOR="#009999"><b>/home/postgres/dba/jobs/replication_check.sh</b></FONT> &gt /home/postgres/dba/logs/replication_check.log 2&gt&amp1
+
+# execute line_alert_monitor() function - hourly
+59 * * * * /home/postgres/dba/jobs/line_alert_monitor.sh &gt /home/postgres/dba/logs/line_alert_monitor.cronlog 2&gt&amp1
+
+# usage rollup job - daily
+00 07 * * * /home/postgres/dba/jobs/usage_rollup.sh &gt /home/postgres/dba/logs/usage_rollup.log 2&gt&amp1
+
+# check for outage between static_ip_pool table and the radreply table.
+15 08 * * * /home/postgres/dba/jobs/static_ip_radreply_outage.sh 2&gt&amp1
+
+# execute if_firmware_populate.sh - daily
+30 09 * * * /home/postgres/dba/jobs/firmware_updater.sh &gt /home/postgres/dba/logs/firmware_updater.log 2&gt&amp1
+
+#execute consolidated alerting functions and report (includes signal strength) - daily
+45 06 * * * /home/postgres/dba/jobs/alert_consolidated_new.sh &gt /home/postgres/dba/logs/alert_consolidated_new.log 2&gt&amp1
+
+#execute NEW term request hoourly report (with checks for high counts and manual runs)
+50 * * * * /home/postgres/dba/jobs/term_request_by_hour_report.sh -h 07 -t 300  &gt /home/postgres/dba/logs/term_request_by_hour_report_new.log 2&gt&amp1
+
+#execute function to determine usage daily alerts
+#ben job written for jon for new cust portal# 30 7 * * * /home/postgres/dba/jobs/alert_usage_daily.sh &gt /home/postgres/dba/logs/alert_usage_daily.log
+
+#execute script to check jbilling db contact table for bad state values
+#00 08 * * * /home/postgres/dba/jobs/check_state_vals.sh &gt /home/postgres/dba/logs/check_state_vals.log 2&gt&amp1
+
+#execute script to check jbilling db tax tables for bad state values
+15 08 * * * /home/postgres/dba/jobs/tax_state_nulls.sh &gt /home/postgres/dba/logs/tax_state_nulls.log 2&gt&amp1
+
+#test script for denjbi02
+#00 08 * * * /home/postgres/denjbi02-scripts/check_state_vals.sh &gt /home/postgres/denjbi02-scripts/check_state_vals.denjbi02.log
+
+#30 08 * * * /home/postgres/denjbi02-scripts/dupli_active_so.sh &gt /home/postgres/denjbi02-scripts/dupli_active_so.denjbi02.log
+
+#30 16 * * * /home/postgres/dba/jobs/check_jbill_oss_mrc_mismatch.sh &gt /home/postgres/dba/logs/check_jbill_oss_mrc_mismatch.log
+
+* * * <FONT COLOR="#009999">51 22 /home/postgres/dba/jobs/check_jbill_oss_mrc_mismatch.sh &gt /home/postgres/dba/logs/check_jbill_oss_mrc_mismatch.log</FONT>
+
+# THESE ARE VARIOUS CONTOUR REPORTS
+
+00 11 * * 0 /home/postgres/dba/jobs/mb_usage_weekly_report.sh 2&gt&amp1 &gt /dev/null
+#15 11 * * * /home/postgres/dba/jobs/sprint_alpha_daily_report.sh &gt /home/postgres/dba/logs/sprint_alpha_daily_report.log 2&gt&amp1
+#30 11 * * * /home/postgres/dba/jobs/sprint_3gtn_daily_report.sh &gt /home/postgres/dba/logs/sprint_3gtn_daily_report.log 2&gt&amp1
+00 17 1 * * /home/postgres/dba/jobs/csct_report/csct_report.sh 2&gt&amp1 &gt /home/postgres/dba/logs/csct_monthly_report.log 2&gt&amp1
+05 20 * * * /home/postgres/dba/jobs/usage_overage_report.sh 2&gt&amp1 &gt /dev/null
+#  test
+#15 12 * * *  /home/postgres/dba/jobs/mon_2_date_daily_usg.sh &gt  /home/postgres/dba/logs/mon_2_date_daily_usg.cronlog 2&gt&amp1
+#45 21 15 1 * /home/postgres/dba/jobs/mon_2_date_daily_usg.sh &gt  /home/postgres/dba/logs/mon_2_date_daily_usg.cronlog 2&gt&amp1
+<FONT COLOR="#009999"><I><b>00 15 02 * * /home/postgres/dba/jobs/connected_lines.sh > /home/postgres/dba/logs/connected_lines.log 2>&1</b></I></FONT>
+
+# Update groupname of verizon lines daily at 5 pm MST
+00 00 * * * /home/postgres/dba/scripts/update_groupname_vzw_lines.sh &gt /home/postgres/dba/logs/update_groupname_vzw_lines.log
+
+# Update radcheck values of verizon lines daily at 5:05 pm MST
+05 00 * * * /home/postgres/dba/scripts/update_radcheck_vzw_lines.sh &gt /home/postgres/dba/logs/update_radcheck_vzw_lines.log
+
+# Fix Class attribute value for Verizon
+06 00 * * * /home/postgres/dba/jobs/fix_class_value.sh &gt /home/postgres/dba/logs/fix_class_value.log
+
+# Detect duplicate IPs
+*/5 16-23 * * * /home/postgres/dba/jobs/detect_duplicate_ip.sh &gt /home/postgres/dba/logs/detect_duplicate_ip.log
+
+<FONT COLOR="#009999"><I><b># Copy master_radacct table from atllog01/denlog01 to atloss01/denoss01.</b></I></FONT>
+#     script to populate master rad data on oss for customer portal-   written by Jon
+#00 09 * * * /home/postgres/dba/jobs/master_rad_hourly_copy.sh  2&gt&amp1 &gt /home/postgres/dba/logs/master_rad_hourly_copy.log
+*/30 * * * * /home/postgres/dba/jobs/master_rad_hourly_copy.sh 2&gt&amp1 &gt /home/postgres/dba/logs/master_rad_hourly_copy.log 2&gt&amp1
+
+# Report number of OSS active lines per carrier for Kudo-san.
+#00 16 * * 1 /home/postgres/dba/jobs/report_num_of_active_lines.sh 2&gt&amp1 &gt /home/postgres/dba/logs/report_num_of_active_lines.log
+
+# Report number of access rejects report.
+00 14,21 * * * /home/postgres/dba/jobs/report_access_reject.sh 2&gt&amp1 &gt /home/postgres/dba/logs/report_access_reject.log
+
+# Report Port-Preempted.
+00 14,21 * * * /home/postgres/dba/jobs/report_port_preempted.sh 2&gt&amp1 &gt /home/postgres/dba/logs/report_port_preempted.log
+
+##      script to product Carrier Usage and Overage reports for Opentaps
+00 06 2 * *  /home/postgres/dba/special/rating_engine/rating_engine_calc.sh 2&gt&amp1 &gt /home/postgres/dba/special/rating_engine/logs/rating_engine_calc.cron
+26 18 6 4 *  /home/postgres/dba/special/rating_engine/rating_engine_calc.sh 2&gt&amp1 &gt /home/postgres/dba/special/rating_engine/logs/rating_engine_calc.cron
+##     RMA script to automatically process RMA tickets
+*/2 * * * *  /home/postgres/dba/special/rma_process/RT_process.sh  &gt&gt /home/postgres/dba/special/rma_process/cronout.log 2&gt&amp1
+
+# OSS product_code auto corrector based on JBilling MRC plan.
+0 */3 * * *  /home/postgres/dba/jobs/sync_product_code.sh &gt&gt /home/postgres/dba/logs/sync_product_code.cronlog 2&gt&amp1
+
+# Device hotlist
+00 14 * * * /home/postgres/dba/jobs/device_monitor_hotlist.sh | mail -s "Device Hotlist $(date)" yshibuya@j-com.co.jp ktaylor@contournetworks.com jobrey@cctus.com csharkey@contournetworks.com jlyon@contournetworks.com lparish@cctus.com tstovicek@cctus.com gordaz@cctus.com
+
+# JBilling and OSS billing entity mapping synchronization
+08 * * * * <FONT COLOR="#009999">/home/postgres/dba/jobs/copy_jbill_oss_billing_entity_mapping.sh &gt /dev/null 2&gt&amp1</FONT>
+
+# Monthly CNI invoice detail report
+00 10 02 * * <FONT COLOR="#009999">/home/postgres/dba/jobs/generate_invoice_detail.sh &gt /tmp/generate_invoice_detail.log 2&gt&amp1</FONT>
+
+
+</BODY>
+</HTML>
+ 
+

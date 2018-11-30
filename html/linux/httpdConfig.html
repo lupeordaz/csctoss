@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>httpd config</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">httpd Configuration</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>PaperWise Notes</I></FONT><BR>&nbsp;<BR>
+
+    [lordaz@water-win etc]$ cat hosts
+
+    # Do not remove the following line, or various programs
+    # that require network functionality will fail.
+    127.0.0.1   localhost.localdomain localhost
+    10.64.60.74     water-win.trustamerica.com  www.trustcompanyofamerica.biz water-win
+
+    [lordaz@water-win etc]$ cat sysconfig/network
+
+    NETWORKING=yes
+    NETWORKING_IPV6=no
+    HOSTNAME=water-win
+
+<FONT COLOR="#009999"><I>/etc/httpd/ directory</I></FONT><BR>&nbsp;<BR>
+    drwxr-xr-x 2 root root 4096 Jul 14 13:00 conf
+    drwxr-xr-x 2 root root 4096 Jun 22 11:32 conf.d
+    lrwxrwxrwx 1 root root   19 Jun 22 11:30 logs -> ../../var/log/httpd
+    lrwxrwxrwx 1 root root   29 Jun 22 11:30 modules -> ../../usr/lib64/httpd/modules
+    lrwxrwxrwx 1 root root   13 Jun 22 11:30 run -> ../../var/run
+<FONT COLOR="#009999"><I>logs File directory</I></FONT><BR>&nbsp;<BR>
+    Files access.log and error.log contain messages from users.
+
+<FONT COLOR="#009999"><I>netstat commands</I></FONT><BR>&nbsp;<BR>
+    netstat -lnp | grep httpd 
+
+<FONT COLOR="#009999"><I>Test the httpd configurations</I></FONT><BR>&nbsp;<BR>
+    apachectl configtest
+<FONT COLOR="#009999"><I>/etc/httpd/ directory</I></FONT><BR>&nbsp;<BR>
+<FONT COLOR="#009999"><I>/etc/httpd/ directory</I></FONT><BR>&nbsp;<BR>
+<FONT COLOR="#009999"><I>/etc/httpd/ directory</I></FONT><BR>&nbsp;<BR>
+<FONT COLOR="#009999"><I>/etc/httpd/ directory</I></FONT><BR>&nbsp;<BR>
+<FONT COLOR="#009999"><I>/etc/httpd/ directory</I></FONT><BR>&nbsp;<BR>
+<FONT COLOR="#009999"><I>/etc/httpd/ directory</I></FONT><BR>&nbsp;<BR>
+<FONT COLOR="#009999"><I>/etc/httpd/ directory</I></FONT><BR>&nbsp;<BR>
+<FONT COLOR="#009999"><I>/etc/httpd/ directory</I></FONT><BR>&nbsp;<BR>
+
+<table border="border" width = 800>
+  <tr align="Left">
+    <th width="45%">Function</th>
+    <th width="55%">Command</th>
+  </tr>
+  <tr align="Left">
+    <td>db2cmd </td>
+    <td>Open DB2 Command line Tool</td>
+  </tr>
+</table>
+
+
+</BODY>
+</HTML>
+ 
+

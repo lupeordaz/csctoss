@@ -1,0 +1,152 @@
+SELECT
+line_id ,
+line_start_date ,
+line_end_date ,
+radius_username ,
+equipment_model_number ,
+equipment_carrier ,
+equipment_maker ,
+equipment_vendor ,
+product_code ,
+sales_order_number ,
+esn_hex ,
+serial_number ,
+location_owner ,
+location_id ,
+location_address ,
+location_name ,
+location_processor ,
+cellsignal ,
+static_ip_address ,
+name ,
+connection_status ,
+last_connected_timestamp,
+firmware_version ,
+warranty_start_date ,
+warranty_end_date ,
+warranty_status ,
+soup_config_name ,
+is_connected ,
+config_status ,
+firmware_status
+FROM csctoss.portal_active_lines_vw
+WHERE billing_entity_id = 794;
+
+line_id                  | 45858
+line_start_date          | 2017-10-18
+line_end_date            | 
+radius_username          | 4704219849@vzw3g.com
+equipment_model_number   | WR11-L800
+equipment_carrier        | VZW
+equipment_maker          | 
+equipment_vendor         | 
+product_code             | MRC-CYE1-M-0-N-0-3
+sales_order_number       | SO-11840
+esn_hex                  | 353238060061040
+serial_number            | S419370
+location_owner           | Jerry Burnett
+location_id              | Bridge City Café- Essex
+location_address         | 1310 SW 3rd Ave Portland, OR 97201
+location_name            | Bridge City Café- Essex
+location_processor       | 
+cellsignal               | 
+static_ip_address        | 10.80.13.92
+name                     | Retail Data Systems - Colorado
+connection_status        | Active
+last_connected_timestamp | 2018-01-02 17:42:23-07
+firmware_version         | 
+warranty_start_date      | 2017-10-18
+warranty_end_date        | 2022-10-18
+warranty_status          | In warranty
+soup_config_name         | 
+is_connected             | NO
+config_status            | Not Current
+firmware_status          | Not Current
+
+
+csctoss=# select table_name from INFORMATION_SCHEMA.views where table_name like 'portal%';
+       table_name       
+------------------------
+ portal_active_lines_vw
+(1 row)
+
+\d+ portal_active_lines_vw
+
+SELECT CASE WHEN ((SELECT count(*) AS count 
+      	                      FROM master_radacct 
+      	                     WHERE ((master_radacct.username)::text = line.radius_username)) = 0) 
+                     THEN 'NO'::text 
+                     ELSE 
+                     CASE WHEN ((SELECT count(*) AS count 
+                     	           FROM master_radacct mrad 
+                     	          WHERE (((((mrad.username)::text = line.radius_username) 
+                     	          	AND (mrad.acctstarttime >= (('now'::text)::timestamp(6) with time zone - '1 mon'::interval))) AND 
+                     	                (mrad.master_radacctid = (SELECT max(mrad2.master_radacctid) AS max 
+                     	                	                        FROM master_radacct mrad2 
+                     	                	                       WHERE ((mrad2.username)::text = (mrad.username)::text)))) 
+                     	            AND (mrad.acctstoptime IS NULL))) = 1) 
+                          THEN 'YES'::text 
+                          ELSE 'NO'::text 
+                     END 
+                END AS "case"
+
+
+csctoss=# select * from unique_identifier where equipment_id = 42817;
+ equipment_id | unique_identifier_type |        value         | notes | date_created | date_modified 
+--------------+------------------------+----------------------+-------+--------------+---------------
+        42817 | ESN DEC                | 89148000002993056792 |       | 2017-06-22   | 
+        42817 | ESN HEX                | 353238060061040      |       | 2017-06-22   | 
+        42817 | MAC ADDRESS            | 00042D06662A         |       | 2017-06-22   | 
+        42817 | MDN                    | 4704219849           |       | 2017-06-22   | 
+        42817 | MIN                    | 4704219849           |       | 2017-06-22   | 
+        42817 | SERIAL NUMBER          | S419370              |       | 2017-06-22   | 
+(6 rows)
+
+
+select le.equipment_id
+      ,l.billing_entity_id
+      ,be.name
+  from line l
+  join line_equipment le on l.line_id = le.line_id
+  join billing_entity be on l.billing_entity_id = be.billing_entity_id
+  join username u on u.billing_entity_id = l.billing_entity_id
+ where le.equipment_id = 42817
+   and username like '4704219849%';
+
+
+
+
+SELECT
+	line_id ,
+	line_start_date ,
+	line_end_date ,
+	radius_username ,
+	equipment_model_number ,
+	equipment_carrier ,
+	equipment_maker ,
+	equipment_vendor ,
+	product_code ,
+	sales_order_number ,
+	esn_hex ,
+	serial_number ,
+	location_owner ,
+	location_id ,
+	location_address ,
+	location_name ,
+	location_processor ,
+	cellsignal ,
+	static_ip_address ,
+	name ,
+	connection_status ,
+	last_connected_timestamp,
+	firmware_version ,
+	warranty_start_date ,
+	warranty_end_date ,
+	warranty_status ,
+	soup_config_name ,
+	is_connected ,
+	config_status ,
+	firmware_status 
+FROM csctoss.portal_active_lines_vw
+WHERE (billing_entity_id = 396)
+  AND line_id = 44157   

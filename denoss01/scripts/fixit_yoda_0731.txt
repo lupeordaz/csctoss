@@ -1,0 +1,193 @@
+
+
+begin;
+
+select public.set_change_log_staff_id(262);
+
+delete  from csctoss.alert_definition    
+where username  in 
+('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+ '3124375816@uscc.net', '3124370416@uscc.net');
+
+delete  from csctoss.username    
+where username  in 
+('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+ '3124375816@uscc.net', '3124370416@uscc.net');
+
+delete  from csctoss.radreply    
+where username  in 
+('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+ '3124375816@uscc.net', '3124370416@uscc.net');
+
+delete  from csctoss.radcheck
+where username  in 
+('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+ '3124375816@uscc.net', '3124370416@uscc.net');
+
+delete  from csctoss.usergroup
+where username  in 
+('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+ '3124375816@uscc.net', '3124370416@uscc.net');
+
+update line set end_date=current_date -1,radius_username=null
+where radius_username  in
+('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+ '3124375816@uscc.net', '3124370416@uscc.net');
+
+--delete  from line
+--where radius_username  in 
+--('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+-- '3124375816@uscc.net', '3124370416@uscc.net');
+
+-----------------------------------------------------------------------------------------------------------
+
+
+delete  from csctoss.alert_definition    
+where username  in 
+(
+'3125460335@uscc.net',
+'3124376564@uscc.net',
+'3122174509@uscc.net',
+'9176731392@tsp17.sprintpcs.com',
+'3123886956@uscc.net',
+'3122179565@uscc.net',
+'3125469378@uscc.net'
+);
+
+
+--select count(*) from alert_activity
+
+delete from alert_activity
+where alert_definition_id in (select alert_definition_id from alert_definition 
+where username  in
+(
+'3125460335@uscc.net',
+'3124376564@uscc.net',
+'3122174509@uscc.net',
+'9176731392@tsp17.sprintpcs.com',
+'3123886956@uscc.net',
+'3122179565@uscc.net',
+'3125469378@uscc.net'
+)
+);
+
+
+Old Usernames : 
+
+3125460335@uscc.net             3124377937@uscc.net
+3124376564@uscc.net             3124378146@uscc.net
+3122174509@uscc.net             3124372806@uscc.net
+9176731392@tsp17.sprintpcs.com  6462389602@tsp17.sprintpcs.com
+3123886956@uscc.net             3124375925@uscc.net
+3122179565@uscc.net             3124375816@uscc.net
+3125469378@uscc.net             3124370416@uscc.net
+
+
+
+New Usernames : 
+3124377937@uscc.net
+3124378146@uscc.net 
+3124372806@uscc.net 
+6462389602@tsp17.sprintpcs.com'
+3124375925@uscc.net
+3124375816@uscc.net 
+3124370416@uscc.net
+
+
+
+
+('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+ '3124375816@uscc.net', '3124370416@uscc.net');
+
+
+
+---    output from above commands:
+
+
+
+csctoss=> begin;
+BEGIN
+csctoss=> select public.set_change_log_staff_id(262);
+ set_change_log_staff_id
+-------------------------
+                     262
+(1 row)
+
+csctoss=> delete  from csctoss.alert_definition
+csctoss-> where username  in
+csctoss-> ('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+csctoss(>  '3124375816@uscc.net', '3124370416@uscc.net');
+DELETE 4
+csctoss=> delete  from csctoss.username
+csctoss-> where username  in
+csctoss-> ('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+csctoss(>  '3124375816@uscc.net', '3124370416@uscc.net');
+DELETE 7
+csctoss=>
+csctoss=> delete  from csctoss.radreply
+csctoss-> where username  in
+csctoss-> ('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+csctoss(>  '3124375816@uscc.net', '3124370416@uscc.net');
+DELETE 0
+csctoss=> delete  from csctoss.radcheck
+csctoss-> where username  in
+csctoss-> ('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+csctoss(>  '3124375816@uscc.net', '3124370416@uscc.net');
+DELETE 7
+csctoss=> delete  from csctoss.usergroup
+csctoss-> where username  in
+csctoss-> ('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+csctoss(>  '3124375816@uscc.net', '3124370416@uscc.net');
+DELETE 7
+csctoss=> update line set end_date=current_date -1,radius_username=null
+csctoss-> where radius_username  in
+csctoss-> ('3124377937@uscc.net', '3124378146@uscc.net', '3124372806@uscc.net', '6462389602@tsp17.sprintpcs.com', '3124375925@uscc.net',
+csctoss(>  '3124375816@uscc.net', '3124370416@uscc.net');
+UPDATE 6
+csctoss=> commit;
+COMMIT
+
+
+
+
+csctoss=> rollback;
+WARNING:  there is no transaction in progress
+ROLLBACK
+csctoss=> begin;
+BEGIN
+csctoss=> select public.set_change_log_staff_id(262);
+ set_change_log_staff_id
+-------------------------
+                     262
+(1 row)
+
+csctoss=> delete from alert_activity
+csctoss-> where alert_definition_id in (select alert_definition_id from alert_definition
+csctoss(> where username  in
+csctoss(> (
+csctoss(> '3125460335@uscc.net',
+csctoss(> '3124376564@uscc.net',
+csctoss(> '3122174509@uscc.net',
+csctoss(> '9176731392@tsp17.sprintpcs.com',
+csctoss(> '3123886956@uscc.net',
+csctoss(> '3122179565@uscc.net',
+csctoss(> '3125469378@uscc.net'
+csctoss(> )
+csctoss(> );
+DELETE 17
+csctoss=> delete  from csctoss.alert_definition
+csctoss-> where username  in
+csctoss-> (
+csctoss(> '3125460335@uscc.net',
+csctoss(> '3124376564@uscc.net',
+csctoss(> '3122174509@uscc.net',
+csctoss(> '9176731392@tsp17.sprintpcs.com',
+csctoss(> '3123886956@uscc.net',
+csctoss(> '3122179565@uscc.net',
+csctoss(> '3125469378@uscc.net'
+csctoss(> );
+DELETE 5
+csctoss=> commit;
+COMMIT
+csctoss=> exit
+

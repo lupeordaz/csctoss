@@ -1,0 +1,214 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Replicate</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Replication Process</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+
+<pre>
+
+<FONT COLOR="#0000FF" SIZE=5><I>Description</I></FONT>
+
+  The Replication Process pushes specific data to the appropriate Radius database server.
+  These are the Radius servers:
+
+ hostname | ip_address  | repl_port | repl_target_db | repl_target_username | repl_target_password | repl_flag | radacct_flag | radpostauth_flag | sprint_flag 
+    ----------+-------------+-----------+----------------+----------------------+----------------------
+ atlrad12 | 10.16.64.14 | 5450      | radiusdb       | slony                | NULL                 | f         | f            | f                | f
+ atlrad20 | 10.16.64.15 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+ atlrad21 | 10.16.64.16 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+ atlrad22 | 10.16.64.17 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+ atlrad23 | 10.16.64.18 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+ atlrad24 | 10.16.64.19 | 5450      | radiusdb       | slony                | NULL                 | t         | t            | t                | f
+ atlrad25 | 10.16.64.23 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+ atlrad30 | 10.16.64.20 | 5450      | radiusdb       | slony                | NULL                 | t         | t            | f                | f
+ atlrad31 | 10.16.64.21 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | f                | f
+ atlrad32 | 10.16.64.22 | 5450      | radiusdb       | slony                | NULL                 | f         | f            | f                | t
+ atlrad33 | 10.16.64.24 | 5450      | radiusdb       | slony                | NULL                 | f         | f            | f                | f
+----------+-------------+-----------+----------------+----------------------+----------------------+-----------+--------------+------------------+-------------
+ denrad12 | 10.17.64.14 | 5450      | radiusdb       | slony                | NULL                 | f         | f            | f                | f
+ denrad20 | 10.17.64.15 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+ denrad21 | 10.17.64.16 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+ denrad22 | 10.17.64.17 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+ denrad23 | 10.17.64.18 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+ denrad24 | 10.17.64.19 | 5450      | radiusdb       | slony                | NULL                 | t         | t            | t                | f
+ denrad25 | 10.17.64.23 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+ denrad30 | 10.17.64.20 | 5450      | radiusdb       | slony                | NULL                 | t         | t            | f                | f
+ denrad31 | 10.17.64.21 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | f                | f
+ denrad32 | 10.17.64.22 | 5450      | radiusdb       | slony                | NULL                 | f         | f            | f                | t
+ denrad33 | 10.17.64.24 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | f                | f
+ denrad34 | 10.17.64.27 | 5450      | radiusdb       | slony                | NULL                 | t         | t            | f                | f
+
+  <FONT COLOR="#800000"><I>To add or remove a server from the replication process, update the slony table <b>system_parameter</b></I></FONT>
+
+    csctoss=# BEGIN;
+    BEGIN
+    csctoss=# select public.set_change_log_staff_id(3);
+     set_change_log_staff_id 
+    -------------------------
+                          -1
+    (1 row)
+
+    csctoss=# UPDATE system_parameter SET repl_flag = TRUE, radpostauth_flag = TRUE where hostname = 'atlrad33';
+    UPDATE 1
+    csctoss=# COMMIT;
+    COMMIT
+    csctoss=#
+
+    csctoss=# select * from system_parameter where hostname = 'atlrad33';
+    
+ hostname | ip_address  | repl_port | repl_target_db | repl_target_username | repl_target_password | repl_flag | radacct_flag | radpostauth_flag | sprint_flag 
+----------+-------------+-----------+----------------+----------------------+----------------------+-----------+--------------+------------------+-------------
+ atlrad33 | 10.16.64.24 | 5450      | radiusdb       | slony                | NULL                 | t         | f            | t                | f
+(1 row)
+
+
+<FONT COLOR="#0000FF" SIZE=5><I>Radius Updater Process</I></FONT>
+
+    <FONT COLOR="#800000"><I>The crontab job that runs the update process executes every minute</I></FONT>
+
+    # execute radius_updater() function to replicate radius data - every minute
+    */3 * * * * /home/postgres/dba/jobs/radius_updater.sh 2>&1 > /dev/null
+
+    <FONT COLOR="#800000"><I>The actual command executes a psql function, <b>radius_updater()</b></I></FONT>
+
+    psql -U slony -d csctoss -q -t -c "select * from radius_updater()" > $TEMPFILE
+
+    
+ 
+<FONT COLOR="#0000FF" SIZE=5><I>Synchronize data between OSS and RadiusDBs (CSCTOSS ===> RadiusDBs)</I></FONT>
+
+    <FONT COLOR="#800000"><I>Synchronize data from CSCTOSS to all RadiusDBs</I></FONT>
+
+      $ sudo su - postgres
+      $ cd /home/postgres/dba/scripts/
+      $ ./sync_oss_rad_all_sync.sh
+
+    <FONT COLOR="#800000"><I>Synchronize data from CSCTOSS to a specific RadiusDB</I></FONT>
+
+      $ sudo su - postgres
+      $ cd /home/postgres/dba/scripts/
+      $ ./sync_oss_rad_batch.sh &lt<i><b>Radius server name, ie denrad20</b></i>&gt
+
+    <FONT COLOR="#800000"><I>Resolve outages from the replication_check.* reports</I></FONT>
+
+    The log generated from the replication_check.sh script resides in the following:
+
+      <b>/home/postgres/dba/logs/replication_check.*</b>
+
+    The replication_check log generates daily.  If an outage is displayed in this log, it
+    should be resolved and the replication process run for that radius server.  An example
+    of an entry is as follows:
+
+      denrad34
+      denrad24
+      denrad20
+      denrad22
+      denrad31
+      denrad21
+      denrad23
+      denrad30
+      denrad33
+      denrad25
+      OUTBOUND denrad34 (usergroup): 109336 - 4704216503@vzw3g.com - SERVICE-vzwretail_wallgarden_cnione - 2
+      OUTBOUND denrad24 (usergroup): 109336 - 4704216503@vzw3g.com - SERVICE-vzwretail_wallgarden_cnione - 2
+      OUTBOUND denrad20 (usergroup): 109336 - 4704216503@vzw3g.com - SERVICE-vzwretail_wallgarden_cnione - 2
+      OUTBOUND denrad22 (usergroup): 109336 - 4704216503@vzw3g.com - SERVICE-vzwretail_wallgarden_cnione - 2
+      OUTBOUND denrad31 (usergroup): 109336 - 4704216503@vzw3g.com - SERVICE-vzwretail_wallgarden_cnione - 2
+      OUTBOUND denrad21 (usergroup): 109336 - 4704216503@vzw3g.com - SERVICE-vzwretail_wallgarden_cnione - 2
+      OUTBOUND denrad23 (usergroup): 109336 - 4704216503@vzw3g.com - SERVICE-vzwretail_wallgarden_cnione - 2
+      OUTBOUND denrad30 (usergroup): 109336 - 4704216503@vzw3g.com - SERVICE-vzwretail_wallgarden_cnione - 2
+      OUTBOUND denrad33 (usergroup): 109336 - 4704216503@vzw3g.com - SERVICE-vzwretail_wallgarden_cnione - 2
+      OUTBOUND denrad25 (usergroup): 109336 - 4704216503@vzw3g.com - SERVICE-vzwretail_wallgarden_cnione - 2
+      END   TIMESTAMP: 20180208171024
+      ------------------------end replication check------------------------
+
+    This log shows the entries that are not synchronized.  To sychronize, do the following steps:
+
+    1.  Run the <b>sync_oss_rad_batch.sh</b> in the directory <b>/home/postgres/dba/scripts</b>:
+
+        [postgres@denoss01 scripts]$ ./sync_oss_rad_batch.sh <b>denrad34</b>
+
+    2.  After all the servers in question have been synchronized, execute the <b>replication_check.sh</b>
+        in the directory <b>/home/postgres/dba/jobs/</b>:
+
+          [postgres@denoss01 jobs]$ ./replication_check.sh > /home/postgres/dba/logs/replication_check.log 2&gt&amp1
+
+    3.  The <b>replication_check</b> process creates a report similar to the one described above.  The
+        report should be empty.  If not, run the sychronization process on the servers in the log till 
+        there are no more outages.
+
+<FONT COLOR="#0000FF" SIZE=5><I>Shell scripts</I></FONT>
+
+    <FONT COLOR="#800000"><I>radius_updater.sh</I></FONT>
+
+        Executes the radius_updater() function to push appropriate radius data to appropriate 
+        radius databases.  This script runs each minute 
+
+    <FONT COLOR="#800000"><I>replication_check.sh</I></FONT>
+
+        Executes daily to check for replication errors by performing except queries between 
+        csctoss master and all radiusdb databases in system_parameter.
+
+    <FONT COLOR="#800000"><I>replcheck.sh</I></FONT>
+
+        Executes ad-hoc to do essentially the same thing as replication_check.sh, but in a 
+        different format.  
+
+<FONT COLOR="#0000FF" SIZE=5><I>Functions</I></FONT>
+
+        public.replchk_attribute(text)
+        public.replchk_attribute_type(text)
+        public.replchk_groupname(text)
+        public.replchk_nas(text)
+        public.replchk_radcheck(text)
+        public.radgroupcheck(text)
+        public.radgroupreply(text)
+        public.radreply(text)
+        public.usergroup(text)
+        public.username(text)
+
+
+
+
+
+
+</BODY>
+</HTML>
+ 
+

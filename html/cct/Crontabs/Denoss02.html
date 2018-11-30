@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Denoss02</TITLE>
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">denoss02 Crontab</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+
+<pre>
+<FONT COLOR="#009999"><I>Crontab entries for Session Monitor on denoss02</I></FONT>
+
+# ############################################################# #
+# Min | HR | Day of Month | Month | Day of Week | File | Output #
+# ############################################################# #
+
+# NOTE : This server on UTC. 7am UTC = 12 Midnight MST
+
+# trim the master_radacct table to 7 days
+00 06 * * * /home/postgres/dba/jobs/trim_radius_tables.sh 2>&1 > /dev/null
+
+# vacuum analyze database - once a day
+15 07 * * * /home/postgres/dba/jobs/dbvacuum.sh > /home/postgres/dba/logs/csctmon_vacuum.log 2>&1
+
+# remove stale log files from all postgres database installs - once a day
+30 08 * * * /home/postgres/dba/jobs/log_file_maint.sh > /home/postgres/dba/logs/log_file_maint.log 2>&1
+
+# session monitor - every minute
+#* * * * * /home/postgres/dba/jobs/session_monitor.sh > /home/postgres/dba/logs/session_monitor.log 2>&1
+#* * * * * /home/postgres/dba/jobs/session_monitor.20130520.sh > /home/postgres/dba/logs/session_monitor.log 2>&1
+* * * * * /home/postgres/dba/jobs/session_monitor3.sh > /home/postgres/dba/logs/session_monitor3.log 2>&1
+
+# session monitor report - once a day
+00 10 * * * /home/postgres/dba/jobs/report_session_monitor.sh > /home/postgres/dba/logs/report_session_monitor.log 2>&1
+
+
+00 18 * * * /home/postgres/dba/jobs/dbbackup.sh 2>&1 /home/postgres/dba/logs/dbbackup.sh.cron
+
+
+
+### THESE ARE OLD ITERATIONS BEFORE INTEGRATING SHORT SESSION JOB WITH EXISTING DUPLICATE SESSION JOB
+
+### dupe session check - every minute
+### * * * * * /home/postgres/dba/jobs/dupe_session_check.sh > /home/postgres/dba/logs/dupe_session_check.log 2>&1
+
+### dupe session report - once a day
+### 00 10 * * * /home/postgres/dba/jobs/report_dupe_session_check.sh > /home/postgres/dba/logs/report_dupe_session_check.log 2>&1
+
+</BODY>
+</HTML>

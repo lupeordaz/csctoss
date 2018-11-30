@@ -1,0 +1,46 @@
+#!/bin/bash
+
+/usr/local/src/prips-0.9.7/prips 166.142.249.0/24 | egrep -v "*\.0$|*\.255$" > vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.148.159.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.150.120.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.205.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.161.0.0/24   | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.156.61.0/24  | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.161.13.0/24  | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.161.14.0/24  | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.161.15.0/24  | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.239.106.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.239.107.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.239.108.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.251.8.0/24   | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.142.132.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.142.137.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.142.255.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.148.155.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.8.0/24   | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.128.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.144.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.155.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.158.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.159.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.180.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.192.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.193.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.194.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.210.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.159.1.0/24   | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.159.2.0/24   | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.159.3.0/24   | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.161.49.0/24  | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.161.54.0/24  | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.241.2.0/24   | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.241.8.0/24   | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.239.203.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.148.137.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.150.92.0/24  | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.155.207.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.159.0.0/24   | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.161.9.0/24   | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.161.12.0/24  | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+/usr/local/src/prips-0.9.7/prips 166.239.120.0/24 | egrep -v "*\.0$|*\.255$" >> vzw_public_ip_ranges.txt
+

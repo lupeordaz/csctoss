@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>gitNotes</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Git Notes</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+
+<BR>
+
+<OL>
+<pre>
+
+
+
+<FONT COLOR="#009999"><I>Clone a Repository</I></FONT><BR>
+  This will create the staging area for retrieving/adding the code of record.  
+  Literally, we are checking out the project.
+
+  Get the link to the Gitlab repository from the Gitlab website.  For this download,
+  use the Git repository Webapp / cnos.  Once in the repository in Gitlab, highlight
+  the SSH address for the repository.  
+
+  Go to the directory on Centos where you will store the repository (usually /home/gordaz).
+
+  Issue the following command:
+
+  <b><i>git clone git@jcigit01.jcigroup.local:webapp/cnos.git </i></b>
+
+<FONT COLOR="#009999"><I>Display Git status</I></FONT><BR>&nbsp;<BR>
+  After cloning the work area, you now have a staging area for controlling
+  your code.  You can modify your entries in this work area.  
+
+  The <b>git status</b> option lets you see where in the Git process your
+  code is at.  Executing the status shows the following:
+
+    [gordaz@cctlix03 opentaps_transaction_scripts]$ git status
+    # On branch master
+    # Changes not staged for commit:
+    #   (use "git add <file>..." to update what will be committed)
+    #   (use "git checkout -- <file>..." to discard changes in working directory)
+    #
+    # modified:   get_active_lines_from_jbill_and_oss_for_opentaps.sql
+    # modified:   get_cancelled_lines_from_jbill_and_oss_for_opentaps.sql
+    #
+    no changes added to commit (use "git add" and/or "git commit -a")
+
+  The status shows the modules that have been modified.  To add these modified
+  modules to the branch, they must first be committed as indicated by the 
+  message. 
+
+<FONT COLOR="#009999"><I>Git <b>Add</b> function</I></FONT><BR>
+  Issuing the '<b>git add</b>' command will stage the changes made to the '<b>Commit</b>'
+  stage.  
+
+    [gordaz@cctlix03 opentaps_transaction_scripts]$ git add get_active_lines_from_jbill_and_oss_for_opentaps.sql
+    [gordaz@cctlix03 opentaps_transaction_scripts]$ git add get_cancelled_lines_from_jbill_and_oss_for_opentaps.sql
+    [gordaz@cctlix03 opentaps_transaction_scripts]$ git status
+    # On branch master
+    # Changes to be committed:
+    #   (use "git reset HEAD <file>..." to unstage)
+    #
+    # modified:   get_active_lines_from_jbill_and_oss_for_opentaps.sql
+    # modified:   get_cancelled_lines_from_jbill_and_oss_for_opentaps.sql
+    #
+
+  The modules are now ready for the '<b>commit</b>' stage.
+
+<FONT COLOR="#009999"><I>Git <b>Commit</b> function</I></FONT><BR>
+
+[gordaz@cctlix03 opentaps_transaction_scripts]$ git commit get_active_lines_from_jbill_and_oss_for_opentaps.sql
+
+
+Redmine ticket 8008 - remove jbilling from selection process for opentapps data.
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# Explicit paths specified without -i nor -o; assuming --only paths...
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#       modified:   get_active_lines_from_jbill_and_oss_for_opentaps.sql
+#
+# Changes not staged for commit:
+#   (use "git add/rm <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#       modified:   get_cancelled_lines_from_jbill_and_oss_for_opentaps.sql
+#       deleted:    jbill_oss_active_lines.csv
+#       deleted:    jbill_oss_cancelled_lines.csv
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#       jbill_oss_active_lines_old.csv
+#       jbill_oss_cancelled_lines_old.csv
+
+[master c6fffdf] Redmine ticket 8008 - remove jbilling from selection process for opentapps data.
+ 1 file changed, 25 insertions(+), 24 deletions(-)
+
+[gordaz@cctlix03 opentaps_transaction_scripts]$ git commit get_cancelled_lines_from_jbill_and_oss_for_opentaps.sql
+
+Redmine ticket 8008 - remove jbilling from selection process for opentapps data.
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# Explicit paths specified without -i nor -o; assuming --only paths...
+# On branch master
+# Your branch is ahead of 'origin/master' by 1 commit.
+#   (use "git push" to publish your local commits)
+#
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#       modified:   get_cancelled_lines_from_jbill_and_oss_for_opentaps.sql
+#
+# Changes not staged for commit:
+#   (use "git add/rm <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#       deleted:    jbill_oss_active_lines.csv
+#       deleted:    jbill_oss_cancelled_lines.csv
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#       jbill_oss_active_lines_old.csv
+#       jbill_oss_cancelled_lines_old.csv
+                                       
+:wq
+[master bec0577] Redmine ticket 8008 - remove jbilling from selection process for opentapps data.
+ 1 file changed, 25 insertions(+), 24 deletions(-)
+[gordaz@cctlix03 opentaps_transaction_scripts]$ 
+
+<FONT COLOR="#f442eb"><I>
+    To amend the message inserted in the Commit stage, use <b>--amend</b> option
+</I></FONT>
+        <b>[gordaz@cctlix03]$ git commit csctoss.rt_oss_rma.sql --amend</b>
+
+
+<FONT COLOR="#009999"><I>Git <b>Push</b> function</I></FONT><BR>
+
+[gordaz@cctlix03]$ git push
+Counting objects: 45, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (35/35), done.
+Writing objects: 100% (35/35), 4.34 KiB | 0 bytes/s, done.
+Total 35 (delta 25), reused 0 (delta 0)
+To git@jcigit01.jcigroup.local:database/csctoss.git
+   a8a83d7..5b3d5a1  master -> master
+
+
+----
+
+
+[gordaz@cctlix03 opentaps_transaction_scripts]$ git push get_active_lines_from_jbill_and_oss_for_opentaps.sql
+warning: push.default is unset; its implicit value is changing in
+Git 2.0 from 'matching' to 'simple'. To squelch this message
+and maintain the current behavior after the default changes, use:
+
+  git config --global push.default matching
+
+To squelch this message and adopt the new behavior now, use:
+
+  git config --global push.default simple
+
+See 'git help config' and search for 'push.default' for further information.
+(the 'simple' mode was introduced in Git 1.7.11. Use the similar mode
+'current' instead of 'simple' if you sometimes use older versions of Git)
+
+fatal: 'get_active_lines_from_jbill_and_oss_for_opentaps.sql' does not appear to be a git repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+[gordaz@cctlix03 opentaps_transaction_scripts]$
+
+
+  
+
+</BODY>
+</HTML>
+ 
+

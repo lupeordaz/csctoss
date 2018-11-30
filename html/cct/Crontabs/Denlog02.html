@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Denlog02</TITLE>
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">denlog02 Crontab</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+
+<pre>
+<FONT COLOR="#009999"><I>Crontab entries for denlog02</I></FONT>
+
+# ############################################################# #
+# Min | HR | Day of Month | Month | Day of Week | File | Output #
+# ############################################################# #
+
+# NOTE : This server on UTC. 7am UTC = 12 Midnight MST
+
+#####################################
+
+# VACUUM & ANALYZE
+00 04 * * * /opt/postgresql/postgresql-9.3.19/bin/vacuumdb -a -z -U postgres > /dev/null 2>&1
+
+# Create table partition.
+00 08 01 * * /home/postgres/dba/jobs/partition_management.sh 2>&1 | mail -s "Partition Management on `hostname`" yshibuya@cctus.com
+
+# execute mrpa_loader() to pull auth data from radius databases - every minute
+* * * * * /home/postgres/dba/jobs/mrpa_loader.sh 2>&1 > /dev/null
+
+# execute mrac_loader() to pull acct data from radius databases - every minute
+* * * * * /home/postgres/dba/jobs/mrac_loader.sh 2>&1 > /dev/null
+
+# execute smrac_loader() function to pull sprint acct data from radius databases - every minute
+* * * * * /home/postgres/dba/jobs/sprint_usage_loader.sh 2>&1 > /dev/null
+
+# remove stale log files from all postgres database installs - once a day
+30 06 * * * /home/postgres/dba/jobs/log_file_maint.sh > /home/postgres/dba/logs/log_file_maint.log 2>&1
+
+# remove duplicate entries from the master_radacct log table - once a day
+00 11 * * * /home/postgres/dba/jobs/remove_radacct_duplicates.sh 2>&1 > /dev/null
+
+# check slony replication - hourly
+#50 * * * * /home/postgres/dba/jobs/test_slony_state-dbi.sh > /home/postgres/dba/logs/test_slony_state-dbi.log 2>&1
+
+# script to backup RADIUS tables and purge, create partition tables, add/remove tables from SLONY
+#      this script remains a work in progress - the major portions of the script are still run mannually by danny
+#dgo# old - do not use 05 21 1 7 * /home/postgres/jobs/radius_auth_acct.sh > /home/postgres/radius_auth_acct.out 2>&1
+
+# Usage report
+0 9 2 * * /home/postgres/dba/jobs/total_usage_per_user_report.sh > /home/postgres/total_usage_per_user_report.out
+
+####   this is currently run by root on atllog01    
+## xxxxxxxxxxxxxxxxxxxx /root/denjbi02-scripts/portalusage.sh > /root/denjbi02-scripts/portalusage.log
+30 2,14,18,22 * * * /home/postgres/dba/jobs/portalusage.sh > /home/postgres/dba/jobs/portalusage.log
+
+###    network script
+*/3 * * * * /home/postgres/dba/jobs/username_watcher.sh 2>&1 > /dev/null
+####    non-critical session count
+#0 * 21 07 * /home/postgres/dba/special/vzw_migration/session_cnt.sh "20-Jul"
+#2 * 21 07 * /home/postgres/dba/special/vzw_migration/session_cnt.sh "21-Jul"
+
+</BODY>
+</HTML>

@@ -1,0 +1,55 @@
+#!/bin/bash
+LOGFILE_BODY=/home/postgres/dba/jobs/term_request_by_hour_report_20121211.txt
+checkTotals="off"
+myNum=0
+#curr_hour=`date +%k`
+check_these="off"
+myRow="empty"
+#set -x
+
+curr_hour=07
+thisHour=0
+	
+	IFS=$'\n'
+        for i in `cat $LOGFILE_BODY |grep "align"|grep -v "\<th>" `
+
+        do
+                myRow=$i
+
+                for j in `echo $myRow|grep -v "\--"|grep 'align="left"'|awk -F\< {'print $2'}|awk  -F\> {'print $2'}`
+                do
+                        if [ $j = "Totals: " ];then
+                                checkTotals="on"
+                        
+			else
+			        thisHour=$j
+				#echo $thisHour
+                        fi
+                done
+
+                if [ $thisHour = $curr_hour ];then
+                     check_these="on"
+                fi
+
+                for j in `echo $myRow|grep -v "\--"|grep "<td"| awk -F\< {'print $2'}|awk  -F\> {'print $2'}|grep -v ";"|sed 's/^0*//'`
+
+                do
+
+                        if [ $checkTotals = "off" ];then
+                             myNum=$j
+                             #echo "myNum:  $myNum"
+
+                             if [ $check_these = "on" ] && [ $thisHour = $curr_hour ];then
+                                  if [ $myNum -gt 300 ];then
+                                       #echo "setting mail sw because a error count exceeded the threshold passed in the (-t) param"
+                                       exceedsThresh="true"
+                                       check_these="off"
+                                  fi
+                             fi
+
+                        fi
+                done
+
+
+        done
+

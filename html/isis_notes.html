@@ -1,0 +1,1076 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>ISIS Data Services Notes and FAQ's</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<A NAME="FormTop"></A>
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">ISIS Data Services Notes and FAQ's
+</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+ 
+<!--
+<A NAME="FormTop"></A>
+<FONT COLOR="#009999"><I>ISIS Main Page</I></FONT><BR>&nbsp;<BR>
+-->
+
+<LI><A HREF="#isisnotes">ISIS Notes</A>
+ 
+<LI><A HREF="#unixcmds">UNIX Commands:</A>
+ 
+<LI><A HREF="#oracl">Oracle</A>
+
+<LI><A HREF="#oracl2">Common Fields</A>
+ 
+<LI><A HREF="#plsql_shell">Common PL/SQL Shell</A>
+ 
+<LI><A HREF="#borpts">Business Objects Monitoring</A>
+ 
+<LI><A HREF="#isiscontacts">ISIS Contacts</A>
+ 
+<LI><A HREF="#pro_c">Pro C testing</A>
+ 
+<LI><A HREF="#testing">Testing Standards</A>
+ 
+</OL>
+ 
+<pre>
+    <b>Help Desk</b>	73001
+    <b>Voice Mail</b>	78700
+</pre>
+ 
+<HR>
+
+<A NAME="isisnotes"></A>
+<!--
+<IMG SRC="../gifst/tsbinar1.gif" WIDTH="24" HEIGHT="27" ALT="">
+-->
+<FONT COLOR="#009999"><I>ISIS Notes:</I></FONT><BR>&nbsp;<BR>
+<pre>
+    <b>Current Allowed databases</b>
+         D_AMA  Development      AMA
+         D_CMN1 Development      Common 1
+         D_CMNM Development      Common
+         D_IN02 Development      IN02
+         D_INST Development      INST
+         D_ISIS Development      401k
+         D_MISC Development      MISC
+         D_PNP  Development      PNP
+         D_QAS2 Staging          IN02
+         D_QASI Staging          INST
+         D_QASK Staging          401K
+         D_QASP Staging          PNP
+         D_QCMN Staging          CMN
+         R_IN02 Reports          IN02
+         R_INST Reports          INST
+         R_ISIS Reports          401k
+         R_PNP  Reports          PNP
+
+    <b>Change database password in development (d_isis, d_inst, d_pnp, d_in02)</b>
+       Format of the command is:
+
+         /opt/tools/auto_connect/bin/suid_set_ac_oracle_passwd isis {instance}
+
+       where {instance} is the one of the databases.  This will prompt for the new password.
+
+    <b>Modify PATH for AUTOREP</b>
+        setenv PATH ${PATH}:/opt/bin
+
+    <b>Determine if a job runs in a Reporting Database or a Production database</b>
+        The job environment file will source the global environment of 
+	the Reporting database if runs in reporting.  Otherwise, there 
+	will not be a system global environment sourced, i.e.:
+		
+	<b>  $AUTOSYS/global_env/rpt_pnp.env setenv PATH ${PATH}:/opt/bin</b>
+	
+	In this example, the job will run in the pnp reporting database.  The file
+	rpt_pnp.env contains the following lines to source the global pnp environment
+	file and to set the ORACLE_SID to R_PNP, the pnp reporting database.
+
+    <b>Using DEBUG files</b>
+
+       Set debug environment variables (examples):
+	   setenv KWAS_DEBUG_LEVEL true
+	   setenv KWCL_DEBUG_LEVEL true
+	   setenv KWCS_DEBUG_LEVEL true
+	   setenv KWTM_DEBUG_LEVEL true
+	   setenv KWIP_DEBUG_LEVEL true
+	   setenv KWST_DEBUG_LEVEL true
+	   setenv KWPE_DEBUG_LEVEL true
+
+       Debug output:		$ISIS_HOME/tmp/kl
+       Reports directory: 	/grphome/devl/dev-psc-users/3/3inst/inst/outbound
+
+          this would be for user k_3inst
+
+    <b>WORK ABAL - To get account balance for a specific date</b>
+
+        Command Line method.
+
+        1. Open a shell in Reporting/Production environment with 'Allow Private ISIS Objects'
+	   set to 'Yes'.
+	2. Create a private version of work_abal with following statement at command line:
+
+	       sp @$ISIS_HOME/plus/GQ19ABAL_TBL
+
+        3. The format for running work_abal is:
+	
+	       $ISIS_HOME/bin/GQ19ABAL <b>{gc_id} {ga_id} {effdate} {sdio_id} {pc_code} {short_name} {pid}</b>
+
+           i.e.,
+	       $ISIS_HOME/bin/GQ19ABAL 0 453000-05 30-APR-2009 0 0 0 82346
+       
+
+    <b>DIVISION</b> :
+        The division is a payroll term.  The GCS_BASIS and GCS_VALUE together 
+	determine the Division.	 These values are in the PART_SUBSET table.  
+	Use the ga_id and ind_id to join; the termdate will be null; i.e.,
+	
+	 <b>WHERE ps.ga_id = pa.ga_id
+	    AND ps.ind_id = pa.ind_id
+	    AND ps.termdate is null</b>
+	
+    <b>Market Type Code</b>
+
+	The Market Type code defines the economic sector that a plan resides in.  These
+	can be GVT (government), BSG (banking services group), CPR.  There are also 
+	market sub type codes to define even further (GVT|FED, STT, etc).  The IND market
+	type refers to individual annuities and is usually at the participant level, although
+	we group them together under a plan.  Different groups/clients will request specific 
+	market types (Plan Implementation would not be interested in IND market type.
+	
+	Look in GROUP_ACCOUNT.<b>mk_type_code</b> for a plans market type code.
+
+	
+    <b>Money Types</b>
+
+	Money types are the combination of sdmt_code and gdmt_seqnbr.  All 
+	money type definitions are found in the table <b>std_mnty</b>.
+
+	
+    <b>Participant age:</b>
+	COLUMN age FORMAT 999.9
+
+	SELECT months_between(sysdate,ind.birth_date)/12 age
+	  FROM individual ind
+	 WHERE id = &lt<i><b>ind_id</b></i>&gt;
+
+
+ 
+</pre>
+<A HREF="#FormTop">ISIS Main Pag</A> 
+ 
+<A NAME="unixcmds"></A><LI>                                 
+<FONT COLOR="#009999"><I>UNIX Commands:</I></FONT><BR>&nbsp;<BR> 
+<pre>
+    <b>ls</b>		lists files in current directory
+    <b>ls -l</b>	long format listing which contains permissions, owner, file size, 
+			date modified, and file name in current directory.
+    <b>ls -a</b>	list all files including hidden files (begin in a dot) in
+		current directory
+
+    <b>nm</b>		Displays the contents of a library.
+                            nm /opt/isis/solaris/qa_test/solaris/lib/libvest_v2.so
+
+    <b>df -k</b>	Displays percentage of space left on a disk.
+    
+    <b>zip -jql</b>	Archive file/files into a zip file
+			    <b>zip</b> -jql &lt<i>zipfile_name</i>&gt.zip &lt<i>filename</i>&gt
+		The &lt<i>filename</i>&gt value could also be a mask.
+    
+    <b>find</b>	Find a file in the sub directories of your current location:
+    
+    		find . -name &lt<i>filename</i>&gt -print
+
+    <b>head</b>	Display the first ten lines of a file.  
+
+    		head &lt<i>filename</i>&gt
+
+		Display the first twenty lines of a file:
+		
+		head -20 &lt<i>filename</i>&gt
+
+    <b>tail</b>	Display the last ten lines of a file.  
+
+    		tail &lt<i>filename</i>&gt
+
+		Display the last twenty lines of a file:
+		
+		tail -20 &lt<i>filename</i>&gt
+
+    <b>pwd</b>	Display your current directory
+
+    <b>Removing all files that are older than 90 days in current directory:</b>
+
+    	find . -type f -mtime +30 -exec rm -f {} \;
+	
+       Remember to go to the directory where you want to remove the files.
+       This will remove the files from your current directory and all 
+       sub directories.
+
+         find . -type f -mtime +30 | grep -v ".sh" |grep -v ".pl" -exec rm -f {} \; 
+
+    <b>Removing duplicate records from a file:</b>
+    	sort <<i>filename</i>> | uniq
+	
+      the following removes duplicates and writes to another file:
+    	sort <<i>filename_1</i>> | uniq > <<i>filename_2</i>>
+
+
+    <b>Display meaning of an Oracle error code</b>
+      oerr ora 1422
+
+      01422, 00000, "exact fetch returns more than requested number of rows"
+      // *Cause: The number specified in exact fetch is less than the rows returned.
+      // *Action: Rewrite the query or change number of rows requested
+        
+</pre>
+<A HREF="#FormTop">ISIS Main Pag</A> 
+<HR />
+
+<A NAME="oracl"></A>
+<!--
+<IMG SRC="../gifst/tsbinar1.gif" WIDTH="24" HEIGHT="27" ALT="">
+-->
+<FONT COLOR="#009999"><I>Oracle:</I></FONT><BR>&nbsp;<BR>
+<!--
+<FONT FACE="Courier New,Courier" SIZE="-1">
+-->
+<pre>
+    <b>COMPUTE</b> totals on a report:
+    
+        BREAK ON ind_id
+	COMPUTE SUM OF tot_bal ON ind_id
+
+
+    <b>Participant account balance</b> using inv_acct and invopt_bal:
+
+	SELECT iva.ind_id
+	      ,SUM(  NVL(ivb.amount, 0)
+        	   + NVL(ivb.int_amt, 0)) bal
+	  FROM inv_acct iva
+	      ,invopt_bal ivb
+	 WHERE iva.ga_id = '&lt<i><b>ga_id</b></i>&gt'
+	   AND iva.ind_id = &lt<i><b>ind_id</b></i>&gt
+	   AND iva.ID = ivb.iva_id
+	   AND ivb.bal_rsn_code = 'M'
+	   AND ivb.effdate = '&lt<i><b>effective date</b></i>&gt'
+	 GROUP BY iva.ind_id;
+
+    <b>Participant age:</b>
+	COLUMN age FORMAT 999.9
+
+	SELECT months_between(sysdate,ind.birth_date)/12 age
+	  FROM individual ind
+	 WHERE id = &lt<i><b>ind_id</b></i>&gt;
+
+
+ 
+</pre>
+<A HREF="#FormTop">ISIS Main Pag</A> 
+
+<HR>
+<A NAME="borpts"></A>
+<!--
+<IMG SRC="../gifst/tsruler.gif" WIDTH="45" HEIGHT="13" ALT="">
+-->
+<FONT COLOR="#009999"><I>Business Objects Monitoring</I></FONT><BR>&nbsp;<BR>
+
+<b>BO Monitoring</b>
+
+<table border="border" width = 300>
+  <tr align="Left">
+    <th width="45%">Name</th>
+    <th width="20%">Week</th>
+    <th width="20%">User Id</th>
+  </tr>
+  <tr align="Left">
+    <td>Sharon</td>
+    <td>01/09</td>
+    <td>thos</td>
+  </tr>
+  <tr align="Left">
+    <td>Dan</td>
+    <td>01/16</td>
+    <td>xxxx</td>
+  </tr>
+  <tr align="Left">
+    <td>Brad</td>
+    <td>01/23</td>
+    <td>brdp</td>
+  </tr>
+  <tr align="Left">
+    <td>Paul</td>
+    <td>01/30</td>
+    <td>pmay</td>
+  </tr>
+  <tr align="Left">
+    <td>Scott</td>
+    <td>02/06</td>
+    <td>scje</td>
+  </tr>
+  <tr align="Left">
+    <td>John</td>
+    <td>02/13</td>
+    <td>brnk</td>
+  </tr>
+  <tr align="Left">
+    <td>Lena</td>
+    <td>02/21</td>
+    <td>yelv</td>
+  </tr>
+  <tr align="Left">
+    <td>Julie</td>
+    <td>02/27</td>
+    <td>jmcp</td>
+  </tr>
+
+  <tr align="Left">
+    <td><b>Lupe<b/></td>
+    <td><b>03/05<b/></td>
+    <td>gdoz</td>
+  </tr>
+
+  <tr align="Left">
+    <td>Dave</td>
+    <td>03/12</td>
+    <td>dvkr</td>
+  </tr>
+
+  <tr align="Left">
+    <td>Cindi</td>
+    <td>03/19</td>
+    <td>haci</td>
+  </tr>
+
+  <tr align="Left">
+    <td>Sharon</td>
+    <td>03/26</td>
+    <td>thos</td>
+  </tr>
+</table>
+
+<BR>
+
+
+<b>Web Reports</b>
+ 
+<table border="border" width = 800>
+  <tr align="Left">
+    <th width="45%">Report Name</th>
+    <th width="20%">Module</th>
+    <th width="20%">Multi Step</th>
+    <th width="40%">Report Type</th>
+    <th width="40%">Recurring Type</th>
+  </tr>
+  <tr align="Left">
+    <td>Annual Plan Review</td>
+    <td>GQ19APKT</td>
+    <td>NO</td>
+    <td>ISIS</td>
+    <td>NO</td>
+  </tr>
+  <tr align="Left">
+    <td>Contribution Report</td>
+    <td>GQ19CRBO</td>
+    <td>YES</td>
+    <td>BO</td>
+    <td>YES</td>
+  </tr>
+  <tr align="Left">
+    <td>Defferred Compensation Market and Cost </td>
+    <td>GQ19DCBO</td>
+    <td>YES</td>
+    <td>BO</td>
+    <td>NO</td>
+  </tr>
+  <tr align="Left">
+    <td>Employee Deminimis Report</td>
+    <td>GQ19DMBO</td>
+    <td>YES</td>
+    <td>BO</td>
+    <td>NO</td>
+  </tr>
+  <tr align="Left">
+    <td>Participant Balance Report</td>
+    <td>GQ19PBBO</td>
+    <td>YES</td>
+    <td>BO</td>
+    <td>YES</td>
+  </tr>
+  <tr align="Left">
+    <td>Trade Monitoring Report</td>
+    <td>GQ19KWTM</td>
+    <td>NO</td>
+    <td>ISIS</td>
+    <td>YES</td>
+  </tr>
+</table>
+
+<BR>
+<A HREF="#FormTop">ISIS Main Pag</A> 
+
+<HR>
+<A NAME="isiscontacts"></A>
+<FONT COLOR="#009999"><I>ISIS Contacts</I></FONT><BR>&nbsp;<BR>
+
+<b>Data Services Team</b>
+
+<table border="border" width = 400>
+  <tr align="Left">
+    <th width="50%">Name</th>
+    <th width="20%">Id</th>
+    <th width="30%">Phone</th>
+  </tr>
+  <tr align="Left">
+    <td>Kathy Morris</td>
+    <td>klb</td>
+    <td>74108</td>
+  </tr>
+  <tr align="Left">
+    <td>Cindi Trowbridge</td>
+    <td>haci</td>
+    <td>73421</td>
+  </tr>
+  <tr align="Left">
+    <td>David Kramer</td>
+    <td>dvkr</td>
+    <td>70663</td>
+  </tr>
+  <tr align="Left">
+    <td>Lena Lvovskaya</td>
+    <td>yelv</td>
+    <td>76703</td>
+  </tr>
+  <tr align="Left">
+    <td>Julie McPheeters</td>
+    <td>jmcp</td>
+    <td>73398</td>
+  </tr>
+  <tr align="Left">
+    <td>Sharon Thompson</td>
+    <td>thos</td>
+    <td>76727</td>
+  </tr>
+  <tr align="Left">
+    <td>John Bronikowski</td>
+    <td>brnk</td>
+    <td>68723</td>
+  </tr>
+  <tr align="Left">
+    <td>Brad Parsons</td>
+    <td>brdp</td>
+    <td>62958</td>
+  </tr>
+  <tr align="Left">
+    <td>Dan Theine</td>
+    <td>thed</td>
+    <td>68727</td>
+  </tr>
+  <tr align="Left">
+    <td>Paul May</td>
+    <td>pmay</td>
+    <td>68719</td>
+  </tr>
+  <tr align="Left">
+    <td>Scott Jeanblanc</td>
+    <td>scje</td>
+    <td>68724</td>
+  </tr>
+</table>
+
+<BR>
+<b>Other Frequent Contacts</b>
+<table border="border" width = 400>
+  <tr align="Left">	
+    <th width="50%">Name</th>
+    <th width="20%">Id</th>
+    <th width="30%">Phone</th>
+  </tr>
+  <tr align="Left">
+    <td>Grace Kovatch</td>
+    <td>gkvt</td>
+    <td>35563</td>
+  </tr>
+  <tr align="Left">
+    <td>Phil Chavez</td>
+    <td>phil</td>
+    <td>76778</td>
+  </tr>
+  <tr align="Left">
+    <td>Rebecca Lee</td>
+    <td>rele</td>
+    <td>72820</td>
+  </tr>
+  <tr align="Left">
+    <td>Brian Miller</td>
+    <td>brim</td>
+    <td>70372</td>
+  </tr>
+</table>
+
+<BR>
+<b>Team Email Aliases</b>
+
+<table border="border" width = 600>
+  <tr align="Left">
+    <th width="33%">Team</th>
+    <th width="33%">Email Alias</th>
+    <th width="34%">On Call #</th>
+  </tr>
+  <tr align="Left">
+    <td>Data Services (Us)</td>
+    <td>mrf</td>
+    <td>(303) </td>
+  </tr>
+  <tr align="Left">
+    <td>SCM Group</td>
+    <td>core_scm</td>
+    <td>(303) </td>
+  </tr>
+  <tr align="Left">
+    <td>Production Support</td>
+    <td>prodsupp</td>
+    <td>(303) 885-9405</td>
+  </tr>
+  <tr align="Left">
+    <td>Quality Center</td>
+    <td>qual_qa</td>
+    <td>(303) </td>
+  </tr>
+  <tr align="Left">
+    <td>Devl DBA's</td>
+    <td>helpgpdba</td>
+    <td>(303) </td>
+  </tr>
+</table>
+
+<BR>
+<b>Important Directories</b>
+
+<table border="border" width = 800>
+  <tr align="Left">
+    <th width="30%">Description</th>
+    <th width="70%">Directory</th>
+  </tr>
+  <tr align="Left">
+    <td>Production Runbook</td>
+    <td>/home/pnp/gp22/admin/runbook</td>
+  </tr>
+  <tr align="Left">
+    <td>Runbook Staging Area</td>
+    <td>/home/devl/staging/review</td>
+  </tr>
+  <tr align="Left">
+    <td>Production reports</td>
+    <td>/grphome/pnp/pnpsupp/reports</td>
+  </tr>
+  <tr align="Left">
+    <td>Environment Files (Prod & Devl)</td>
+    <td>$AUTOSYS/env_files_*</td>
+  </tr>
+  <tr align="Left">
+    <td>FTP Outgoing Files</td>
+    <td>/opt/inst/data/outgoing</td>
+  </tr>
+  <tr align="Left">
+    <td>Project folders</td>
+    <td>:\common\project_documentation\common_projects</td>
+  </tr>
+  <tr align="Left">
+    <td>Brians Directory</td>
+    <td>/grphome/pnp/rec_rep</td>
+  </tr>
+</table>
+
+<BR>
+<A HREF="#FormTop">ISIS Main Pag</A> 
+
+<PRE>
+
+
+</PRE>
+ 
+<HR>
+ 
+<A NAME="pro_c"></A>
+<!--
+<IMG SRC="../gifst/tsmenu3.gif" WIDTH="54" HEIGHT="30" ALT="">
+-->
+<FONT COLOR="#009999"><I>Pro C testing</I></FONT><BR>&nbsp;<BR>
+<PRE>
+Compiling Pro C
+
+Use the appropriate make command for your Pro*C version:
+
+    <b>make_proc9 -f</b> &lt<i> makefile.mkv9 </i>&gt
+    <b>make_proc11 -f</b> &lt<i> makefile.mkv11 </i>&gt
+
+Compile for using <b>dbx</b>:
+
+    The CCFLAGS line in the makefile must be as follows:  
+
+      CFLAGS=-Xt -DKERR__ANSI_C -lm -g
+
+Executing dbx:
+
+At the command line, enter following:
+	/opt/SUNWspro/bin/dbxtool
+
+<A HREF="#FormTop">ISIS Main Pag</A> 
+<HR>
+<A NAME="oracl2"></A>
+<!--
+<IMG SRC="../gifst/tsbinar1.gif" WIDTH="24" HEIGHT="27" ALT=""> </FONT><BR>&nbsp;<BR>
+-->
+<FONT COLOR="#009999"><I>Common ISIS fields:</I> </FONT><BR>&nbsp;<BR>
+
+<PRE>
+SELECT pa.ga_id
+      ,pa.ind_id
+      ,ind.last_name||', '||ind.first_name ppt_name
+      ,substr(ind.ssn,1,3)||'-'||substr(ind.ssn,4,2)||'-'||substr(ind.ssn,6,4) ppt_ssn
+      ,ind.mailing_name_1
+      ,ind.mailing_name_2
+      ,ind.mailing_name_3
+      ,a.first_line_mailing
+      ,a.scnd_line_mailing
+      ,a.city
+      ,a.state_code
+      ,a.zip_code
+      ,to_char(t.emp_hire_date,'DD-MON-YYYY') emp_hiredate
+      ,to_char(t.emp_term_date,'DD-MON-YYYY') emp_termdate
+      ,to_char(t.eligibility_date,'DD-MON-YYYY') eligib_date
+      ,to_char(t.first_contrib,'DD-MON-YYYY') first_contrib_date
+      ,to_char(t.dfrl_effdate,'DD-MON-YYYY') dfrl_effdate
+      ,t.sdmt_code||t.gdmt_seqnbr money_type
+  from part_agrmt pa
+      ,individual ind
+      ,address a
+      ,pt&&pt._plans t
+ where pa.ga_id = t.ga_id
+   and pa.ind_id = t.ind_id
+   and ind.id = pa.ind_id
+   and a.ind_id = ind.id
+/
+
+SET LINES 145
+SET PAGES 50000
+SET VERIFY OFF
+
+COLUMN ga_id			HEADING 'Group Account'
+COLUMN ga_id 			HEADING 'Group|Account' 
+COLUMN prov_company		HEADING 'Providing|Company' format a9
+COLUMN plan_name 		HEADING 'Plan Name'  
+COLUMN irsrl_code		HEADING 'IRS|Code' format a5
+COLUMN basis_value		HEADING 'Basis|Value' format a10
+COLUMN sdio_id			HEADING 'Fund|Id' format a6
+COLUMN cs_am 			HEADING 'AM Contact Servicer' format a35 trunc
+COLUMN cs_rm 			HEADING 'RM Contact Servicer'  format a35 trunc
+COLUMN cs_pm 			HEADING 'PM Contact Servicer'  format a35 trunc
+COLUMN cs_srf 			HEADING 'SRF Contact Servicer'  format a35 trunc
+COLUMN assets 			HEADING '&&effdate|Asset|Balance' format 999,999,999.99 
+COLUMN ppt_count 		HEADING '&&effdate|Life|Count' format 999,999  
+COLUMN mk_type_code 		HEADING 'Market|Type|Code' format a6  
+COLUMN mk_subtype_code 		HEADING 'Market|Subtype|Code' format a7
+COLUMN method_code 		HEADING 'Method'  
+COLUMN sdsv_code 		HEADING 'SDSV|Code'  
+COLUMN sdsv_subcode 		HEADING 'SDSV|Subcode'   
+COLUMN prod_code 		HEADING 'Product|Code' 
+COLUMN kgpf_balance 		HEADING '&&effdate|KGPF Balance' format 999,999,999.99  
+COLUMN ussax_balance 		HEADING '&&effdate|USSAX Balance' format 999,999,999.99  
+COLUMN ma_balance		HEADING '&&effdate|MA Balance ' format 999,999,999.99
+COLUMN ga_id			HEADING 'Group Account'
+COLUMN div			HEADING 'Div.'
+COLUMN vest_bef			HEADING 'BEF|Vest %'
+COLUMN vest_erb			HEADING 'ERB|Vest %'
+COLUMN bef_mt			HEADING 'BEF|MT Bal.' format 999,999,999.99
+COLUMN erb_mt			HEADING 'ERB|MT Bal.' format 999,999,999.99
+COLUMN check_amt		HEADING 'Check|Amt.' format 99,999,999.99
+COLUMN money_type		HEADING 'Money|Type' format a6
+
+COLUMN ppt_name			HEADING 'Ppt Name' format a40
+COLUMN ppt_ssn			HEADING 'SSN' format a11
+COLUMN ssn_ext			HEADING 'SSN|Ext'
+COLUMN ssn_ext_rsn_code		HEADING 'SSN Ext|Rsn' 
+COLUMN ppt_age			HEADING 'Ppt|Age'
+COLUMN ppt_gender		HEADING 'Ppt|Sex' format a3
+COLUMN ppt_status		HEADING 'Status|Code' format a6
+COLUMN ind_id			HEADING 'Individual|Id' 
+COLUMN bene_name		HEADING 'Beneficiary Name' format a40
+COLUMN bene_ssn			HEADING 'Beneficiary|SSN' format a11
+
+COLUMN user_logon_id		HEADING 'User|Logon'
+COLUMN role			HEADING 'Role' format a20
+COLUMN user_category		HEADING 'User|Category'
+COLUMN access_level		HEADING 'Access|Level' format a6  justify center
+COLUMN psc_uscs_inq	        HEADING 'PSC|Inquire' justify center
+COLUMN psc_uscs_upd             HEADING 'PSC|Update' justify center
+COLUMN psc_uscs_cash            HEADING 'PSC|Cash' justify center
+
+COLUMN ev_id			HEADING 'Event'
+COLUMN evty_code		HEADING 'Event|Code'
+COLUMN wkun_short_name		HEADING 'Work Unit' format a10
+COLUMN dpdate_time		HEADING 'Dpdate' format a11
+
+COLUMN first_line_mailing	HEADING 'First Line Address'
+COLUMN scnd_line_mailing	HEADING 'Second Line Address'
+COLUMN city			HEADING 'City'
+COLUMN state_code		HEADING 'State'
+COLUMN zip_code			HEADING 'Zip|Code'
+COLUMN status_code		HEADING 'Status|Code' format a6
+COLUMN country			HEADING 'Country|Code' format a7
+
+COLUMN effdate 			HEADING 'Effective|Date' format a11
+COLUMN disb_date		HEADING 'Disb.|Date' format a11
+COLUMN emp_hire_date		HEADING 'Hire|Date' format a11
+COLUMN emp_termdate		HEADING 'Termination|Date' format a11
+COLUMN first_contrib		HEADING 'First Contrib|Date' format a13
+
+COLUMN disb_dsrs_code		HEADING 'Disb|Reason' format a11
+COLUMN disb_amt			HEADING 'Disb|Amt' format 999,999,999,999.99
+COLUMN dist_amt			HEADING 'Dist|Amt' format 999,999,999,999.99
+COLUMN wthldg_amt		HEADING 'Witholding|Amount' format 999,999,999,999.99
+COLUMN acct_bal			HEADING 'Balance As Of|31-DEC-2011' format 999,999,999,999.99
+--
+
+<A HREF="#FormTop">ISIS Main Pag</A> 
+<A NAME="plsql_shell"></A>
+<!--
+<IMG SRC="../gifst/tsbinar1.gif" WIDTH="24" HEIGHT="27" ALT="">
+-->
+<FONT COLOR="#009999"><I>Common PL/SQL Shell:</I></FONT><BR>&nbsp;<BR>
+<!--
+-->
+<PRE>
+--
+DROP TABLE pt&&pt._base;
+
+CREATE TABLE pt&&pt._base
+( ga_id				VARCHAR2(13)
+ ,plan_name			VARCHAR2(100)
+ ,plan_first_line_mailing	VARCHAR2(35)
+ ,plan_scnd_line_mailing	VARCHAR2(35)
+ ,plan_city			VARCHAR2(20)
+ ,plan_state_code		VARCHAR2(2)
+ ,plan_zip_code			VARCHAR2(10)
+ ,plan_ppt_count		NUMBER(10)
+ ,tot_plan_assets		NUMBER(17,2)
+ ,brk_name			VARCHAR2(40)
+ ,brk_company_name		VARCHAR2(70)
+ ,brk_first_line_mailing	VARCHAR2(35)
+ ,brk_scnd_line_mailing		VARCHAR2(35)
+ ,brk_city			VARCHAR2(20)
+ ,brk_state_code		VARCHAR2(2)
+ ,brk_zip_code			VARCHAR2(10)
+ ,brk_work_phone_area_code	NUMBER(3)
+ ,brk_work_phone_nbr		VARCHAR2(8)
+ ,brk_phone_ext_nbr		VARCHAR2(5)
+ ,brk_email_address		VARCHAR2(80)
+ ,rsd_name			VARCHAR2(40) 
+ );
+
+--
+
+DECLARE
+
+TEMP_ROW 		pt&&pt._base%ROWTYPE;
+
+CURSOR get_groups IS
+SELECT ga.id ga_id
+      ,pl.name 
+      ,gc.first_line_mailing
+      ,gc.scnd_line_mailing
+      ,gc.city
+      ,gc.state_code
+      ,gc.zip_code
+  FROM group_account ga
+      ,plan pl
+      ,group_client gc
+ WHERE ga.status_code = 'A'
+   AND pl.id = ga.plan_id
+   AND gc.id = ga.gc_id;
+
+
+BEGIN
+
+  FOR RROW IN get_groups
+  LOOP
+  
+    TEMP_ROW.ga_id			:= RROW.ga_id;
+    TEMP_ROW.plan_name			:= RROW.name;
+    TEMP_ROW.plan_first_line_mailing	:= RROW.first_line_mailing;
+    TEMP_ROW.plan_scnd_line_mailing	:= RROW.scnd_line_mailing;
+    TEMP_ROW.plan_city			:= RROW.city;
+    TEMP_ROW.plan_state_code		:= RROW.state_code;
+    TEMP_ROW.plan_zip_code		:= RROW.zip_code;
+    TEMP_ROW.plan_ppt_count		:= NULL;
+    TEMP_ROW.tot_plan_assets		:= NULL;
+    TEMP_ROW.brk_name			:= NULL;
+    TEMP_ROW.brk_company_name		:= NULL;
+    TEMP_ROW.brk_first_line_mailing	:= NULL;
+    TEMP_ROW.brk_scnd_line_mailing	:= NULL;
+    TEMP_ROW.brk_city			:= NULL;
+    TEMP_ROW.brk_state_code		:= NULL;
+    TEMP_ROW.brk_zip_code		:= NULL;
+    TEMP_ROW.brk_work_phone_area_code	:= NULL;
+    TEMP_ROW.brk_work_phone_nbr		:= NULL;
+    TEMP_ROW.brk_phone_ext_nbr		:= NULL;
+    TEMP_ROW.brk_email_address		:= NULL;
+    TEMP_ROW.rsd_name			:= NULL;
+
+--
+--  Get total participant count
+--
+    BEGIN
+        SELECT count(distinct ind_id) 
+	  INTO TEMP_ROW.plan_ppt_count
+	  FROM part_agrmt
+	 WHERE ga_id = TEMP_ROW.ga_id;
+    EXCEPTION
+      WHEN NO_DATA_FOUND THEN
+        TEMP_ROW.plan_ppt_count := 0;
+    END;
+
+--
+--  Pull Total Asset Balance
+--
+    BEGIN
+       SELECT sum(baltot_balance)
+         INTO TEMP_ROW.tot_plan_assets
+         FROM work_stat2
+        WHERE effdate = '&&effdate'
+          AND fat_othr_code = 'END'
+          AND ga_id = TEMP_ROW.ga_id;
+    EXCEPTION
+       WHEN NO_DATA_FOUND THEN 
+         TEMP_ROW.tot_plan_assets := 0;
+    END;
+
+--
+--  Get the AM contact servicer information
+--
+    BEGIN
+
+       SELECT cs.last_name||', '||cs.first_name
+             ,cs.company_name
+             ,cs.first_line_mailing
+             ,cs.scnd_line_mailing
+             ,cs.city
+             ,cs.state_code
+             ,cs.zip_code
+             ,cs.work_phone_area_code area_code
+             ,cs.work_phone_nbr phone_nbr
+             ,cs.phone_ext_nbr extn
+             ,cs.email_address
+         INTO TEMP_ROW.brk_name
+	     ,TEMP_ROW.brk_company_name
+	     ,TEMP_ROW.brk_first_line_mailing
+	     ,TEMP_ROW.brk_scnd_line_mailing
+	     ,TEMP_ROW.brk_city
+	     ,TEMP_ROW.brk_state_code
+	     ,TEMP_ROW.brk_zip_code
+	     ,TEMP_ROW.brk_work_phone_area_code
+	     ,TEMP_ROW.brk_work_phone_nbr
+	     ,TEMP_ROW.brk_phone_ext_nbr
+	     ,TEMP_ROW.brk_email_address
+         FROM ga#contact_servicer gcs
+             ,contact_servicer cs
+        WHERE gcs.ga_id = TEMP_ROW.ga_id
+          AND gcs.type_code = 'BRK'
+          AND gcs.termdate is null
+          AND gcs.effdate = (select max(gcs2.effdate)
+                               from ga#contact_servicer gcs2
+                              where gcs2.ga_id = gcs.ga_id
+                                and gcs2.type_code = 'BRK'
+                                and gcs2.termdate is null)
+	  AND rownum < 2
+          AND cs.id = gcs.csv_id
+	  AND cs.last_name is not null
+	  AND cs.first_name is not null;
+
+    EXCEPTION
+       WHEN NO_DATA_FOUND THEN 
+	  TEMP_ROW.brk_name			:= NULL;
+	  TEMP_ROW.brk_company_name		:= NULL;
+	  TEMP_ROW.brk_first_line_mailing	:= NULL;
+	  TEMP_ROW.brk_scnd_line_mailing	:= NULL;
+	  TEMP_ROW.brk_city			:= NULL;
+	  TEMP_ROW.brk_state_code		:= NULL;
+	  TEMP_ROW.brk_zip_code			:= NULL;
+	  TEMP_ROW.brk_work_phone_area_code	:= NULL;
+	  TEMP_ROW.brk_work_phone_nbr		:= NULL;
+	  TEMP_ROW.brk_phone_ext_nbr		:= NULL;
+	  TEMP_ROW.brk_email_address 		:= NULL;
+    END;
+
+--
+--  Get the RSD contact servicer name
+--
+    BEGIN
+
+         SELECT cs.last_name||', '||cs.first_name
+           INTO TEMP_ROW.rsd_name
+           FROM ga#contact_servicer gcs
+               ,contact_servicer cs
+          WHERE gcs.ga_id = TEMP_ROW.ga_id
+            AND gcs.type_code = 'RSD'
+            AND gcs.termdate is null
+            AND gcs.effdate = (select max(gcs2.effdate)
+                                 from ga#contact_servicer gcs2
+                                where gcs2.ga_id = gcs.ga_id
+                                  and gcs2.type_code = 'RSD'
+                                  and gcs2.termdate is null)
+	    AND rownum < 2
+            AND cs.id = gcs.csv_id
+	    AND cs.last_name is not null
+	    AND cs.first_name is not null;
+
+    EXCEPTION
+      WHEN NO_DATA_FOUND THEN 
+        TEMP_ROW.rsd_name := null;
+    END;
+
+--
+
+    INSERT INTO pt&&pt._base
+    ( ga_id
+     ,plan_name
+     ,plan_first_line_mailing
+     ,plan_scnd_line_mailing
+     ,plan_city
+     ,plan_state_code
+     ,plan_zip_code
+     ,plan_ppt_count
+     ,tot_plan_assets
+     ,brk_name
+     ,brk_company_name
+     ,brk_first_line_mailing
+     ,brk_scnd_line_mailing
+     ,brk_city
+     ,brk_state_code
+     ,brk_zip_code
+     ,brk_work_phone_area_code
+     ,brk_work_phone_nbr
+     ,brk_phone_ext_nbr
+     ,brk_email_address
+     ,rsd_name
+    )
+    VALUES
+    ( TEMP_ROW.ga_id
+     ,TEMP_ROW.plan_name
+     ,TEMP_ROW.plan_first_line_mailing
+     ,TEMP_ROW.plan_scnd_line_mailing
+     ,TEMP_ROW.plan_city
+     ,TEMP_ROW.plan_state_code
+     ,TEMP_ROW.plan_zip_code
+     ,TEMP_ROW.plan_ppt_count
+     ,TEMP_ROW.tot_plan_assets
+     ,TEMP_ROW.brk_name
+     ,TEMP_ROW.brk_company_name
+     ,TEMP_ROW.brk_first_line_mailing
+     ,TEMP_ROW.brk_scnd_line_mailing
+     ,TEMP_ROW.plan_city
+     ,TEMP_ROW.plan_state_code
+     ,TEMP_ROW.plan_zip_code
+     ,TEMP_ROW.brk_work_phone_area_code
+     ,TEMP_ROW.brk_work_phone_nbr
+     ,TEMP_ROW.brk_phone_ext_nbr
+     ,TEMP_ROW.brk_email_address
+     ,TEMP_ROW.rsd_name
+    );
+    
+  COMMIT;
+
+  END LOOP;
+  
+END;
+/
+
+<A HREF="#FormTop">ISIS Main Pag</A> 
+<HR>
+ 
+<A NAME="testing"></A>
+<!--
+<IMG SRC="../gifst/tsbinar1.gif" WIDTH="24" HEIGHT="27" ALT="">
+-->
+<FONT COLOR="#009999"><I>Testing Standards:</I></FONT><BR>&nbsp;<BR>
+<!--
+<FONT FACE="Courier New,Courier" SIZE="-1">
+-->
+<pre>
+    <b>Harvest - Test Results path for package</b>
+        QC-Core-Testing-Execute Tests-2012-< rest of path>- ISIS-REPT-HD000000155-GQ19DTBO
+
+    <b>Setting up AUTOSYS console in development</b>
+     
+       Two commands are required:
+       
+           source ~asd/.autosys
+	   source ~asd/.autosys
+	   
+       It's easiest to set these up as an alias like the following:
+       
+           alias autocon   'source ~asd/.autosys;~asd/bin/autosys'
+	   
+
+    <b>Using DEBUG files</b>
+
+       -- Set debug environment variables
+       setenv KWAS_DEBUG_LEVEL true
+       setenv KWCL_DEBUG_LEVEL true
+       setenv KWCS_DEBUG_LEVEL true
+       setenv KWTM_DEBUG_LEVEL true
+
+       setenv KWIP_DEBUG_LEVEL true
+       setenv KWST_DEBUG_LEVEL true
+       setenv KWPE_DEBUG_LEVEL true
+
+       Debug output:		$ISIS_HOME/tmp/kl
+       PSC Reports directory: 	/grphome/devl/dev-psc-users/3/3inst/inst/outbound
+                                This would be for user k_3inst (or 3inst).  This would
+				change for user k_2inst.
+
+</pre>
+<A HREF="#FormTop">ISIS Main Pag</A> 
+ 
+</BODY>
+</HTML>
+ 

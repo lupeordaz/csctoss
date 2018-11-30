@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>Java Notes</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Notes on Java and Java utilities</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+<OL>
+
+<pre>
+
+    <b>Display current version of java:</b>
+        java -version
+        
+    <b>Display contents of a jar file:</b>    
+        jar tf <b>&ltjar file name&gt</b>
+
+    <b>Find a specific class in a jar</b>
+        jar tf <b>&ltjar file name&gt</b> | grep &ltclass name&gt
+    
+    <b>Find the class GroovyStarter in a jar library</b>
+        <i>First cd to the directory,i.e. cd /usr/local/groovy/lib</i>
+        find . -name '*.jar' -print |  xargs  -I '{}' sh -c '/usr/java6/bin/jar tf {} | grep <b>&ltGroovyStarter&gt</b> &&  echo {}'
+
+        <i>Result:</i>
+        org/codehaus/groovy/tools/GroovyStarter.class
+        ./groovy-2.3.4.jar
+
+        <i>Displays result that the jar groovy-2.3.4.jar contains the class</i>
+
+<b>CLASSPATH for running DB2 on java apps:</b>
+
+  /home/db2inst1/sqllib/java/db2java.zip:
+  /home/db2inst1/sqllib/java/db2jcc.jar:
+  /home/db2inst1/sqllib/java/sqlj.zip:
+  /home/db2inst1/sqllib/function:
+  /home/db2inst1/sqllib/java/db2jcc_license_cu.jar
+
+
+
+</pre>
+
+</BODY>
+</HTML>
+ 
+

@@ -1,0 +1,126 @@
+
+
+Old equipment
+
+
+select * from unique_identifier where unique_identifier_type = 'ESN HEX' and value = 'A1000043950DE1';
+ equipment_id | unique_identifier_type |     value      | notes | date_created | date_modified 
+--------------+------------------------+----------------+-------+--------------+---------------
+        41730 | ESN HEX                | A1000043950DE1 |       | 2016-07-20   | 
+(1 row)
+
+select * from unique_identifier where equipment_id = 41730;
+
+ equipment_id | unique_identifier_type |       value        | notes | date_created | date_modified 
+--------------+------------------------+--------------------+-------+--------------+---------------
+        41730 | ESN DEC                | 270113184309768417 |       | 2016-07-20   | 
+        41730 | ESN HEX                | A1000043950DE1     |       | 2016-07-20   | 
+        41730 | MAC ADDRESS            | 008044127871       |       | 2016-07-20   | 
+        41730 | MDN                    | 4702703041         |       | 2016-07-20   | 
+        41730 | MIN                    | 4702703041         |       | 2016-07-20   | 
+        41730 | SERIAL NUMBER          | 971926             |       | 2016-07-20   | 
+(6 rows)
+
+csctoss=# select line_id from line_equipment where equipment_id = 41730;
+ line_id 
+---------
+   43923
+(1 row)
+
+
+
+New equipment
+
+
+csctoss=# select * from unique_identifier where unique_identifier_type = 'ESN HEX' and value = 'A1000036982D32';
+ equipment_id | unique_identifier_type |     value      | notes | date_created | date_modified 
+--------------+------------------------+----------------+-------+--------------+---------------
+        39366 | ESN HEX                | A1000036982D32 |       | 2014-08-12   | 
+(1 row)
+
+csctoss=# select * from unique_identifier where equipment_id = 39366;
+ equipment_id | unique_identifier_type |       value        | notes | date_created | date_modified 
+--------------+------------------------+--------------------+-------+--------------+---------------
+        39366 | ESN DEC                | 270113183009973042 |       | 2014-08-12   | 
+        39366 | ESN HEX                | A1000036982D32     |       | 2014-08-12   | 
+        39366 | MAC ADDRESS            | 00804411013B       |       | 2014-08-12   | 
+        39366 | MDN                    | 4047196911         |       | 2014-08-12   | 
+        39366 | MIN                    | 4047196911         |       | 2014-08-12   | 
+        39366 | SERIAL NUMBER          | 903830             |       | 2014-08-12   | 
+(6 rows)
+
+
+SELECT username 
+        FROM username u,
+        unique_identifier ui
+        WHERE 1=1
+          AND substring(u.username FROM 1 FOR 10) = ui.value
+          AND ui.equipment_id=41730
+          AND ui.unique_identifier_type = 'MIN';
+ 
+
+
+       new
+       username       
+----------------------
+ 4702703041@vzw3g.com
+(1 row)
+
+
+select * from groupname_default where billing_entity_id = 293;
+ groupname_default_key_id |        groupname         |    carrier    | billing_entity_id 
+--------------------------+--------------------------+---------------+-------------------
+                      670 | SERVICE-digitalnetwork   | SPRINT        |               293
+                      726 | SERVICE-vzwwholesale     | VZW_WHOLESALE |               293
+                      765 | SERVICE-digitalnetwork   | USCC          |               293
+                      696 | SERVICE-vzwretail_cnione | VZW           |               293
+(4 rows)
+
+
+
+Carrier - VZW
+New groupname - SERVICE-vzwretail_cnione
+new username - 4702703041@vzw3g.com
+Line id - 43923
+BE  -  293
+
+
+SELECT *
+  from ops_api_static_ip_assign('VZW',
+                                'SERVICE-vzwretail_cnione',
+                                '4702703041@vzw3g.com', 
+                                43923, 
+                                293);
+
+
+
+--- Production
+
+BEGIN
+csctoss=# select public.set_change_log_staff_id(3);
+ set_change_log_staff_id 
+-------------------------
+                      -1
+(1 row)
+
+csctoss=# SELECT *
+csctoss-#   from ops_api_static_ip_assign('VZW',
+csctoss(#                                 'SERVICE-vzwretail_cnione',
+csctoss(#                                 '4702703041@vzw3g.com', 
+csctoss(#                                 43923, 
+csctoss(#                                 293);
+NOTICE:  ops_api_static_ip_assign is called: parameters => [carrier=VZW][vrf=SERVICE-vzwretail_cnione][username=4702703041@vzw3g.com][line_id=43923][billing_entity_id=293]
+NOTICE:  We found IP pool.
+NOTICE:  We found an available IP address in the IP pool. [IP=10.81.88.104]
+ERROR:  Username 4702703041@vzw3g.com already assigned Framed-IP-Address 10.81.88.169
+CONTEXT:  SQL statement "INSERT INTO radreply (username, attribute, op, value, priority) VALUES ( $1 , 'Framed-IP-Address', '=',  $2 ::text, 10)"
+PL/pgSQL function "ops_api_static_ip_assign" line 61 at SQL statement
+csctoss=# rollback;
+ROLLBACK
+csctoss=# select * from static_ip_pool where static_ip in ('10.81.88.104','10.81.88.169');
+  id   |  static_ip   |        groupname         | is_assigned | line_id | carrier_id | billing_entity_id 
+-------+--------------+--------------------------+-------------+---------+------------+-------------------
+ 36534 | 10.81.88.104 | SERVICE-vzwretail_cnione | f           |         |          3 |               293
+ 36599 | 10.81.88.169 | SERVICE-vzwretail_cnione | t           |   43923 |          3 |               293
+(2 rows)
+

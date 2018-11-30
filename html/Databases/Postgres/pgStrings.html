@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>PgStrings</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Postgres String Manipulation</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>Postgres String Functions</I></FONT>
+
+  Postgres string functions are defined best in the <a href="https://www.postgresql.org/docs/8.2/static/functions-string.html">Postgres Documentation</a>
+
+<FONT COLOR="#009999"><I>INSTR</I></FONT>
+
+  The Oracle <b><i>INSTR</i></b> function has been created and is available in our postgres environment.
+  The syntax for Oracle INSTR function is as follows:
+
+    instr (s1, s2, st, t)
+
+  The Oracle INSTR  function is similar to the SUBSTR, except instead of returning the sub string, Oracle INSTR returns the location of the string.
+
+  The parameters include s1 (the string we are searching in), s2 (the string we are searching for), st (the character
+  location to start looking, usually 1), and t (the number of the occurrence we are looking for, for instance, the 3rd 
+  occurrence).  
+
+  SELECT
+    INSTR('Now is the time for all good men',' ',1,3)
+  FROM
+    dual; 
+
+  INSTR('NOWISTHETIMEFORALLGOODMEN','',1,3)
+  -----------------------------------------                                       
+  11
+
+  1 row selected.
+
+  In the example above, I am using Oracle INSTR to look for the third occurrence of the string " " (a space) starting at the beginning.  According to the results of the Oracle INSTR function, the third space in the string is at character number 11.
+
+
+</BODY>
+</HTML>

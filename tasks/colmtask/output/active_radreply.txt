@@ -1,0 +1,14 @@
+  id   |            username            |     attribute     | op |     value     | priority 
+-------+--------------------------------+-------------------+----+---------------+----------
+ 35207 | 3123889696@uscc.net            | Class             | =  | 9120          |       10
+ 12534 | 3124370962@uscc.net            | Class             | =  | 6224          |       10
+ 14474 | 3124370962@uscc.net            | Framed-IP-Address | =  | 10.56.54.39   |       10
+ 25220 | 6462410806@tsp17.sprintpcs.com | Class             | =  | 7152          |       10
+ 29933 | 6462429777@tsp18.sprintpcs.com | Class             | =  | 8156          |       10
+ 31914 | 6462429777@tsp18.sprintpcs.com | Framed-IP-Address | =  | 10.60.92.1    |       10
+ 37855 | 6463423614@tsp17.sprintpcs.com | Class             | =  | 11130         |       10
+ 37856 | 6463423614@tsp17.sprintpcs.com | Framed-IP-Address | =  | 10.60.92.100  |       10
+ 52597 | 9176846951@tsp17.sprintpcs.com | Class             | =  | 19050         |       10
+ 67051 | 9176846951@tsp17.sprintpcs.com | Framed-IP-Address | =  | 10.60.185.124 |       10
+(10 rows)
+

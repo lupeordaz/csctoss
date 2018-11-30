@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META HTTP-EQUIV="Content-Language" CONTENT="en">
+   <TITLE>TAR</TITLE>
+   <META NAME="identifier" SCHEME="URN" CONTENT="URN:NBN:fi-fe20051953">
+   <META NAME="Description"  CONTENT="procmail tips and recipes">
+   <META NAME="Robots"       CONTENT="index, follow">
+   <META NAME="Author"       CONTENT="Lupe Ordaz">
+   <META NAME="Owner"        CONTENT="Lupe Ordaz">
+   <META NAME="Distribution" CONTENT="global">
+   <META NAME="Keywords"     CONTENT="procmail, email filtering, filtering, recipes">
+   <LINK REL="SHORTCUT ICON" HREF="../scuticon/i_ts16m.ico">
+   <link rel="stylesheet" type="text/css" title="tscss" href="../ts.css">
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+ 
+<!--
+Other colors used: orange         #E69900
+                   light green    #00CC00
+                   dark green     #008080
+                   question green #009999
+                   red            #FF0000
+                   Faded Yellow   #FFFFCC
+                   Faded Blue     #CCFFFF
+-->
+ 
+
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">Using tar</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+ 
+<BR>
+ 
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>View contents of a tar file (.tar, .gz)</I></FONT><BR>&nbsp;<BR>
+  <i>On AIX, to view a .gz file:</i>
+    gunzip -c sample.tar.gz | tar tvf -
+
+  <i>On Linux: </i>
+  
+<FONT COLOR="#009999"><I>Create Archive Files (.tar, .gz)</I></FONT><BR>&nbsp;<BR>
+  <i>Create an uncompressed tar file; basic command to create a tar archive.</i>
+      tar cvf &lt<i>archive_name</i>&gt.tar &lt<i>path</i>&gt/&lt<i>file name</i>&gt
+
+  <i>Tar and zip an entire directory</i>
+      tar -zcvf prog-1-jan-2005.tar.gz /home/jerry/prog
+
+
+  <i>zip -jql</i> Archive file/files into a zip file
+      <i>zip</i> -jql &lt<i>zipfile_name</i>&gt.zip &lt<i>filename</i>&gt
+          
+  <i>tar a directory and send it to netcat</i>
+    
+    The &lt<i>filename</i>&gt value could also be a mask.
+
+    &lt<i>Sending server (sam_rev)</i>&gt
+      tar cf - /sam8/TCA.DEV | nc -l -p 50892
+
+    &lt<i>Receiving server (sam_win)</i>&gt
+    nc sam_rev 50892 | tar xf -
+
+    The directory TCA.DEV under /sam8 is tarred on the sencding server, received by the receiving server
+    and extracted and restored to directory /sam8/TCA.DEV on sam_win.  If the directory TCA.DEV already 
+    exists, it will be overlayed.
+
+  <i>tar and zip in one command:</i>
+    tar -cvzf /home/uvadmin/backups/CST.20141121.tar.gz /opt/GEMDATA/CST
+
+    This creates the tar file CST.20141121.tar.gz in the directory /home/uvadmin/backups.  The source is 
+    /opt/GEMDATA/CST.
+
+<FONT COLOR="#009999"><I>Extract Archive Files (.tar, .gz)</I></FONT><BR>&nbsp;<BR>
+  <i>Extract an archive file</i>
+    tar xf &lt<i>archive.tar</i>&gt
+
+  <i>Extract a directory</i>
+    cd to the directory in question
+    tar xf /tmp/water_icons_dir.tar
+    
+
+  <i>gunzip and extract tar in one command:</i>
+
+    Go to the directory (cd) where the extract will be located and issue the following command:
+
+      gunzip -c &lt<i>zipped tar file name</i>&gt | tar xvf -
+
+      <i>Example:</i>
+      gunzip -c /mnt/db2_code/v10_5/DB2_Svr_V10.5_AIX.tar.gz | tar xvf -
+
+    The <i>-c</i> option keeps the tar file zipped in the original location.  Example:
+
+      &gt cd /restore
+      &gt gunzip -c /mnt/db2_code/v10_5/DB2_Svr_V10.5_AIX.tar.gz | tar xvf -
+
+<FONT COLOR="#009999"><I>tar a whole directory</I></FONT>
+
+     <b>tar -cvf house.tar /uvdata05/sal1/HOUSE</b>
+
+</pre>
+
+</BODY>
+</HTML>
+ 
+

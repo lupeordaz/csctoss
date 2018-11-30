@@ -1,0 +1,100 @@
+SET
+ equipment_id | serial_number |    mac_address    |  model_number1  |        radius_username         |                   config_rev                    
+--------------+---------------+-------------------+-----------------+--------------------------------+-------------------------------------------------
+        19747 | 799036        | 799036            | Systech 7310    | 3126711540@uscc.net            | 
+        19747 | 799036        | 799036            | Systech 7310    |                                | 
+        35376 | 849894        | 0080440FA759      | Sprint CFE      |                                | UNKNOWN
+        43579 | 888462        | 008044116879      | Systech 8100EVE | 4703461414@vzw3g.com           | 
+        40134 | 745535        | 00804411CCB0      | Systech 8110ESP | 5668562785@tsp18.sprintpcs.com | 
+        33557 | 760676        | 008044101761      | Systech 8100ESP | 5339389419@tsp17.sprintpcs.com | 
+         3518 | 640426        | 0DA626            | Systech 7310    | 3125469726@uscc.net            | 
+        33555 | 775395        | 00804410310F      | Systech 8110ESP | 6466500831@tsp17.sprintpcs.com | 
+         4744 | 641745        | 0DE3A4            | Systech 7310    | 3125467736@uscc.net            | 
+        40134 | 745535        | 00804411CCB0      | Systech 8110ESP |                                | 
+        41645 | 945691        | 008044124EFB      | SL-08-CVE       |                                | CONTOURVERSIONATMAficionadoSL158PG1f05march2018
+        41645 | 945691        | 008044124EFB      | SL-08-CVE       | 4702597002@vzw3g.com           | CONTOURVERSIONATMAficionadoSL158PG1f05march2018
+        16293 | 621563        | ofeacf            | Systech 7310    | 3124377312@uscc.net            | 
+        34198 | 767390        | 102DE2            | Systech 8100EVE | 4043086078@vzw3g.com           | 
+         8553 | 607513        | 0E16AE            | Systech 7310    | 3125462130@uscc.net            | 
+        35464 | 778209        | 10320A            | Systech 8100EVE | 4045480186@vzw3g.com           | 
+        40835 | 927719        | 00804411FCF9      | SL-08-CVE       | 4702492641@vzw3g.com           | UNKNOWN
+        40834 | 927446        | 00804411EEAC      | SL-08-CVE       | 4702491767@vzw3g.com           | UNKNOWN
+        40861 | 927631        | 00804411FC3C      | SL-08-CVE       | 4704265791@vzw3g.com           | UNKNOWN
+        16072 | 645520        | 0E1397            | Systech 7310    |                                | 
+         7116 | 645237        | 0E136B            | Systech 7310    | 3124371354@uscc.net            | 
+         7126 | 645234        | 0E1364            | Systech 7310    | 3124371367@uscc.net            | 
+        15649 | 645471        | 0E1361            | Systech 7310    | 3124376918@uscc.net            | 
+        15655 | 645465        | 0E139C            | Systech 7310    | 3124376924@uscc.net            | 
+        15726 | 645466        | 0E1386            | Systech 7310    | 3124373587@uscc.net            | 
+        16079 | 645542        | 0E135A            | Systech 7310    | 3124377050@uscc.net            | 
+        16046 | 645544        | 0E1389            | Systech 7310    | 3124373992@uscc.net            | 
+        16068 | 645528        | 0E13A0            | Systech 7310    | 3124377038@uscc.net            | 
+        16921 | 621479        | 0DF2ED            | Systech 7310    | 3124378134@uscc.net            | 
+        16112 | 645578        | 0E1381            | Systech 7310    | 3124377091@uscc.net            | 
+        16124 | 641117        | 0080440EEC81      | Systech 7310    | 6462410806@tsp17.sprintpcs.com | 
+        40825 | 927090        | 00804411FAC2      | SL-08-P-CVE     | 4048529716@vzw3g.com           | 
+        39463 | 714531        | 00804411A848      | Systech 8100EVE | 4048593169@vzw3g.com           | 
+         6195 | 642796        | 0DE048            | Systech 7310    | 3123887845@uscc.net            | 
+        16072 | 645520        | 0E1397            | Systech 7310    | 3124377042@uscc.net            | 
+        15715 | 629547        | 0E5678            | Systech 7310    | 3124376990@uscc.net            | UNKNOWN
+        40813 | 866289        | A10000157719AF    | Sprint CFE      | 5668624651@tsp17.sprintpcs.com | 
+         7123 | 606196        | 0DF7C8            | Systech 7310    | 3124371363@uscc.net            | 
+         5719 | 642687        | 0DE1EC            | Systech 7310    | 3123889048@uscc.net            | 
+        19664 | 799030        | F616FBA9          | Systech 7310    |                                | 
+        19664 | 799030        | F616FBA9          | Systech 7310    | 3126711388@uscc.net            | 
+        43431 | S15828        | 00804413B42F      | SL-05-E2-CV1    | 4706069253@vzw3g.com           | 
+        43270 | S14271        | 00804413BE4D      | SL-05-E2-CV1    | 4706266375@vzw3g.com           | 
+        43263 | S14084        | 00804413BE2A      | SL-05-E2-CV1    | 4706064143@vzw3g.com           | 
+        32989 | 760604        | 410189            | Systech 8100ESP | 6468579787@tsp17.sprintpcs.com | 
+        36851 | 695312        | 0080440F213C      | Systech 7710CS  |                                | 
+        35358 | 706117        | 00:80:44:0F:3F:B9 | Sprint CFE      | 5007264255@tsp17.sprintpcs.com | 
+        35359 | 706026        | 00:80:44:0F:40:22 | Sprint CFE      | 5007264253@tsp17.sprintpcs.com | 
+        35379 | 732998        | 0FC11D            | Systech 8100EVE | 4048313574@vzw3g.com           | 
+        38587 | 745057        | 008044114976      | Systech 8110EVE | 4045767739@vzw3g.com           | 
+        17432 | 619974        | 0080440E2D72      | Systech 7310    |                                | 
+        17432 | 619974        | 0080440E2D72      | Systech 7310    | 3124378726@uscc.net            | 
+        30141 | 732856        | 0FECC0            | Systech 8100ESP | 2129510888@tsp17.sprintpcs.com | 
+        30967 | 777169        | 00804410725F      | Systech 8100ESP |                                | 
+        16124 | 641117        | 0080440EEC81      | Systech 7310    | 3124377105@uscc.net            | 
+        30637 | 732206        | 0080440FBEE2      | Sprint CFE      | 9178580210@tsp17.sprintpcs.com | 
+        35478 | 732733        | 0FB39E            | Systech 8100EVE | 4043091246@vzw3g.com           | 
+        38587 | 745057        | 008044114976      | Systech 8110EVE |                                | 
+        19925 | 606262        | 0080440DF761      | Systech 7310    | 3126711829@uscc.net            | 
+        16758 | 621087        | 0080440DEDE8      | Systech 7310    | 3124377934@uscc.net            | 
+        33870 | 770190        | 000000            | Systech 8110ESP | 5662092965@tsp17.sprintpcs.com | 
+        43276 | S14276        | 00804413BE92      | SL-05-E2-CV1    | 4706266381@vzw3g.com           | 
+        36851 | 695312        | 0080440F213C      | Systech 7710CS  | 5774871610@tsp17.sprintpcs.com | 
+        39463 | 714531        | 00804411A848      | Systech 8100EVE | 4704236979@vzw3g.com           | 
+        36851 | 695312        | 0080440F213C      | Systech 7710CS  |                                | 
+        37024 | 855390        | 00804410FB37      | Systech 8100EVE | 4046704229@vzw3g.com           | 
+        37033 | 692688        | 0080440F0C3C      | Systech 7310VE  | 3124378231@uscc.net            | 
+        40530 | 912199        | 00804411DEEA      | Sprint CFE      | 5776927500@tsp17.sprintpcs.com | 
+        36911 | 797602        | 797602            | Systech 8100EVE | 4045962545@vzw3g.com           | 
+        37033 | 692688        | 0080440F0C3C      | Systech 7310VE  | 4045489137@vzw3g.com           | 
+        34865 | 777331        | 10816F            | Systech 8100ESP | 5662074670@tsp18.sprintpcs.com | 
+        33555 | 775395        | 00804410310F      | Systech 8110ESP | 5774870117@tsp17.sprintpcs.com | 
+        16124 | 641117        | 0080440EEC81      | Systech 7310    | 9172430903@tsp17.sprintpcs.com | 
+        39463 | 714531        | 00804411A848      | Systech 8100EVE |                                | 
+        38750 | 868208        | 008044111699      | Systech 8100EVE | 4048072745@vzw3g.com           | 
+        40031 | 706012        | 0080440F5A27      | Sprint CFE      | 5666968633@tsp17.sprintpcs.com | 
+        32989 | 760604        | 410189            | Systech 8100ESP | 5668560771@tsp18.sprintpcs.com | 
+        40134 | 745535        | 00804411CCB0      | Systech 8110ESP | 9178583243@tsp17.sprintpcs.com | 
+        35376 | 849894        | 0080440FA759      | Sprint CFE      | 6466689477@tsp18.sprintpcs.com | UNKNOWN
+        40043 | 895485        | 00804411AD0D      | Sprint CFE      | 5775135823@tsp17.sprintpcs.com | 
+         5755 | 645240        | 0E139D            | Systech 7301    | 3123889155@uscc.net            | 
+        34773 | 849881        | 0FA75C            | Sprint CFE      | 5007261086@tsp17.sprintpcs.com | 
+        20974 | 696553        | 0E6CA7            | Systech 7701CS  | 6466717168@tsp18.sprintpcs.com | 
+        21118 | 696566        | 0E6CA5            | Systech 7710CS  | 6463264762@tsp17.sprintpcs.com | 
+        26768 | 698387        | 0F04D7            | Systech 7701CS  | 9174826475@tsp17.sprintpcs.com | 
+        27537 | 698393        | 0EA0A3            | Systech 7701CS  | 9172045161@tsp17.sprintpcs.com | 
+        27538 | 698395        | 0F0346            | Systech 7701CS  | 9172045510@tsp17.sprintpcs.com | 
+        28407 | 680456        | 0F06D6            | Systech 7701CS  | 9175230304@tsp17.sprintpcs.com | 
+        36881 | 849888        | 0080440FA755      | Sprint CFE      | 5338240677@tsp17.sprintpcs.com | 
+        35530 | 849896        | 104B07            | Systech 7710CS  | 5662109173@tsp17.sprintpcs.com | 
+        39279 | 784624        | 00804410779B      | Sprint CFE      | 5338881839@tsp17.sprintpcs.com | 
+        35478 | 732733        | 0FB39E            | Systech 8100EVE | 4043702038@vzw3g.com           | 
+        38794 | 855436        | 00804410DADE      | Systech 8100EVE | 4704217923@vzw3g.com           | 
+        30967 | 777169        | 00804410725F      | Systech 8100ESP | 5774874100@tsp18.sprintpcs.com | 
+        43480 | 912322        | 00804411C4BB      | SL-08-CSE       | 5666961569@tsp17.sprintpcs.com | 
+(95 rows)
+

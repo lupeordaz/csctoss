@@ -1,0 +1,30 @@
+
+START  : 20160218205506
+STRING : 4042939022@vzw3g.com,29CD7DF7,10.81.12.135,,schailds1xpdn01
+COMMAND: radclient -x -c 1 : -f /home/postgres/dba/logs/pod.dat disconnect 
+Acct-Session-Id=29CD7DF7
+User-Name=4042939022@vzw3g.com
+Framed-IP-Address=10.81.12.135
+--------------------end of pod report--------------------
+START  : 20160218205506
+STRING : 4042939022@vzw3g.com,29CD7DF7,10.81.12.135,,schailds1xpdn01
+COMMAND: radclient -x -c 1 : -f /home/postgres/dba/logs/pod.dat disconnect 
+Acct-Session-Id=29CD7DF7
+User-Name=4042939022@vzw3g.com
+Framed-IP-Address=10.81.12.135
+--------------------end of pod report--------------------
+START  : 20160218205510
+STRING : 4042939022@vzw3g.com,29CD7DF7,10.81.12.135,,schailds1xpdn01
+COMMAND: radclient -x -c 1 : -f /home/postgres/dba/logs/pod.dat disconnect 
+Acct-Session-Id=29CD7DF7
+User-Name=4042939022@vzw3g.com
+Framed-IP-Address=10.81.12.135
+--------------------end of pod report--------------------
+START  : 20160218205510
+STRING : 4042939022@vzw3g.com,29CD7DF7,10.81.12.135,,schailds1xpdn01
+COMMAND: radclient -x -c 1 : -f /home/postgres/dba/logs/pod.dat disconnect 
+Acct-Session-Id=29CD7DF7
+User-Name=4042939022@vzw3g.com
+Framed-IP-Address=10.81.12.135
+--------------------end of pod report--------------------
+

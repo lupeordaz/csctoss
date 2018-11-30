@@ -1,0 +1,5 @@
+# Rule for database 
+# Sample record
+# Aug 30 15:58:28 dencfw01.contournetworks.net dencfw01: NetScreen device_id=dencfw01  [Root]system-notification-00257(traffic): start_time="2018-08-30 13:58:26" duration=2 policy_id=1623 service=https proto=6 src zone=private_atm dst zone=Untrust action=Permit sent=136 rcvd=68 src=10.82.8.20 dst=172.217.4.46 src_port=58024 dst_port=443 src-xlated ip=74.115.157.233 port=49293 dst-xlated ip=172.217.4.46 port=443 session_id=86783 reason=Close - TCP RST
+
+rule=:%start_time:date-rfc3164% %host:word% %device:word% %fw_type:word% device_id=%device_id:word% %filler1:char-to:\x3A%: start_time="%fwstart_time:char-to:\x22%" duration=%duration:number% policy_id=%policy_id:number% service=%service:word% proto=%proto:word% src zone=%src_zone:word% dst zone=%dst_zone:word% action=%action:word% sent=%sent:number% rcvd=%rcvd:number% src=%src_ip:ipv4% dst=%dst_ip:ipv4% src_port=%src_port:number% dst_port=%dst_port:number% src-xlated ip=%srx_xtranslateip:ipv4% port=%srxxlatedport:number% dst-xlated ip=%dst_xtranslateip:ipv4% port=%dstxlatedport:number% session_id=%session_id:number% reason=%reason:rest%

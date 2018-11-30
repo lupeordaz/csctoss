@@ -1,0 +1,261 @@
+Task 5631 - Test data:
+
+Serial #:  673192
+
+ equipment_id | unique_identifier_type |       value        | notes | date_created | date_modified 
+--------------+------------------------+--------------------+-------+--------------+---------------
+        23126 | ESN DEC                | 270113178504318055 |       | 2011-05-11   | 
+        23126 | ESN HEX                | A100000941E367     |       | 2011-05-11   | 
+        23126 | MAC ADDRESS            | 0EF55D             |       | 2011-05-11   | 
+        23126 | MDN                    | 9172721625         |       | 2011-05-11   | 
+        23126 | MIN                    | 000009174055121    |       | 2011-05-11   | 
+        23126 | SERIAL NUMBER          | 673192             |       | 2011-05-11   | 
+
+         5551 | ESN DEC                | 24601411607 |       | 2009-09-24   | 
+         5551 | ESN HEX                | F6158A17    |       | 2009-09-24   | 
+         5551 | MAC ADDRESS            | 0DE485      |       | 2010-03-29   | 
+         5551 | MDN                    | 3123889225  |       | 2009-09-24   | 
+         5551 | MIN                    | 3123889225  |       | 2009-09-24   | 
+         5551 | SERIAL NUMBER          | 642261      |       | 2009-10-06   | 
+
+        24856 | ESN DEC                | 270113178504334663 |       | 2011-07-20   | 
+        24856 | ESN HEX                | A1000009422447     |       | 2011-07-20   | 
+        24856 | MAC ADDRESS            | 0EEB35             |       | 2011-07-20   | 
+        24856 | MDN                    | 9172664543         |       | 2011-07-20   | 
+        24856 | MIN                    | 000009174976869    |       | 2011-07-20   | 
+        24856 | SERIAL NUMBER          | 687993             |       | 2011-07-20   | 
+
+        39856 | ESN DEC                | 270113183009972820 |       | 2014-10-15   | 
+        39856 | ESN HEX                | A1000036982C54     |       | 2014-10-15   | 
+        39856 | MAC ADDRESS            | V008044110715      |       | 2014-10-15   | 
+        39856 | MDN                    | 4048070677         |       | 2014-10-15   | 
+        39856 | MIN                    | 4048070677         |       | 2014-10-15   | 
+        39856 | SERIAL NUMBER          | 904176V            |       | 2014-10-15   | 
+
+        39831 | ESN DEC                | 270113179708305566 |       | 2014-10-14   | 
+        39831 | ESN HEX                | A10000157EBB9E     |       | 2014-10-14   | 
+        39831 | MAC ADDRESS            | S008044110715      |       | 2014-10-14   | 
+        39831 | MDN                    | 5774957160         |       | 2014-10-14   | 
+        39831 | MIN                    | 5774957160         |       | 2014-10-14   | 
+        39831 | SERIAL NUMBER          | 904176S            |       | 2014-10-14   | 
+
+         3426 | ESN DEC                | 24601357545 |       | 2009-05-26   | 
+         3426 | ESN HEX                | F614B6E9    |       | 2009-05-26   | 
+         3426 | MAC ADDRESS            | 0DA736      |       | 2010-03-29   | 
+         3426 | MDN                    | 3123765213  |       | 2009-05-26   | 
+         3426 | MIN                    | 3125469814  |       | 2009-05-26   | 
+         3426 | SERIAL NUMBER          | 640438      |       | 2009-06-25   | 
+
+        36552 | ESN DEC                | 24601236161  |       | 2013-10-23   | 
+        36552 | ESN HEX                | F612DCC1     |       | 2013-10-23   | 
+        36552 | MAC ADDRESS            | 0080440DAD87 |       | 2013-10-24   | 
+        36552 | MDN                    | 4046158488   |       | 2013-10-23   | 
+        36552 | MIN                    | 4046158488   |       | 2013-10-23   | 
+        36552 | SERIAL NUMBER          | 641855       |       | 2013-10-24   | 
+
+        34686 | ESN DEC                | 270113179412717438 |       | 2013-05-22   | 
+        34686 | ESN HEX                | A1000012C20D7E     |       | 2013-05-22   | 
+        34686 | MAC ADDRESS            | 0080441049E0       |       | 2013-05-22   | 
+        34686 | MDN                    | 4047101782         |       | 2013-05-22   | 
+        34686 | MIN                    | 4047101782         |       | 2013-05-22   | 
+        34686 | SERIAL NUMBER          | 849565V            |       | 2013-05-22   | 
+
+        34661 | ESN DEC                | 270113179708272464 |       | 2013-05-18   | 
+        34661 | ESN HEX                | A10000157E3A50     |       | 2013-05-18   | 
+        34661 | MAC ADDRESS            | 1049CC             |       | 2013-05-18   | 
+        34661 | MDN                    | 5665295851         |       | 2013-05-18   | 
+        34661 | MIN                    | 000009137098947    |       | 2013-05-18   | 
+        34661 | SERIAL NUMBER          | 849565S            |       | 2013-05-18   | 
+
+        22860 | ESN DEC                | 270113178504321497 |       | 2011-04-28   | 
+        22860 | ESN HEX                | A100000941F0D9     |       | 2011-04-28   | 
+        22860 | MAC ADDRESS            | 0EE0A5             |       | 2011-04-28   | 
+        22860 | MDN                    | 9172726938         |       | 2011-04-28   | 
+        22860 | MIN                    | 000007812286534    |       | 2011-04-28   | 
+        22860 | SERIAL NUMBER          | 675536             |       | 2011-04-28   | 
+
+select ui.value as ESN_HEX
+      ,ug.groupname
+      ,u.username
+      ,l.line_id
+      ,l.billing_entity_id
+      ,ui.equipment_id
+  from unique_identifier ui
+  join line_equipment le on le.equipment_id = ui.equipment_id
+  join line l on le.line_id = l.line_id
+  join username u on l.radius_username = u.username
+  join usergroup ug on ug.username = u.username
+ where ui.unique_identifier_type = 'ESN HEX'
+   and ui.value in ('A100000941E367','F6158A17','A1000009422447','A1000036982C54','A10000157EBB9E'
+                   ,'F614B6E9','F612DCC1','A1000012C20D7E','A10000157E3A50','A100000941F0D9');
+
+    esn_hex     |       groupname       |            username            | line_id | billing_entity_id | equipment_id 
+ ----------------+-----------------------+--------------------------------+---------+-------------------+--------------
+ A100000941F0D9 | SERVICE-cardtronics   | 9172726938@tsp17.sprintpcs.com |   23499 |               107 |        22860
+ F612DCC1       | SERVICE-atmaficionado | 3124376657@uscc.net            |   42764 |               116 |        36552
+ F6158A17       | SERVICE-private_atm   | 3123889225@uscc.net            |   42578 |               302 |         5551
+ A100000941E367 | SERVICE-cardtronics   | 9172721625@tsp18.sprintpcs.com |   19382 |               473 |        23126
+ A1000009422447 | SERVICE-cardtronics   | 9172664543@tsp17.sprintpcs.com |   24276 |               107 |        24856
+(5 rows)
+
+Call ops_api_assign:
+
+select * from ops_api_assign_5631('A100000941F0D9','SO-TEST01',107,'SERVICE-cardtronics',TRUE);
+
+Call ops_api_static_ip_assign:
+
+select * from ops_api_static_ip_assign_5631('SPRINT','SERVICE-cardtronics','9172726938@tsp17.sprintpcs.com',23499,107);
+
+
+
+
+select billing_entity_id                                                  
+      ,groupname
+      ,count(*) as totl 
+  from static_ip_pool 
+ group by billing_entity_id, groupname
+ order by billing_entity_id;
+
+
+
+------
+ begin;
+
+ select public.set_change_log_staff_id(3);
+
+ update static_ip_pool set is_assigned = TRUE where groupname = 'SERVICE-premier_atm_sea' and billing_entity_id = 148 and carrier_id = 1;
+
+select * from ops_api_assign_5631('F612DCC1','SO-10179',148,'SERVICE-premier_atm_sea',TRUE);
+
+csctoss=# select * from ops_api_assign_5631('F612DCC1','SO-10179',148,'SERVICE-premier_atm_sea',TRUE);
+NOTICE:  Sales Order: SO-10179
+NOTICE:  ESN: F612DCC1
+NOTICE:  CARRIER: USCC
+NOTICE:  MDN/MIN: 4046158488
+NOTICE:  USERNAME: 4046158488@vzw3g.com USERGROUP: SERVICE-premier_atm_sea
+NOTICE:  ops_api_static_ip_assign is called: parameters => [carrier=USCC][vrf=SERVICE-premier_atm_sea][username=4046158488@vzw3g.com][line_id=45963][billing_entity_id=148]
+CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign( $1 , $2 , $3 , $4 , $5 )"
+PL/pgSQL function "ops_api_assign_5631" line 256 at select into variables
+NOTICE:  OSS: No IP Block For given VRF/CARRIER combination.
+CONTEXT:  SQL statement "SELECT  * FROM ops_api_static_ip_assign( $1 , $2 , $3 , $4 , $5 )"
+PL/pgSQL function "ops_api_assign_5631" line 256 at select into variables
+NOTICE:  STATIC IP: ERROR:  OSS: No IP Block For given VRF/CARRIER combination.
+ERROR:  ERROR:  OSS: No IP Block For given VRF/CARRIER combination.!
+csctoss=# rollback;
+ROLLBACK
+
+
+----
+
+select ui.value as ESN_HEX
+      ,ug.groupname
+      ,u.username
+      ,l.line_id
+      ,l.billing_entity_id
+      ,ui.equipment_id
+  from unique_identifier ui
+  join line_equipment le on le.equipment_id = ui.equipment_id
+  join line l on le.line_id = l.line_id
+  join username u on l.radius_username = u.username
+  join usergroup ug on ug.username = u.username
+ where ui.unique_identifier_type = 'ESN HEX'
+   and l.billing_entity_id = 112;
+
+       esn_hex        |        groupname         |               username               | line_id | billing_entity_id | equipment_id
+----------------------+--------------------------+--------------------------------------+---------+-------------------+-------------
+-
+ 4702597555           | SERVICE-vzwretail_cnione | 4702597555@vzw3g.com                 |   42926 |               112 |        41216
+ 89314404000148031157 | SERVICE-vodafone         | 882393256289569@m2m01.contournet.net |   45708 |               112 |        42396
+ 4702597338           | SERVICE-vzwretail_cnione | 4702597338@vzw3g.com                 |   42748 |               112 |        40531
+ A1000045811645       | SERVICE-vzwretail_cnione | 4702597338@vzw3g.com                 |   42748 |               112 |        40937
+ A000003361D1DF       | SERVICE-sharenet         | 5668526642@tsp17.sprintpcs.com       |   42726 |               112 |        38917
+ A0000033618C8C       | SERVICE-vzwretail_cnione | 4702308519@vzw3g.com                 |   42727 |               112 |        40933
+ 80EB26BE             | SERVICE-vzwretail_cnione | 4702597573@vzw3g.com                 |   42728 |               112 |        40934
+ A1000045881050       | SERVICE-vzwretail_cnione | 4046708974@vzw3g.com                 |   42626 |               112 |        40902
+ 89148000003082925186 | SERVICE-vzwretail_cnione | 4043578970@vzw3g.com                 |   44613 |               112 |        42106
+ A10000157EBCD1       | SERVICE-private_atm      | 5662079654@tsp18.sprintpcs.com       |   43669 |               112 |        33366
+ 89148000003082925277 | SERVICE-vzwretail_cnione | 4043871982@vzw3g.com                 |   44236 |               112 |        42112
+ 89148000003082925202 | SERVICE-vzwretail_cnione | 4043549430@vzw3g.com                 |   44237 |               112 |        42104
+ 00042D07449E         | SERVICE-fiservcashlog    | 476318                               |   44238 |               112 |        42132
+ 353547060051185      | SERVICE-vzwretail_cnione | 4704463884@vzw3g.com                 |   45806 |               112 |        43158
+ 89148000003082925343 | SERVICE-vzwretail_cnione | 4043600105@vzw3g.com                 |   44260 |               112 |        42091
+ 476313               | SERVICE-fiservcashlog    | 476313                               |   44261 |               112 |        42135
+ MM140217900362       | SERVICE-contour_qa       | 5774870902@tsp17.sprintpcs.com       |   45808 |               112 |        39718
+ A10000157E5DD0       | SERVICE-public_inet      | 5668520469@tsp17.sprintpcs.com       |   37381 |               112 |        37129
+ 35351405041228       | SERVICE-inventory        | 5662138226@tsp17.sprintpcs.com       |   36077 |               112 |        36076
+ F616EAF0             | SERVICE-private_inet     | 3124373794@uscc.net                  |   36018 |               112 |        15877
+ F616EB45             | SERVICE-private_inet     | 3124373816@uscc.net                  |   36021 |               112 |        15896
+ 89148000003082925426 | SERVICE-vzwretail_cnione | 4044162175@vzw3g.com                 |   45695 |               112 |        42094
+ 89314404000148030464 | SERVICE-vodafone         | 882393256289500@m2m01.contournet.net |   45500 |               112 |        43011
+ 204043256289534      | SERVICE-vodafone         | 882393256289534@m2m01.contournet.net |   45579 |               112 |        43032
+ A1000043872216       | SERVICE-vzwretail_cnione | 4703033267@vzw3g.com                 |   44006 |               112 |        40916
+ F611C1DC             | SERVICE-private_atm      | 3123883702@uscc.net                  |   44009 |               112 |         2379
+ A100000941E67F       | SERVICE-private_atm      | 5774810399@tsp18.sprintpcs.com       |   44008 |               112 |        23466
+ A1000009420863       | SERVICE-private_atm      | 5774810399@tsp18.sprintpcs.com       |   44008 |               112 |        23835
+ 353238060034740      | SERVICE-vzwretail_cnione | 4705728443@vzw3g.com                 |   45773 |               112 |        43058
+ 353238064704157      | SERVICE-vzwretail_cnione | 4704217835@vzw3g.com                 |   44745 |               112 |        42432
+ 4702597273           | SERVICE-vzwretail_cnione | 4702597273@vzw3g.com                 |   45585 |               112 |        41306
+ 89148000003082925467 | SERVICE-vzwretail_cnione | 4703460831@vzw3g.com                 |   44773 |               112 |        42434
+ 89148000003082925475 | SERVICE-vzwretail_cnione | 4703460833@vzw3g.com                 |   44774 |               112 |        42433
+ 89148000003082925228 | SERVICE-vzwretail_cnione | 4049898797@vzw3g.com                 |   44775 |               112 |        42102
+ 89148000003082925632 | SERVICE-vzwretail_cnione | 4703460836@vzw3g.com                 |   44776 |               112 |        42459
+ 89148000003082925624 | SERVICE-vzwretail_cnione | 4703460841@vzw3g.com                 |   44777 |               112 |        42458
+ 89148000003082925459 | SERVICE-vzwretail_cnione | 4703460843@vzw3g.com                 |   44778 |               112 |        42457
+ 89148000002681971088 | SERVICE-vzwretail_cnione | 4703461880@vzw3g.com                 |   44780 |               112 |        42460
+ 89148000003082925483 | SERVICE-vzwretail_cnione | 4704215291@vzw3g.com                 |   44772 |               112 |        42435
+ 89148000002683906637 | SERVICE-vzwretail_cnione | 4704452772@vzw3g.com                 |   44779 |               112 |        42456
+ 89148000003082925251 | SERVICE-vzwretail_cnione | 4043602014@vzw3g.com                 |   44788 |               112 |        42110
+ 352613070069970      | SERVICE-vzwretail_cnione | 4703460832@vzw3g.com                 |   44795 |               112 |        42471
+ 8600191701           | SERVICE-vzwretail_cnione | 4705325323@vzw3g.com                 |   44833 |               112 |        42523
+ 353238060196333      | SERVICE-vzwretail_cnione | 4703460713@vzw3g.com                 |   45559 |               112 |        42970
+ A10000157F187A       | SERVICE-vzwretail_cnione | 4042271640@vzw3g.com                 |   44917 |               112 |        30814
+ F616FBCE             | SERVICE-private_atm      | 3126711432@uscc.net                  |   44918 |               112 |        19689
+ 4702597310           | SERVICE-vzwretail_cnione | 4702597310@vzw3g.com                 |   44947 |               112 |        40777
+ 4702597344           | SERVICE-vzwretail_cnione | 4702597344@vzw3g.com                 |   44950 |               112 |        41308
+ 882393256289341      | SERVICE-vodafone         | 882393256289341@m2m01.contournet.net |   44109 |               112 |        41305
+ 4702597277           | SERVICE-vzwretail_cnione | 4702597277@vzw3g.com                 |   44118 |               112 |        40636
+ 4708913857           | SERVICE-vzwretail_cnione | 4708913857@vzw3g.com                 |   44123 |               112 |        40078
+ 353238060032900      | SERVICE-vzwretail_cnione | 4702177666@vzw3g.com                 |   45546 |               112 |        42975
+ 89148000003082925327 | SERVICE-vzwretail_cnione | 4043601668@vzw3g.com                 |   44388 |               112 |        42117
+ 89148000003082925210 | SERVICE-vzwretail_cnione | 4043544068@vzw3g.com                 |   44396 |               112 |        42103
+ 4702597287           | SERVICE-vzwretail_cnione | 4702597287@vzw3g.com                 |   45869 |               112 |        41427
+ 89314404000148029581 | SERVICE-vodafone         | 882393256289412@m2m01.contournet.net |   44408 |               112 |        42243
+ 89314404000148030498 | SERVICE-vodafone         | 882393256289503@m2m01.contournet.net |   44410 |               112 |        42245
+ 89314404000148031355 | SERVICE-vodafone         | 882393256289589@m2m01.contournet.net |   44411 |               112 |        42246
+ A100004396117C       | SERVICE-private_atm      | 5003551573@tsp17.sprintpcs.com       |   44412 |               112 |        35879
+ 89148000003082925319 | SERVICE-vzwretail_cnione | 4044163714@vzw3g.com                 |   44421 |               112 |        42116
+ A000003361FCCF       | SERVICE-vzwretail_cnione | 4044163714@vzw3g.com                 |   44421 |               112 |        42247
+ 4702597263           | SERVICE-vzwretail_cnione | 4702597263@vzw3g.com                 |   45595 |               112 |        41307
+ 89148000003082925392 | SERVICE-vzwretail_cnione | 4043872935@vzw3g.com                 |   44455 |               112 |        42097
+ 89314404000148031132 | SERVICE-vodafone         | 882393256289567@m2m01.contournet.net |   45744 |               112 |        43055
+ 352613070148204      | SERVICE-vzwretail_cnione | 4704462130@vzw3g.com                 |   45799 |               112 |        43157
+ 89314404000148028203 | SERVICE-vodafone         | 882393256289274@m2m01.contournet.net |   45453 |               112 |        42994
+ A100001578C997       | SERVICE-private_atm      | 5002629681@tsp17.sprintpcs.com       |   45570 |               112 |        41619
+ A100004581143F       | SERVICE-vzwretail_cnione | 4703038950@vzw3g.com                 |   45882 |               112 |        40941
+(68 rows)
+
+
+---
+
+
+csctoss=# select * from unique_identifier where equipment_id = 19726;
+ equipment_id | unique_identifier_type |    value     | notes | date_created | date_modified 
+--------------+------------------------+--------------+-------+--------------+---------------
+        19726 | ESN DEC                | 24601506176  |       | 2010-07-14   | 
+        19726 | ESN HEX                | F616FB80     |       | 2010-07-14   | 
+        19726 | MAC ADDRESS            | 0080440FF0A3 |       | 2013-03-18   | 
+        19726 | MDN                    | 3126711499   |       | 2010-07-14   | 
+        19726 | MIN                    | 3126711499   |       | 2010-07-14   | 
+        19726 | SERIAL NUMBER          | 798999       |       | 2013-03-18   | 
+(6 rows)
+
+
+select * from ops_api_assign_lo('F612DCC1','SO-10179',112,'SERVICE-private_atm',TRUE,TRUE);
+
+OR
+
+select * from ops_api_static_ip_assign_5631('USCC','SERVICE-private_atm','3123883702@uscc.net',45921,112);
+
+
+
+

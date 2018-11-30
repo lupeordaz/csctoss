@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <TITLE>soupclue</TITLE>
+</HEAD>
+ 
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+<HR>
+
+<CENTER>
+<TABLE BORDER="1" BGCOLOR="#008080" WIDTH="100%"><TR><TD>
+<H1 style="text-align: center;">
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+<FONT COLOR="#E69900">SOUP Cell Signal Reporting</FONT>
+<SPAN CLASS=Size60>&nbsp;</SPAN><BR>
+</H1>
+</TD></TR></TABLE>
+</CENTER>
+
+<BR>
+
+<OL>
+<pre>
+
+<FONT COLOR="#009999"><I>Determining cell signal data generation</I></FONT><BR>&nbsp;<BR>
+
+1.  Log in to SOUP server and 'sudo su -'
+2.  log in to the mysql database:  mysql -u root sdm
+3.  Using the sql from copy_cellsignal_to_csctoss.sh, execute the 
+    following query:
+
+    SELECT a.esn
+          ,TRIM(SUBSTRING(a.esn, 1, LOCATE(',', a.esn) - 1)) AS esn1
+          ,TRIM(SUBSTRING(a.esn, LOCATE(',', a.esn) + 1)) AS esn2
+          ,a.cellsignal,
+    FROM_UNIXTIME(a.timestamp) AS timestamp
+    FROM cellsignal a
+    WHERE 1 = 1
+    AND a.timestamp >= unix_timestamp(CURRENT_TIMESTAMP - INTERVAL 1 DAY)
+
+    Result is 88 records displayed; way to small a population.
+
+4.  Re-ran the script with 'INTERVAL 2 DAY'.
+
+5.  Results showed a large number of entries, which is expected.  Something
+    happenned within last two days.
+6.  Checked /opt/sdm/sdm.log and found that there was a reboot two days ago.
+7.  Check to see if the python script /opt/sdm/sdm.py is running.  Issuing a ps -ef
+    command shows that the script is not running.
+8.  Execute the /opt/sdm/startsdm script to start the sdm.py program
+
+    ./startsdm
+
+9.  Issue the ps -ef command again:
+
+    ps -ef | grep sdm
+
+    [root@densoup01 sdm]# ps -ef | grep sdm
+    root       461     1  4 14:53 pts/1    00:00:00 python2 /opt/sdm/sdm.py -v
+    root       505 32552  0 14:53 pts/1    00:00:00 grep sdm
+    root      9040  9039  0 Mar14 ?        00:00:00 inotifywait -m /opt/sdm/savefiles -e create -e moved_to
+    [
+
+10. Execute the "tail -f /opt/sdm/sdm.log" command to verify that data is being generated.
+
+11. On OSS, query database table soup_ellsignal:
+
+    select count(*) FROM soup_cellsignal ;
+     count 
+    -------
+      4566
+    (1 row)
+
+    This verifies that data is being transmitted.
+
+12. Issue is resolved.
+</BODY>
+</HTML>
+ 
+
